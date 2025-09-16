@@ -200,6 +200,17 @@ export default function PropertyResultsDisplay({
         </div>
       </div>
 
+      {/* Call to Action */}
+      <div className="text-center mt-6">
+        <div className="inline-block bg-white/90 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/30 shadow-lg" style={{
+        display: "none"
+      }}>
+          <p className="text-slate-700 font-semibold text-sm">
+            <span>Click 'Scan' to view further details</span>
+          </p>
+        </div>
+      </div>
+
       {/* Navigation Controls - Arrows on either side of dots */}
       <div className="flex items-center justify-center space-x-6 mt-4">
         {/* Left Arrow */}
@@ -236,17 +247,6 @@ export default function PropertyResultsDisplay({
       }}>
           <ChevronRight className="w-6 h-6 text-slate-700" />
         </motion.button>
-      </div>
-
-      {/* Call to Action */}
-      <div className="text-center mt-6">
-        <div className="inline-block bg-white/90 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/30 shadow-lg" style={{
-        display: "none"
-      }}>
-          <p className="text-slate-700 font-semibold text-sm">
-            <span>Click 'Scan' to view further details</span>
-          </p>
-        </div>
       </div>
     </div>;
 }
