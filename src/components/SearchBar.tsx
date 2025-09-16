@@ -62,6 +62,25 @@ export const SearchBar = ({
             backdropFilter: 'blur(20px) saturate(180%)',
             WebkitBackdropFilter: 'blur(20px) saturate(180%)'
           }}>
+              {/* Full search bar fill animation overlay - positioned to cover entire container */}
+              <AnimatePresence>
+                {isSubmitted && <motion.div 
+                  className="absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600 z-10" 
+                  initial={{
+                    clipPath: "inset(0 100% 0 0)"
+                  }} 
+                  animate={{
+                    clipPath: "inset(0 0% 0 0)"
+                  }} 
+                  exit={{
+                    opacity: 0
+                  }} 
+                  transition={{
+                    clipPath: { duration: 0.4, ease: [0.76, 0, 0.24, 1] },
+                    opacity: { duration: 0.2 }
+                  }} 
+                />}
+              </AnimatePresence>
               {/* Upload indicator */}
               <AnimatePresence>
                 {!isSubmitted && <motion.div initial={{
@@ -99,31 +118,6 @@ export const SearchBar = ({
               }} placeholder="" className={`w-full bg-transparent text-xl font-light focus:outline-none transition-none ${isSubmitted ? 'opacity-0' : 'opacity-100'}`} style={{
                 color: '#E5F0F1'
               }} autoComplete="off" disabled={isSubmitted} />
-                
-                {/* Processing overlay with full bar animation */}
-                <AnimatePresence>
-                  {isSubmitted && <motion.div 
-                    className="absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600" 
-                    initial={{
-                      width: "0%",
-                      left: "50%",
-                      transform: "translateX(-50%)"
-                    }} 
-                    animate={{
-                      width: "100%",
-                      left: "0%",
-                      transform: "translateX(0%)"
-                    }} 
-                    exit={{
-                      opacity: 0
-                    }} 
-                    transition={{
-                      width: { duration: 0.4, ease: [0.76, 0, 0.24, 1] },
-                      left: { duration: 0.4, ease: [0.76, 0, 0.24, 1] },
-                      transform: { duration: 0.4, ease: [0.76, 0, 0.24, 1] }
-                    }} 
-                  />}
-                </AnimatePresence>
                 
                 {/* Animated placeholder */}
                 <AnimatePresence>
