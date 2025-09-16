@@ -422,7 +422,7 @@ export default function ChatInterface({
         {/* Input Area */}
         <div className="p-6 border-t border-slate-100/60">
           <form onSubmit={handleSendMessage} className="relative">
-            <motion.div className="relative flex items-center bg-slate-50/80 backdrop-blur-sm border border-slate-200/60 rounded-2xl px-4 py-3 transition-all duration-150 hover:border-slate-300/60 focus-within:border-blue-300/60 focus-within:bg-white/80" whileFocus={{
+            <motion.div className="relative flex items-center bg-white border border-slate-200/60 rounded-2xl px-4 py-3 transition-all duration-150 hover:border-slate-300/60 focus-within:border-blue-300/60 focus-within:bg-white" whileFocus={{
             scale: 1.005,
             y: -1
           }} transition={{
