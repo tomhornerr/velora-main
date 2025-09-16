@@ -270,8 +270,16 @@ export const MainContent = ({
       </div>
 
       {/* Content container */}
-      <div className={`relative z-10 h-full flex flex-col bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-lg border border-blue-200/50 backdrop-blur-sm ${currentView === 'upload' ? 'p-8' : 'p-8 lg:p-16'}`}>
-        <div className={`relative w-full ${currentView === 'upload' ? 'h-full' : 'max-w-5xl mx-auto'} flex-1 flex flex-col`}>
+      <div className={`relative z-10 h-full flex flex-col ${
+        isInChatMode 
+          ? 'bg-transparent' 
+          : `bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-lg border border-blue-200/50 backdrop-blur-sm ${currentView === 'upload' ? 'p-8' : 'p-8 lg:p-16'}`
+      }`}>
+        <div className={`relative w-full ${
+          isInChatMode 
+            ? 'h-full w-full' 
+            : currentView === 'upload' ? 'h-full' : 'max-w-5xl mx-auto'
+        } flex-1 flex flex-col`}>
           <motion.div initial={{
           opacity: 0,
           y: 20
