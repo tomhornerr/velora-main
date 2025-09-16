@@ -68,245 +68,135 @@ export default function PropertyResultsDisplay({
   const [activeScan, setActiveScan] = useState(false);
   const [activeLocation, setActiveLocation] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
+
   const nextProperty = () => {
     setCurrentIndex(prev => (prev + 1) % properties.length);
   };
+
   const prevProperty = () => {
     setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
   };
+
   const goToProperty = (index: number) => {
     setCurrentIndex(index);
   };
-  return <div className={`w-full px-4 py-3 ${className || ''}`}>
+
+  const currentProperty = properties[currentIndex];
+
+  return (
+    <div className={`w-full max-w-2xl ${className || ''}`}>
       {/* Header */}
-      <div className="mb-2 text-left">
-        <h2 className="text-sm font-semibold text-slate-600 mb-1">
-          <span>Here are the most suitable comps I found Tom:</span>
-        </h2>
+      <div className="mb-6">
+        <h3 className="text-base font-semibold text-slate-800 mb-1">
+          Property Comparables
+        </h3>
+        <p className="text-sm text-slate-600">
+          Here are the most suitable comps I found for your search
+        </p>
       </div>
 
-      {/* Carousel Container */}
-      <div className="relative flex justify-start">
-        
-        {/* Carousel Cards - Stacked Layout */}
-        <div className="relative h-72 w-full max-w-xs mb-4">
-          {properties.map((property, index) => {
-          const isActive = index === currentIndex;
-          const offset = index - currentIndex;
-          const isVisible = Math.abs(offset) <= 2;
-          return <AnimatePresence key={property.id}>
-              {isVisible && <motion.div key={property.id} className="absolute inset-0 cursor-pointer" onClick={() => goToProperty(index)} initial={{
-              scale: 0.9,
-              y: 10,
-              opacity: 0
-            }} animate={{
-              scale: isActive ? 1 : 0.95 - Math.abs(offset) * 0.02,
-              y: Math.abs(offset) * 4,
-              opacity: isActive ? 1 : 0.8 - Math.abs(offset) * 0.1,
-              zIndex: properties.length - Math.abs(offset)
-            }} exit={{
-              scale: 0.85,
-              y: 20,
-              opacity: 0,
-              transition: {
-                duration: 0.15
-              }
-            }} transition={{
-              duration: 0.25,
-              ease: [0.4, 0, 0.2, 1]
-            }} whileHover={isActive ? {
-              y: -2,
-              scale: 1.01
-            } : {
-              scale: 0.97 - Math.abs(offset) * 0.02
-            }}>
-                  {/* Card */}
-                  <div className={`w-full h-full bg-white/95 backdrop-blur-xl rounded-2xl overflow-hidden border transition-all duration-300 ${isActive ? 'border-indigo-200 shadow-2xl' : 'border-white/30 shadow-lg'}`}>
-                    {/* Property Image */}
-                    <div className="relative h-40 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
-                      {/* Mock property image with gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-indigo-50 to-purple-100">
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-                        
-                        {/* Property image placeholder */}
-                        <div className="absolute inset-2 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 flex items-center justify-center">
-                          <div className="text-center">
-                            <div className="w-8 h-8 bg-white/30 rounded-lg mx-auto mb-1 flex items-center justify-center">
-                              <div className="w-4 h-4 bg-white/50 rounded-md" />
-                            </div>
-                            <p className="text-white/80 text-xs font-medium">
-                              <span>Property Image</span>
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+      {/* Main Property Card */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-4">
+        {/* Property Image */}
+        <div className="relative h-48 bg-gradient-to-br from-slate-100 to-slate-200">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
+          </div>
+          
+          {/* Address Badge */}
+          <div className="absolute top-4 left-4">
+            <div className="bg-white/95 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-sm">
+              <h4 className="text-sm font-semibold text-slate-800">
+                {currentProperty.address}
+              </h4>
+            </div>
+          </div>
 
-                      {/* Address Overlay */}
-                      <div className="absolute top-2 left-2 right-2">
-                        <div className="bg-white/95 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-md border border-white/30">
-                          <h3 className="text-sm font-bold text-slate-800 truncate">
-                            <span>{property.address}</span>
-                          </h3>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Property Details */}
-                    <div className="p-3 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="text-xl font-bold text-slate-800">
-                          <span>{property.price}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-4 text-slate-600">
-                        <div className="flex items-center space-x-1">
-                          <div className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
-                          <span className="font-medium text-sm">
-                            <span>{property.beds}</span>
-                            <span className="ml-0.5">beds</span>
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <div className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
-                          <span className="font-medium text-sm">
-                            <span>{property.baths}</span>
-                            <span className="ml-0.5">baths</span>
-                          </span>
-                        </div>
-                        <div className="flex items-center space-x-1">
-                          <div className="w-1.5 h-1.5 bg-slate-400 rounded-full" />
-                          <span className="font-medium text-sm">{property.sqft}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>}
-            </AnimatePresence>;
-        })}
-        </div>
-
-        {/* Floating Action Panel */}
-        <div className="relative ml-8 flex items-center">
-          <motion.div 
-            className="flex flex-col bg-white/95 backdrop-blur-xl border border-blue-200/60 rounded-3xl p-3 shadow-xl"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            style={{
-              boxShadow: '0 8px 32px rgba(59, 130, 246, 0.1), 0 4px 16px rgba(0, 0, 0, 0.04)'
-            }}
-          >
-            {/* Scan Button */}
-            <motion.button
+          {/* Action Buttons */}
+          <div className="absolute top-4 right-4 flex space-x-2">
+            <button
               onClick={() => setActiveScan(!activeScan)}
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-200 ${
+              className={`w-10 h-10 rounded-xl flex items-center justify-center backdrop-blur-sm transition-colors ${
                 activeScan 
-                  ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg' 
-                  : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200/80'
+                  ? 'bg-emerald-500 text-white' 
+                  : 'bg-white/90 text-slate-600 hover:bg-white'
               }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
-              <Scan className="w-5 h-5" strokeWidth={2} />
-            </motion.button>
-
-            {/* Location Button */}
-            <motion.button
+              <Scan className="w-4 h-4" strokeWidth={2} />
+            </button>
+            
+            <button
               onClick={() => setIsMapOpen(true)}
-              className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 ${
-                activeLocation 
-                  ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg' 
-                  : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200/80'
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-600 hover:bg-white transition-colors"
             >
-              <MapPin className="w-5 h-5" strokeWidth={2} />
-            </motion.button>
-          </motion.div>
+              <MapPin className="w-4 h-4" strokeWidth={2} />
+            </button>
+          </div>
+        </div>
+
+        {/* Property Details */}
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-2xl font-bold text-slate-900">
+              {currentProperty.price}
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-3 gap-4 text-sm">
+            <div className="text-center">
+              <div className="text-xl font-semibold text-slate-800">{currentProperty.beds}</div>
+              <div className="text-slate-600">Bedrooms</div>
+            </div>
+            <div className="text-center">
+              <div className="text-xl font-semibold text-slate-800">{currentProperty.baths}</div>
+              <div className="text-slate-600">Bathrooms</div>
+            </div>
+            <div className="text-center">
+              <div className="text-xl font-semibold text-slate-800">{currentProperty.sqft}</div>
+              <div className="text-slate-600">Square Feet</div>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Call to Action */}
-      <div className="text-center mt-6">
-        <div className="inline-block bg-white/90 backdrop-blur-sm rounded-xl px-6 py-3 border border-white/30 shadow-lg" style={{
-        display: "none"
-      }}>
-          <p className="text-slate-700 font-semibold text-sm">
-            <span>Click 'Scan' to view further details</span>
-          </p>
-        </div>
-      </div>
-
-      {/* Navigation Controls */}
-      <div className="flex items-center justify-start space-x-6 -mt-6">
-        {/* Left Arrow */}
-        <motion.button 
-          onClick={prevProperty} 
-          className="w-8 h-8 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg border border-white/20 rounded-full flex items-center justify-center transition-all duration-200" 
-          whileHover={{
-            scale: 1.1,
-            x: -2
-          }} 
-          whileTap={{
-            scale: 0.9
-          }} 
-          style={{
-            boxShadow: '0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)'
-          }}
+      {/* Navigation */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={prevProperty}
+          className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
         >
-          <ChevronLeft className="w-4 h-4 text-slate-700" />
-        </motion.button>
+          <ChevronLeft className="w-5 h-5 text-slate-700" />
+        </button>
 
         {/* Pagination Dots */}
-        <div className="flex justify-center space-x-2">
+        <div className="flex space-x-2">
           {properties.map((_, index) => (
-            <motion.button 
-              key={index} 
-              onClick={() => goToProperty(index)} 
-              className={`h-2 rounded-full transition-all duration-300 ${
+            <button
+              key={index}
+              onClick={() => goToProperty(index)}
+              className={`w-2 h-2 rounded-full transition-all ${
                 index === currentIndex 
-                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 w-6 shadow-lg' 
-                  : 'bg-slate-300 hover:bg-slate-400 w-2'
+                  ? 'bg-slate-800 w-6' 
+                  : 'bg-slate-300 hover:bg-slate-400'
               }`}
-              whileHover={{
-                scale: 1.2
-              }} 
-              whileTap={{
-                scale: 0.8
-              }}
-              style={index === currentIndex ? {
-                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
-              } : {}}
             />
           ))}
         </div>
 
-        {/* Right Arrow */}
-        <motion.button 
-          onClick={nextProperty} 
-          className="w-8 h-8 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg border border-white/20 rounded-full flex items-center justify-center transition-all duration-200" 
-          whileHover={{
-            scale: 1.1,
-            x: 2
-          }} 
-          whileTap={{
-            scale: 0.9
-          }} 
-          style={{
-            boxShadow: '0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)'
-          }}
+        <button
+          onClick={nextProperty}
+          className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
         >
-          <ChevronRight className="w-4 h-4 text-slate-700" />
-        </motion.button>
+          <ChevronRight className="w-5 h-5 text-slate-700" />
+        </button>
       </div>
 
       {/* Map Popup */}
       <MapPopup 
         isOpen={isMapOpen}
         onClose={() => setIsMapOpen(false)}
-        propertyAddress={properties[currentIndex]?.address}
+        propertyAddress={currentProperty?.address}
       />
-    </div>;
+    </div>
+  );
 }
