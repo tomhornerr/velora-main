@@ -369,8 +369,10 @@ export default function ChatInterface({
                     duration: 0.2,
                     delay: 0.15,
                     ease: smoothEasing
-                  }}>
-                    <PropertyResultsDisplay properties={propertyResults} />
+                  }} className="flex justify-start">
+                    <div className="w-full max-w-md">
+                      <PropertyResultsDisplay properties={propertyResults} />
+                    </div>
                   </motion.div>
                 )}
               </motion.div>

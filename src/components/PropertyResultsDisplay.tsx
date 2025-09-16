@@ -77,7 +77,7 @@ export default function PropertyResultsDisplay({
   const goToProperty = (index: number) => {
     setCurrentIndex(index);
   };
-  return <div className={`w-full max-w-4xl mx-auto px-4 py-3 ${className || ''}`}>
+  return <div className={`w-full px-4 py-3 ${className || ''}`}>
       {/* Header */}
       <div className="mb-2 text-left">
         <h2 className="text-sm font-semibold text-slate-600 mb-1">
@@ -240,7 +240,7 @@ export default function PropertyResultsDisplay({
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex items-center justify-start space-x-6 -mt-6 ml-20">
+      <div className="flex items-center justify-start space-x-6 -mt-6">
         {/* Left Arrow */}
         <motion.button 
           onClick={prevProperty} 
