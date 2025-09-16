@@ -96,7 +96,7 @@ export default function PropertyResultsDisplay({
       </div>
 
       {/* Main Property Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden mb-4">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
         {/* Property Image */}
         <div className="relative h-48 bg-gradient-to-br from-slate-100 to-slate-200">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
@@ -112,25 +112,37 @@ export default function PropertyResultsDisplay({
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="absolute top-4 right-4 flex space-x-2">
-            <button
-              onClick={() => setActiveScan(!activeScan)}
-              className={`w-10 h-10 rounded-xl flex items-center justify-center backdrop-blur-sm transition-colors ${
-                activeScan 
-                  ? 'bg-emerald-500 text-white' 
-                  : 'bg-white/90 text-slate-600 hover:bg-white'
-              }`}
-            >
-              <Scan className="w-4 h-4" strokeWidth={2} />
-            </button>
-            
-            <button
-              onClick={() => setIsMapOpen(true)}
-              className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/90 backdrop-blur-sm text-slate-600 hover:bg-white transition-colors"
-            >
-              <MapPin className="w-4 h-4" strokeWidth={2} />
-            </button>
+          {/* Navigation Controls - Top Right */}
+          <div className="absolute top-4 right-4 flex items-center space-x-2">
+            <div className="flex items-center bg-white/95 backdrop-blur-sm rounded-lg p-1 shadow-sm">
+              <button
+                onClick={prevProperty}
+                className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-slate-100 transition-colors"
+              >
+                <ChevronLeft className="w-4 h-4 text-slate-700" />
+              </button>
+              
+              <div className="flex items-center space-x-1 px-2">
+                {properties.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => goToProperty(index)}
+                    className={`w-1.5 h-1.5 rounded-full transition-all ${
+                      index === currentIndex 
+                        ? 'bg-slate-800 w-4' 
+                        : 'bg-slate-300 hover:bg-slate-400'
+                    }`}
+                  />
+                ))}
+              </div>
+              
+              <button
+                onClick={nextProperty}
+                className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-slate-100 transition-colors"
+              >
+                <ChevronRight className="w-4 h-4 text-slate-700" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -139,6 +151,27 @@ export default function PropertyResultsDisplay({
           <div className="flex items-center justify-between mb-4">
             <div className="text-2xl font-bold text-slate-900">
               {currentProperty.price}
+            </div>
+            
+            {/* Action Buttons - Integrated into details section */}
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => setActiveScan(!activeScan)}
+                className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
+                  activeScan 
+                    ? 'bg-emerald-500 text-white shadow-sm' 
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                }`}
+              >
+                <Scan className="w-4 h-4" strokeWidth={2} />
+              </button>
+              
+              <button
+                onClick={() => setIsMapOpen(true)}
+                className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+              >
+                <MapPin className="w-4 h-4" strokeWidth={2} />
+              </button>
             </div>
           </div>
           
@@ -156,39 +189,14 @@ export default function PropertyResultsDisplay({
               <div className="text-slate-600">Square Feet</div>
             </div>
           </div>
+
+          {/* Property Counter */}
+          <div className="mt-4 pt-4 border-t border-slate-100">
+            <div className="text-center text-sm text-slate-500">
+              Property {currentIndex + 1} of {properties.length}
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* Navigation */}
-      <div className="flex items-center justify-between">
-        <button
-          onClick={prevProperty}
-          className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
-        >
-          <ChevronLeft className="w-5 h-5 text-slate-700" />
-        </button>
-
-        {/* Pagination Dots */}
-        <div className="flex space-x-2">
-          {properties.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToProperty(index)}
-              className={`w-2 h-2 rounded-full transition-all ${
-                index === currentIndex 
-                  ? 'bg-slate-800 w-6' 
-                  : 'bg-slate-300 hover:bg-slate-400'
-              }`}
-            />
-          ))}
-        </div>
-
-        <button
-          onClick={nextProperty}
-          className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
-        >
-          <ChevronRight className="w-5 h-5 text-slate-700" />
-        </button>
       </div>
 
       {/* Map Popup */}
