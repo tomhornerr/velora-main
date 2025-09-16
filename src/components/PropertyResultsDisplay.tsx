@@ -212,11 +212,11 @@ export default function PropertyResultsDisplay({
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex items-center justify-start space-x-6 mt-6 ml-24">
+      <div className="flex items-center justify-start space-x-6 mt-3 ml-24">
         {/* Left Arrow */}
         <motion.button 
           onClick={prevProperty} 
-          className="w-12 h-12 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg border border-white/20 rounded-full flex items-center justify-center transition-all duration-200" 
+          className="w-8 h-8 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg border border-white/20 rounded-full flex items-center justify-center transition-all duration-200" 
           whileHover={{
             scale: 1.1,
             x: -2
@@ -228,7 +228,7 @@ export default function PropertyResultsDisplay({
             boxShadow: '0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)'
           }}
         >
-          <ChevronLeft className="w-6 h-6 text-slate-700" />
+          <ChevronLeft className="w-4 h-4 text-slate-700" />
         </motion.button>
 
         {/* Pagination Dots */}
@@ -258,7 +258,7 @@ export default function PropertyResultsDisplay({
         {/* Right Arrow */}
         <motion.button 
           onClick={nextProperty} 
-          className="w-12 h-12 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg border border-white/20 rounded-full flex items-center justify-center transition-all duration-200" 
+          className="w-8 h-8 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg border border-white/20 rounded-full flex items-center justify-center transition-all duration-200" 
           whileHover={{
             scale: 1.1,
             x: 2
@@ -270,7 +270,7 @@ export default function PropertyResultsDisplay({
             boxShadow: '0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)'
           }}
         >
-          <ChevronRight className="w-6 h-6 text-slate-700" />
+          <ChevronRight className="w-4 h-4 text-slate-700" />
         </motion.button>
       </div>
     </div>;
