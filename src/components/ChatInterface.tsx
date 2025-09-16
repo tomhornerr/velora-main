@@ -273,95 +273,103 @@ export default function ChatInterface({
           {/* Messages Area */}
           <div className="flex-1 overflow-y-auto px-8 pt-6 pb-4 space-y-6 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
             <AnimatePresence initial={false}>
-              {messages.map((message, index) => <motion.div key={message.id} initial={{
-              opacity: 0,
-              y: 6,
-              scale: 0.98
-            }} animate={{
-              opacity: 1,
-              y: 0,
-              scale: 1
-            }} exit={{
-              opacity: 0,
-              y: -4,
-              scale: 0.98
-            }} transition={{
-              duration: 0.15,
-              ease: smoothEasing,
-              delay: index * 0.02
-            }} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  <div className={`flex max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start space-x-3`}>
-                    {/* Message Content */}
-                    <motion.div className={`group relative ${message.role === 'user' ? 'px-4 py-3 rounded-2xl text-slate-800 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/50' : 'text-slate-700'}`} whileHover={{
-                  y: message.role === 'user' ? -1 : 0,
-                  scale: message.role === 'user' ? 1.005 : 1
-                }} transition={{
-                  duration: 0.1,
-                  ease: snapEasing
-                }}>
-                      <motion.p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">
-                        <motion.span initial={{
-                      opacity: 0,
-                      y: 2
-                    }} animate={{
-                      opacity: 1,
-                      y: 0
-                    }} transition={{
-                      duration: 0.12,
-                      ease: preciseEasing,
-                      delay: message.role === 'assistant' ? 0.05 : 0.02
-                    }}>
-                          {message.content}
-                        </motion.span>
-                      </motion.p>
-                      
-                      {/* Message Actions */}
-                      {message.role === 'assistant' && <motion.div className="flex items-center space-x-3 mt-4 opacity-0 group-hover:opacity-100 transition-all duration-150" initial={{
-                    y: 2,
-                    opacity: 0
-                  }} whileHover={{
-                    y: 0,
-                    opacity: 1
+              {messages.map((message, index) => {
+                // Check if this is a property-related assistant message
+                const isPropertyResponse = message.role === 'assistant' && isPropertyQuery && index === messages.length - 1;
+                
+                return <motion.div key={message.id} initial={{
+                opacity: 0,
+                y: 6,
+                scale: 0.98
+              }} animate={{
+                opacity: 1,
+                y: 0,
+                scale: 1
+              }} exit={{
+                opacity: 0,
+                y: -4,
+                scale: 0.98
+              }} transition={{
+                duration: 0.15,
+                ease: smoothEasing,
+                delay: index * 0.02
+              }} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  {/* Only show message content if it's not a property response */}
+                  {!isPropertyResponse && (
+                    <div className={`flex max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start space-x-3`}>
+                      {/* Message Content */}
+                      <motion.div className={`group relative ${message.role === 'user' ? 'px-4 py-3 rounded-2xl text-slate-800 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/50' : 'text-slate-700'}`} whileHover={{
+                    y: message.role === 'user' ? -1 : 0,
+                    scale: message.role === 'user' ? 1.005 : 1
                   }} transition={{
                     duration: 0.1,
                     ease: snapEasing
                   }}>
-                          <motion.button whileHover={{
-                      scale: 1.08
-                    }} whileTap={{
-                      scale: 0.92
+                        <motion.p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                          <motion.span initial={{
+                        opacity: 0,
+                        y: 2
+                      }} animate={{
+                        opacity: 1,
+                        y: 0
+                      }} transition={{
+                        duration: 0.12,
+                        ease: preciseEasing,
+                        delay: message.role === 'assistant' ? 0.05 : 0.02
+                      }}>
+                            {message.content}
+                          </motion.span>
+                        </motion.p>
+                        
+                        {/* Message Actions */}
+                        {message.role === 'assistant' && <motion.div className="flex items-center space-x-3 mt-4 opacity-0 group-hover:opacity-100 transition-all duration-150" initial={{
+                      y: 2,
+                      opacity: 0
+                    }} whileHover={{
+                      y: 0,
+                      opacity: 1
                     }} transition={{
-                      duration: 0.08,
+                      duration: 0.1,
                       ease: snapEasing
-                    }} onClick={() => handleCopyMessage(message.content, message.id)} className={`w-8 h-8 flex items-center justify-center transition-all duration-100 rounded-xl ${copiedMessageId === message.id ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'}`}>
-                            {copiedMessageId === message.id ? <Check className="w-4 h-4" strokeWidth={1.5} /> : <Copy className="w-4 h-4" strokeWidth={1.5} />}
-                          </motion.button>
-                          
-                          <motion.button whileHover={{
-                      scale: 1.08
-                    }} whileTap={{
-                      scale: 0.92
-                    }} transition={{
-                      duration: 0.08,
-                      ease: snapEasing
-                    }} onClick={() => handleThumbsUp(message.id)} className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all duration-100 ${likedMessages.has(message.id) ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100 shadow-[0_0_8px_rgba(34,197,94,0.15)]' : 'text-slate-400 hover:text-emerald-500 hover:bg-emerald-50'}`}>
-                            <ThumbsUp className="w-4 h-4" strokeWidth={1.5} />
-                          </motion.button>
-                          
-                          <motion.button whileHover={{
-                      scale: 1.08
-                    }} whileTap={{
-                      scale: 0.92
-                    }} transition={{
-                      duration: 0.08,
-                      ease: snapEasing
-                    }} onClick={() => handleThumbsDown(message.id)} className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all duration-100 ${dislikedMessages.has(message.id) ? 'text-red-500 bg-red-50 hover:bg-red-100 shadow-[0_0_8px_rgba(239,68,68,0.15)]' : 'text-slate-400 hover:text-red-500 hover:bg-red-50'}`}>
-                            <ThumbsDown className="w-4 h-4" strokeWidth={1.5} />
-                          </motion.button>
-                        </motion.div>}
-                    </motion.div>
-                  </div>
-                </motion.div>)}
+                    }}>
+                            <motion.button whileHover={{
+                        scale: 1.08
+                      }} whileTap={{
+                        scale: 0.92
+                      }} transition={{
+                        duration: 0.08,
+                        ease: snapEasing
+                      }} onClick={() => handleCopyMessage(message.content, message.id)} className={`w-8 h-8 flex items-center justify-center transition-all duration-100 rounded-xl ${copiedMessageId === message.id ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'}`}>
+                              {copiedMessageId === message.id ? <Check className="w-4 h-4" strokeWidth={1.5} /> : <Copy className="w-4 h-4" strokeWidth={1.5} />}
+                            </motion.button>
+                            
+                            <motion.button whileHover={{
+                        scale: 1.08
+                      }} whileTap={{
+                        scale: 0.92
+                      }} transition={{
+                        duration: 0.08,
+                        ease: snapEasing
+                      }} onClick={() => handleThumbsUp(message.id)} className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all duration-100 ${likedMessages.has(message.id) ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100 shadow-[0_0_8px_rgba(34,197,94,0.15)]' : 'text-slate-400 hover:text-emerald-500 hover:bg-emerald-50'}`}>
+                              <ThumbsUp className="w-4 h-4" strokeWidth={1.5} />
+                            </motion.button>
+                            
+                            <motion.button whileHover={{
+                        scale: 1.08
+                      }} whileTap={{
+                        scale: 0.92
+                      }} transition={{
+                        duration: 0.08,
+                        ease: snapEasing
+                      }} onClick={() => handleThumbsDown(message.id)} className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all duration-100 ${dislikedMessages.has(message.id) ? 'text-red-500 bg-red-50 hover:bg-red-100 shadow-[0_0_8px_rgba(239,68,68,0.15)]' : 'text-slate-400 hover:text-red-500 hover:bg-red-50'}`}>
+                              <ThumbsDown className="w-4 h-4" strokeWidth={1.5} />
+                            </motion.button>
+                          </motion.div>}
+                      </motion.div>
+                    </div>
+                  )}
+                </motion.div>
+              })}
             </AnimatePresence>
 
             {/* Property Results Display */}
