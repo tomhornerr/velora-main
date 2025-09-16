@@ -75,10 +75,10 @@ export default function PropertyResultsDisplay({
   const goToProperty = (index: number) => {
     setCurrentIndex(index);
   };
-  return <div className={`w-full max-w-4xl mx-auto px-4 py-6 ${className || ''}`}>
+  return <div className={`w-full max-w-4xl mx-auto px-4 py-3 ${className || ''}`}>
       {/* Header */}
-      <div className="mb-6 text-left">
-        <h2 className="text-xl font-bold text-slate-800 mb-2">
+      <div className="mb-2 text-left">
+        <h2 className="text-sm font-semibold text-slate-600 mb-1">
           <span>Here are the most suitable comps I found Tom:</span>
         </h2>
       </div>
@@ -87,7 +87,7 @@ export default function PropertyResultsDisplay({
       <div className="relative flex justify-start">
         
         {/* Carousel Cards - Stacked Layout */}
-        <div className="relative h-80 w-full max-w-sm mb-8">
+        <div className="relative h-64 w-full max-w-sm mb-4">
           {properties.map((property, index) => {
           const isActive = index === currentIndex;
           const offset = index - currentIndex;
