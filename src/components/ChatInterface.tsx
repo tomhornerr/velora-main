@@ -429,7 +429,7 @@ export default function ChatInterface({
                   handleSendMessage(e as any);
                 }
               }
-            }} placeholder="Message PropertyAI..." className="flex-1 bg-transparent text-slate-800 placeholder:text-slate-500 focus:outline-none text-base" disabled={isTyping} />
+            }} placeholder="Ask anything" className="flex-1 bg-transparent text-slate-800 placeholder:text-slate-500 focus:outline-none text-base" disabled={isTyping} />
               
               <button type="submit" disabled={!inputValue.trim() || isTyping} className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200 ${
                 inputValue.trim() && !isTyping 
