@@ -87,7 +87,7 @@ export default function PropertyResultsDisplay({
       <div className="relative flex justify-start">
         
         {/* Carousel Cards - Stacked Layout */}
-        <div className="relative h-64 w-full max-w-sm mb-4">
+        <div className="relative h-72 w-full max-w-sm mb-4">
           {properties.map((property, index) => {
           const isActive = index === currentIndex;
           const offset = index - currentIndex;
@@ -121,7 +121,7 @@ export default function PropertyResultsDisplay({
                   {/* Card */}
                   <div className={`w-full h-full bg-white/95 backdrop-blur-xl rounded-2xl overflow-hidden border transition-all duration-300 ${isActive ? 'border-indigo-200 shadow-2xl ring-2 ring-indigo-100' : 'border-white/30 shadow-lg'}`}>
                     {/* Property Image */}
-                    <div className="relative h-48 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
+                    <div className="relative h-40 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
                       {/* Mock property image with gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-br from-blue-100 via-indigo-50 to-purple-100">
                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
@@ -150,7 +150,7 @@ export default function PropertyResultsDisplay({
                     </div>
 
                     {/* Property Details */}
-                    <div className="p-4 space-y-3">
+                    <div className="p-3 space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="text-xl font-bold text-slate-800">
                           <span>{property.price}</span>
