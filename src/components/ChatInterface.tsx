@@ -233,7 +233,7 @@ export default function ChatInterface({
       {/* Fullscreen Chat Container - Matching Search Page Background */}
       <div className="w-full h-full bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col relative">
         {/* Header */}
-        <div className="flex items-center justify-between px-3 py-1 border-b border-slate-100/20">
+        <div className="flex items-center justify-between px-6 py-3 mx-4 mt-4 border-b border-slate-100/20">
           <div className="flex items-center space-x-2">
             <motion.button whileHover={{
             scale: 1.02
