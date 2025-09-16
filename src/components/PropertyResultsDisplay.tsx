@@ -4,6 +4,7 @@ import * as React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Scan, MapPin } from "lucide-react";
+import { MapPopup } from './MapPopup';
 
 // Import property images
 import property1 from "@/assets/property-1.jpg";
@@ -66,6 +67,7 @@ export default function PropertyResultsDisplay({
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeScan, setActiveScan] = useState(false);
   const [activeLocation, setActiveLocation] = useState(false);
+  const [isMapOpen, setIsMapOpen] = useState(false);
   const nextProperty = () => {
     setCurrentIndex(prev => (prev + 1) % properties.length);
   };
@@ -211,7 +213,7 @@ export default function PropertyResultsDisplay({
 
             {/* Location Button */}
             <motion.button
-              onClick={() => setActiveLocation(!activeLocation)}
+              onClick={() => setIsMapOpen(true)}
               className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 ${
                 activeLocation 
                   ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg' 
@@ -299,5 +301,12 @@ export default function PropertyResultsDisplay({
           <ChevronRight className="w-4 h-4 text-slate-700" />
         </motion.button>
       </div>
+
+      {/* Map Popup */}
+      <MapPopup 
+        isOpen={isMapOpen}
+        onClose={() => setIsMapOpen(false)}
+        propertyAddress={properties[currentIndex]?.address}
+      />
     </div>;
 }
