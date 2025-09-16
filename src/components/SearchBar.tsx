@@ -57,7 +57,7 @@ export const SearchBar = ({
           } : {}} />
             
             {/* Main search container */}
-            <div className={`relative flex items-center backdrop-blur-xl border-2 rounded-3xl px-8 py-3 shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-all duration-500 ${isSubmitted ? 'border-[#CBD9DA]/80 shadow-[0_20px_60px_rgba(203,217,218,0.15)] scale-105' : 'border-[#CBD9DA]/60 group-hover:border-[#CBD9DA]/70 group-hover:shadow-[0_12px_40px_rgba(203,217,218,0.1)]'}`} style={{
+            <div className={`relative flex items-center backdrop-blur-xl border-2 rounded-3xl px-8 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-all duration-500 ${isSubmitted ? 'border-[#CBD9DA]/80 shadow-[0_20px_60px_rgba(203,217,218,0.15)] scale-105' : 'border-[#CBD9DA]/60 group-hover:border-[#CBD9DA]/70 group-hover:shadow-[0_12px_40px_rgba(203,217,218,0.1)]'}`} style={{
             backgroundColor: 'rgba(68, 97, 125, 0.95)',
             backdropFilter: 'blur(20px) saturate(180%)',
             WebkitBackdropFilter: 'blur(20px) saturate(180%)'
