@@ -211,40 +211,46 @@ export default function PropertyResultsDisplay({
         </div>
       </div>
 
-      {/* Navigation Controls - Horizontal Layout like ChatGPT */}
-      <div className="flex items-center justify-center space-x-8 mt-8">
+      {/* Navigation Controls */}
+      <div className="flex items-center justify-center space-x-6 mt-6">
         {/* Left Arrow */}
         <motion.button 
           onClick={prevProperty} 
-          className="w-10 h-10 bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center transition-all duration-200 shadow-md" 
+          className="w-12 h-12 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg border border-white/20 rounded-full flex items-center justify-center transition-all duration-200" 
           whileHover={{
             scale: 1.1,
             x: -2
           }} 
           whileTap={{
             scale: 0.9
+          }} 
+          style={{
+            boxShadow: '0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)'
           }}
         >
-          <ChevronLeft className="w-5 h-5 text-white" strokeWidth={2.5} />
+          <ChevronLeft className="w-6 h-6 text-slate-700" />
         </motion.button>
 
         {/* Pagination Dots */}
-        <div className="flex justify-center space-x-3">
+        <div className="flex justify-center space-x-2">
           {properties.map((_, index) => (
             <motion.button 
               key={index} 
               onClick={() => goToProperty(index)} 
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`h-2 rounded-full transition-all duration-300 ${
                 index === currentIndex 
-                  ? 'bg-blue-500 shadow-md' 
-                  : 'bg-blue-200 hover:bg-blue-300'
+                  ? 'bg-gradient-to-r from-emerald-500 to-teal-500 w-6 shadow-lg' 
+                  : 'bg-slate-300 hover:bg-slate-400 w-2'
               }`}
               whileHover={{
-                scale: 1.3
+                scale: 1.2
               }} 
               whileTap={{
-                scale: 0.9
+                scale: 0.8
               }}
+              style={index === currentIndex ? {
+                boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)'
+              } : {}}
             />
           ))}
         </div>
@@ -252,16 +258,19 @@ export default function PropertyResultsDisplay({
         {/* Right Arrow */}
         <motion.button 
           onClick={nextProperty} 
-          className="w-10 h-10 bg-blue-500 hover:bg-blue-600 rounded-full flex items-center justify-center transition-all duration-200 shadow-md" 
+          className="w-12 h-12 bg-white/90 backdrop-blur-sm hover:bg-white shadow-lg border border-white/20 rounded-full flex items-center justify-center transition-all duration-200" 
           whileHover={{
             scale: 1.1,
             x: 2
           }} 
           whileTap={{
             scale: 0.9
+          }} 
+          style={{
+            boxShadow: '0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08)'
           }}
         >
-          <ChevronRight className="w-5 h-5 text-white" strokeWidth={2.5} />
+          <ChevronRight className="w-6 h-6 text-slate-700" />
         </motion.button>
       </div>
     </div>;
