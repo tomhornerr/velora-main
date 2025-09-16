@@ -40,7 +40,7 @@ export default function ChatInterface({
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [likedMessages, setLikedMessages] = useState<Set<string>>(new Set());
   const [dislikedMessages, setDislikedMessages] = useState<Set<string>>(new Set());
-  const [isPropertyQuery, setIsPropertyQuery] = useState(false);
+  const [propertyQueries, setPropertyQueries] = useState<Set<string>>(new Set()); // Track which messages are property responses
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -109,7 +109,6 @@ export default function ChatInterface({
   }, [initialQuery, isInitialized]);
   const handleInitialQuery = async (query: string) => {
     const isPropertyRelated = isPropertyRelatedQuery(query);
-    setIsPropertyQuery(isPropertyRelated);
     
     const userMessage: Message = {
       id: `user-${Date.now()}`,
@@ -131,6 +130,12 @@ export default function ChatInterface({
       const updatedMessages = [...newMessages, aiResponse];
       setMessages(updatedMessages);
       onMessagesUpdate?.(updatedMessages);
+      
+      // Track property-related responses
+      if (isPropertyRelated) {
+        setPropertyQueries(prev => new Set([...prev, aiResponse.id]));
+      }
+      
       setIsTyping(false);
     }, 1800);
   };
@@ -139,7 +144,6 @@ export default function ChatInterface({
     if (!inputValue.trim() || isTyping) return;
     
     const isPropertyRelated = isPropertyRelatedQuery(inputValue.trim());
-    setIsPropertyQuery(isPropertyRelated);
     
     const userMessage: Message = {
       id: `user-${Date.now()}`,
@@ -153,23 +157,23 @@ export default function ChatInterface({
     setInputValue("");
     setIsTyping(true);
     setTimeout(() => {
-      const responses = [{
-        intro: "Excellent question! Let me provide you with a comprehensive breakdown:",
-        content: "• **Key Considerations** - Important factors to keep in mind\n• **Implementation Strategy** - Step-by-step approach for success\n• **Common Pitfalls** - What to avoid and how to prevent issues\n• **Best Practices** - Industry-standard recommendations\n\nWould you like me to elaborate on any of these areas?"
-      }, {
-        intro: "That's a fascinating topic to explore. Here's my analysis:",
-        content: "• **Current Trends** - What's happening in this space right now\n• **Technical Insights** - Deep dive into the technical aspects\n• **Practical Applications** - Real-world use cases and examples\n• **Future Outlook** - Where this is heading and emerging opportunities\n\nWhat specific aspect interests you most?"
-      }] as any[];
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       const aiResponse: Message = {
         id: `ai-${Date.now()}`,
-        content: `${randomResponse.intro}\n\n${randomResponse.content}`,
+        content: isPropertyRelated 
+          ? `Here are the most suitable comps I found for "${inputValue.trim()}":` 
+          : "Excellent question! Let me provide you with a comprehensive breakdown:\n\n• **Key Considerations** - Important factors to keep in mind\n• **Implementation Strategy** - Step-by-step approach for success\n• **Common Pitfalls** - What to avoid and how to prevent issues\n• **Best Practices** - Industry-standard recommendations\n\nWould you like me to elaborate on any of these areas?",
         role: 'assistant',
         timestamp: new Date()
       };
       const updatedMessages = [...newMessages, aiResponse];
       setMessages(updatedMessages);
       onMessagesUpdate?.(updatedMessages);
+      
+      // Track property-related responses
+      if (isPropertyRelated) {
+        setPropertyQueries(prev => new Set([...prev, aiResponse.id]));
+      }
+      
       setIsTyping(false);
     }, 1500 + Math.random() * 500);
   };
@@ -275,7 +279,7 @@ export default function ChatInterface({
             <AnimatePresence initial={false}>
               {messages.map((message, index) => {
                 // Check if this is a property-related assistant message
-                const isPropertyResponse = message.role === 'assistant' && isPropertyQuery && index === messages.length - 1;
+                const isPropertyResponse = message.role === 'assistant' && propertyQueries.has(message.id);
                 
                 return <motion.div key={message.id} initial={{
                 opacity: 0,
@@ -293,101 +297,105 @@ export default function ChatInterface({
                 duration: 0.15,
                 ease: smoothEasing,
                 delay: index * 0.02
-              }} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                  {/* Only show message content if it's not a property response */}
+              }} className="space-y-4">
+                  {/* User Message or Non-Property Assistant Message */}
                   {!isPropertyResponse && (
-                    <div className={`flex max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start space-x-3`}>
-                      {/* Message Content */}
-                      <motion.div className={`group relative ${message.role === 'user' ? 'px-4 py-3 rounded-2xl text-slate-800 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/50' : 'text-slate-700'}`} whileHover={{
-                    y: message.role === 'user' ? -1 : 0,
-                    scale: message.role === 'user' ? 1.005 : 1
-                  }} transition={{
-                    duration: 0.1,
-                    ease: snapEasing
-                  }}>
-                        <motion.p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">
-                          <motion.span initial={{
-                        opacity: 0,
-                        y: 2
-                      }} animate={{
-                        opacity: 1,
-                        y: 0
-                      }} transition={{
-                        duration: 0.12,
-                        ease: preciseEasing,
-                        delay: message.role === 'assistant' ? 0.05 : 0.02
-                      }}>
-                            {message.content}
-                          </motion.span>
-                        </motion.p>
-                        
-                        {/* Message Actions */}
-                        {message.role === 'assistant' && <motion.div className="flex items-center space-x-3 mt-4 opacity-0 group-hover:opacity-100 transition-all duration-150" initial={{
-                      y: 2,
-                      opacity: 0
-                    }} whileHover={{
-                      y: 0,
-                      opacity: 1
+                    <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                      <div className={`flex max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start space-x-3`}>
+                        {/* Message Content */}
+                        <motion.div className={`group relative ${message.role === 'user' ? 'px-4 py-3 rounded-2xl text-slate-800 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/50' : 'text-slate-700'}`} whileHover={{
+                      y: message.role === 'user' ? -1 : 0,
+                      scale: message.role === 'user' ? 1.005 : 1
                     }} transition={{
                       duration: 0.1,
                       ease: snapEasing
                     }}>
-                            <motion.button whileHover={{
-                        scale: 1.08
-                      }} whileTap={{
-                        scale: 0.92
+                          <motion.p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                            <motion.span initial={{
+                          opacity: 0,
+                          y: 2
+                        }} animate={{
+                          opacity: 1,
+                          y: 0
+                        }} transition={{
+                          duration: 0.12,
+                          ease: preciseEasing,
+                          delay: message.role === 'assistant' ? 0.05 : 0.02
+                        }}>
+                              {message.content}
+                            </motion.span>
+                          </motion.p>
+                          
+                          {/* Message Actions */}
+                          {message.role === 'assistant' && <motion.div className="flex items-center space-x-3 mt-4 opacity-0 group-hover:opacity-100 transition-all duration-150" initial={{
+                        y: 2,
+                        opacity: 0
+                      }} whileHover={{
+                        y: 0,
+                        opacity: 1
                       }} transition={{
-                        duration: 0.08,
+                        duration: 0.1,
                         ease: snapEasing
-                      }} onClick={() => handleCopyMessage(message.content, message.id)} className={`w-8 h-8 flex items-center justify-center transition-all duration-100 rounded-xl ${copiedMessageId === message.id ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'}`}>
-                              {copiedMessageId === message.id ? <Check className="w-4 h-4" strokeWidth={1.5} /> : <Copy className="w-4 h-4" strokeWidth={1.5} />}
-                            </motion.button>
-                            
-                            <motion.button whileHover={{
-                        scale: 1.08
-                      }} whileTap={{
-                        scale: 0.92
-                      }} transition={{
-                        duration: 0.08,
-                        ease: snapEasing
-                      }} onClick={() => handleThumbsUp(message.id)} className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all duration-100 ${likedMessages.has(message.id) ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100 shadow-[0_0_8px_rgba(34,197,94,0.15)]' : 'text-slate-400 hover:text-emerald-500 hover:bg-emerald-50'}`}>
-                              <ThumbsUp className="w-4 h-4" strokeWidth={1.5} />
-                            </motion.button>
-                            
-                            <motion.button whileHover={{
-                        scale: 1.08
-                      }} whileTap={{
-                        scale: 0.92
-                      }} transition={{
-                        duration: 0.08,
-                        ease: snapEasing
-                      }} onClick={() => handleThumbsDown(message.id)} className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all duration-100 ${dislikedMessages.has(message.id) ? 'text-red-500 bg-red-50 hover:bg-red-100 shadow-[0_0_8px_rgba(239,68,68,0.15)]' : 'text-slate-400 hover:text-red-500 hover:bg-red-50'}`}>
-                              <ThumbsDown className="w-4 h-4" strokeWidth={1.5} />
-                            </motion.button>
-                          </motion.div>}
-                      </motion.div>
+                      }}>
+                              <motion.button whileHover={{
+                          scale: 1.08
+                        }} whileTap={{
+                          scale: 0.92
+                        }} transition={{
+                          duration: 0.08,
+                          ease: snapEasing
+                        }} onClick={() => handleCopyMessage(message.content, message.id)} className={`w-8 h-8 flex items-center justify-center transition-all duration-100 rounded-xl ${copiedMessageId === message.id ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'}`}>
+                                {copiedMessageId === message.id ? <Check className="w-4 h-4" strokeWidth={1.5} /> : <Copy className="w-4 h-4" strokeWidth={1.5} />}
+                              </motion.button>
+                              
+                              <motion.button whileHover={{
+                          scale: 1.08
+                        }} whileTap={{
+                          scale: 0.92
+                        }} transition={{
+                          duration: 0.08,
+                          ease: snapEasing
+                        }} onClick={() => handleThumbsUp(message.id)} className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all duration-100 ${likedMessages.has(message.id) ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100 shadow-[0_0_8px_rgba(34,197,94,0.15)]' : 'text-slate-400 hover:text-emerald-500 hover:bg-emerald-50'}`}>
+                                <ThumbsUp className="w-4 h-4" strokeWidth={1.5} />
+                              </motion.button>
+                              
+                              <motion.button whileHover={{
+                          scale: 1.08
+                        }} whileTap={{
+                          scale: 0.92
+                        }} transition={{
+                          duration: 0.08,
+                          ease: snapEasing
+                        }} onClick={() => handleThumbsDown(message.id)} className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all duration-100 ${dislikedMessages.has(message.id) ? 'text-red-500 bg-red-50 hover:bg-red-100 shadow-[0_0_8px_rgba(239,68,68,0.15)]' : 'text-slate-400 hover:text-red-500 hover:bg-red-50'}`}>
+                                <ThumbsDown className="w-4 h-4" strokeWidth={1.5} />
+                              </motion.button>
+                            </motion.div>}
+                        </motion.div>
+                      </div>
                     </div>
+                  )}
+                  
+                  {/* Property Results Display for Property Messages */}
+                  {isPropertyResponse && (
+                    <motion.div initial={{
+                      opacity: 0,
+                      y: 12,
+                      scale: 0.98
+                    }} animate={{
+                      opacity: 1,
+                      y: 0,
+                      scale: 1
+                    }} transition={{
+                      duration: 0.2,
+                      delay: 0.15,
+                      ease: smoothEasing
+                    }}>
+                      <PropertyResultsDisplay properties={propertyResults} />
+                    </motion.div>
                   )}
                 </motion.div>
               })}
             </AnimatePresence>
-
-            {/* Property Results Display */}
-            {messages.length > 0 && messages[messages.length - 1]?.role === 'assistant' && isPropertyQuery && <motion.div initial={{
-            opacity: 0,
-            y: 12,
-            scale: 0.98
-          }} animate={{
-            opacity: 1,
-            y: 0,
-            scale: 1
-          }} transition={{
-            duration: 0.2,
-            delay: 0.15,
-            ease: smoothEasing
-          }} className="mt-8">
-                <PropertyResultsDisplay properties={propertyResults} />
-              </motion.div>}
 
             {/* Typing indicator */}
             <AnimatePresence>
