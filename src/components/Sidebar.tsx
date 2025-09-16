@@ -55,17 +55,20 @@ export const Sidebar = ({
   }} animate={{
     opacity: 1,
     x: 0
+  }} exit={{
+    opacity: 0,
+    x: -8
   }} transition={{
     layout: {
-      duration: 0.15,
-      ease: [0.4, 0, 0.2, 1]
-    },
-    opacity: {
       duration: 0.12,
       ease: [0.4, 0, 0.2, 1]
     },
+    opacity: {
+      duration: 0.1,
+      ease: [0.4, 0, 0.2, 1]
+    },
     x: {
-      duration: 0.15,
+      duration: 0.1,
       ease: [0.4, 0, 0.2, 1]
     }
   }} className={`w-16 lg:w-20 bg-white/80 backdrop-blur-xl border-r border-slate-200/60 flex flex-col items-center py-6 shadow-[0_0_50px_rgba(0,0,0,0.04)] ${className || ''}`}>
@@ -91,9 +94,9 @@ export const Sidebar = ({
       transition: {
         duration: 0.05
       }
-    }} onClick={onChatToggle} className={`
+        }} onClick={onChatToggle} className={`
           relative w-11 h-11 lg:w-13 lg:h-13 rounded-xl flex items-center justify-center mb-6
-          transition-all duration-200 group overflow-hidden cursor-pointer
+          transition-all duration-100 group overflow-hidden cursor-pointer
           ${isChatPanelOpen ? 'bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200/60 shadow-[0_8px_32px_rgba(99,102,241,0.15)]' : 'bg-slate-50/80 hover:bg-slate-100/80 border-2 border-slate-200/40 hover:border-indigo-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.04)]'}
         `} aria-label="Toggle Chat History">
         <AnimatePresence>
@@ -148,7 +151,7 @@ export const Sidebar = ({
           handleItemClick(item.id);
         }} className={`
                 relative w-11 h-11 lg:w-13 lg:h-13 rounded-xl flex items-center justify-center
-                transition-all duration-200 group overflow-hidden
+                transition-all duration-100 group overflow-hidden
                 ${isActive ? 'bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200/60 shadow-[0_8px_32px_rgba(99,102,241,0.15)]' : 'bg-slate-50/80 hover:bg-slate-100/80 border-2 border-slate-200/40 hover:border-indigo-200/60 shadow-[0_4px_20px_rgba(0,0,0,0.04)]'}
               `} aria-label={item.label}>
               {/* Active indicator */}
