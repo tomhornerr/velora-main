@@ -87,7 +87,7 @@ export default function PropertyResultsDisplay({
       <div className="relative flex justify-start">
         
         {/* Carousel Cards - Stacked Layout */}
-        <div className="relative h-72 w-full max-w-sm mb-4">
+        <div className="relative h-72 w-full max-w-xs mb-4">
           {properties.map((property, index) => {
           const isActive = index === currentIndex;
           const offset = index - currentIndex;
