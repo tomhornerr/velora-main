@@ -76,9 +76,9 @@ export const SearchBar = ({
                     opacity: 0
                   }} 
                   transition={{
-                    clipPath: { duration: 0.4, ease: [0.76, 0, 0.24, 1] },
-                    opacity: { duration: 0.2 }
-                  }} 
+                    clipPath: { duration: 0.15, ease: [0.76, 0, 0.24, 1] },
+                    opacity: { duration: 0.1 }
+                  }}
                 />}
               </AnimatePresence>
               {/* Upload indicator */}
