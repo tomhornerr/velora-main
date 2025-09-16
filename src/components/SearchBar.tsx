@@ -96,7 +96,7 @@ export const SearchBar = ({
                 if (e.key === 'Enter') {
                   handleSubmit(e);
                 }
-              }} placeholder="" className={`w-full bg-transparent text-xl font-light focus:outline-none transition-all duration-300 placeholder:text-transparent ${isSubmitted ? 'opacity-0' : 'opacity-100'}`} style={{
+              }} placeholder="" className={`w-full bg-transparent text-xl font-light focus:outline-none transition-none ${isSubmitted ? 'opacity-0' : 'opacity-100'}`} style={{
                 color: '#E5F0F1'
               }} autoComplete="off" disabled={isSubmitted} />
                 
