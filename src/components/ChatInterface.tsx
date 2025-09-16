@@ -230,8 +230,37 @@ export default function ChatInterface({
     duration: 0.2,
     ease: smoothEasing
   }} className={`flex flex-col h-full w-full relative ${className || ''}`}>
-      {/* Fullscreen Chat Container - Matching Search Page Background */}
-      <div className="w-full h-full bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col relative">
+      {/* Fullscreen Chat Container - Animated Background */}
+      <div className="w-full h-full relative overflow-hidden">
+        {/* Animated Background Layer */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100">
+          {/* Flowing Gradient Overlay */}
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-blue-100/20 to-indigo-100/20 animate-[gradient-shift_8s_ease-in-out_infinite]" 
+                 style={{
+                   backgroundSize: '400% 400%',
+                   animation: 'gradient-shift 8s ease-in-out infinite'
+                 }} />
+          </div>
+          
+          {/* Floating Elements */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            {/* Large floating shapes */}
+            <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white/5 rounded-full blur-xl animate-[float_6s_ease-in-out_infinite]" />
+            <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-blue-200/10 rounded-full blur-lg animate-[float_8s_ease-in-out_infinite_reverse]" />
+            <div className="absolute top-1/2 left-3/4 w-20 h-20 bg-purple-200/8 rounded-full blur-lg animate-[float_7s_ease-in-out_infinite]" 
+                 style={{ animationDelay: '2s' }} />
+            
+            {/* Smaller floating dots */}
+            <div className="absolute top-1/3 right-1/3 w-8 h-8 bg-indigo-200/15 rounded-full blur-sm animate-[float_5s_ease-in-out_infinite]" 
+                 style={{ animationDelay: '1s' }} />
+            <div className="absolute bottom-1/3 left-1/3 w-6 h-6 bg-blue-300/12 rounded-full blur-sm animate-[float_9s_ease-in-out_infinite]" 
+                 style={{ animationDelay: '3s' }} />
+          </div>
+        </div>
+        
+        {/* Content Layer */}
+        <div className="relative z-10 flex flex-col h-full">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-3 mx-4 mt-4 border-b border-slate-100/20">
           <div className="flex items-center space-x-2">
@@ -440,6 +469,7 @@ export default function ChatInterface({
               </button>
             </div>
           </form>
+        </div>
         </div>
       </div>
     </motion.div>;
