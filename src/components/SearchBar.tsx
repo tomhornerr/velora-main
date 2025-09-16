@@ -114,37 +114,54 @@ export const SearchBar = ({
                 }} transition={{
                   duration: 0.3
                 }} className="absolute inset-0 flex items-center justify-center px-4">
-                      {/* Full search bar fill animation */}
+                      {/* Full search bar symmetric fill animation */}
                       <motion.div className="absolute inset-0 rounded-3xl overflow-hidden">
+                        {/* Main fill animation - expands from center */}
                         <motion.div 
-                          className="absolute inset-0 bg-gradient-to-r from-emerald-500/90 to-green-500/90 backdrop-blur-sm" 
+                          className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600" 
                           initial={{
                             scaleX: 0,
-                            transformOrigin: "left"
+                            transformOrigin: "center"
                           }} 
                           animate={{
                             scaleX: 1,
-                            transformOrigin: "left"
+                            transformOrigin: "center"
                           }} 
                           transition={{
-                            duration: 0.45,
-                            ease: [0.76, 0, 0.24, 1]  // Sudden acceleration, sharp deceleration
+                            duration: 0.4,
+                            ease: [0.68, -0.55, 0.265, 1.55]  // Dramatic spring-like easing
                           }} 
                         />
+                        {/* Shimmer overlay effect */}
                         <motion.div 
-                          className="absolute inset-0 bg-white/10 backdrop-blur-sm" 
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent" 
                           initial={{
-                            scaleX: 0,
-                            transformOrigin: "right"
+                            x: "-100%"
                           }} 
                           animate={{
-                            scaleX: 1,
-                            transformOrigin: "right"
+                            x: "100%"
                           }} 
                           transition={{
-                            duration: 0.3,
-                            delay: 0.15,
-                            ease: [0.87, 0, 0.13, 1]  // Even more dramatic velocity shift
+                            duration: 0.8,
+                            delay: 0.1,
+                            ease: [0.25, 0.46, 0.45, 0.94]
+                          }} 
+                        />
+                        {/* Pulse overlay for depth */}
+                        <motion.div 
+                          className="absolute inset-0 bg-white/10" 
+                          initial={{
+                            opacity: 0,
+                            scale: 0.95
+                          }} 
+                          animate={{
+                            opacity: [0, 0.5, 0],
+                            scale: [0.95, 1.02, 1]
+                          }} 
+                          transition={{
+                            duration: 0.6,
+                            times: [0, 0.5, 1],
+                            ease: [0.76, 0, 0.24, 1]
                           }} 
                         />
                       </motion.div>
