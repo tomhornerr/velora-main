@@ -419,13 +419,7 @@ export default function ChatInterface({
         {/* Input Area */}
         <div className="p-6">
           <form onSubmit={handleSendMessage} className="relative">
-            <motion.div className="relative flex items-center bg-white border border-slate-200/60 rounded-2xl px-4 py-2 max-w-2xl mx-auto transition-all duration-150 hover:border-slate-300/60 focus-within:border-blue-300/60 focus-within:bg-white" whileFocus={{
-            scale: 1.005,
-            y: -1
-          }} transition={{
-            duration: 0.1,
-            ease: snapEasing
-          }}>
+            <div className="relative flex items-center bg-white/90 border border-slate-300 rounded-xl px-4 py-3 max-w-2xl mx-auto shadow-sm hover:shadow-md transition-all duration-200 focus-within:border-slate-400 backdrop-blur-sm">
               <input ref={inputRef} type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={e => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -433,21 +427,16 @@ export default function ChatInterface({
                   handleSendMessage(e as any);
                 }
               }
-            }} placeholder="Ask Anything..." className="flex-1 bg-transparent text-slate-800 placeholder:text-slate-500 focus:outline-none font-medium text-sm" disabled={isTyping} />
+            }} placeholder="Message PropertyAI..." className="flex-1 bg-transparent text-slate-800 placeholder:text-slate-500 focus:outline-none text-base" disabled={isTyping} />
               
-              <motion.button type="submit" disabled={!inputValue.trim() || isTyping} whileHover={{
-              scale: 1.08,
-              y: -1
-            }} whileTap={{
-              scale: 0.92,
-              y: 0
-            }} transition={{
-              duration: 0.08,
-              ease: snapEasing
-            }} className={`ml-3 w-10 h-10 rounded-xl flex items-center justify-center transition-all duration-150 ${inputValue.trim() && !isTyping ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-sm hover:shadow-md' : 'bg-slate-200 text-slate-400'}`}>
+              <button type="submit" disabled={!inputValue.trim() || isTyping} className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200 ${
+                inputValue.trim() && !isTyping 
+                  ? 'bg-slate-800 text-white hover:bg-slate-700 shadow-sm' 
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+              }`}>
                 <ArrowUp className="w-4 h-4" strokeWidth={2} />
-              </motion.button>
-            </motion.div>
+              </button>
+            </div>
           </form>
         </div>
       </div>

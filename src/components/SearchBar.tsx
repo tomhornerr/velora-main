@@ -30,130 +30,40 @@ export const SearchBar = ({
         {/* Main Search Interface */}
         <motion.div initial={{
         opacity: 0,
-        y: 30,
-        scale: 0.95
+        y: 20
       }} animate={{
-        opacity: isSubmitted ? 0.8 : 1,
-        y: 0,
-        scale: isSubmitted ? 1.02 : 1
+        opacity: 1,
+        y: 0
       }} transition={{
-        duration: isSubmitted ? 0.3 : 0.8,
-        ease: [0.23, 1, 0.32, 1],
-        delay: isSubmitted ? 0 : 0.2
+        duration: 0.4,
+        ease: [0.25, 0.1, 0.25, 1]
       }} className="relative">
-          <form onSubmit={handleSubmit} className="relative group">
-            {/* Elegant glow effect */}
-            <motion.div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${isSubmitted ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} style={{
-            background: isSubmitted ? 'linear-gradient(90deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.12), rgba(59, 130, 246, 0.12))' : 'linear-gradient(90deg, rgba(99, 102, 241, 0.06), rgba(168, 85, 247, 0.06), rgba(59, 130, 246, 0.06))',
-            filter: 'blur(25px)',
-            transform: isSubmitted ? 'scale(1.08)' : 'scale(1.04)'
-          }} animate={isSubmitted ? {
-            scale: [1.08, 1.12, 1.08],
-            opacity: [0.12, 0.18, 0.12]
-          } : {}} transition={isSubmitted ? {
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut"
-          } : {}} />
-            
+          <form onSubmit={handleSubmit} className="relative">
             {/* Main search container */}
-            <div className={`relative flex items-center backdrop-blur-xl border-2 rounded-3xl px-8 py-2 shadow-[0_8px_32px_rgba(0,0,0,0.08)] transition-all duration-500 ${isSubmitted ? 'border-[#CBD9DA]/80 shadow-[0_20px_60px_rgba(203,217,218,0.15)] scale-105' : 'border-[#CBD9DA]/60 group-hover:border-[#CBD9DA]/70 group-hover:shadow-[0_12px_40px_rgba(203,217,218,0.1)]'}`} style={{
-            backgroundColor: 'rgba(68, 97, 125, 0.95)',
-            backdropFilter: 'blur(20px) saturate(180%)',
-            WebkitBackdropFilter: 'blur(20px) saturate(180%)'
-          }}>
-              {/* Refined fill animation overlay - slightly inset for elegance */}
-              <AnimatePresence>
-                {isSubmitted && <motion.div 
-                  className="absolute top-1 bottom-1 left-1 right-1 rounded-[calc(1.5rem-4px)] bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600 z-10" 
-                  initial={{
-                    clipPath: "inset(0 100% 0 0)"
-                  }} 
-                  animate={{
-                    clipPath: "inset(0 0% 0 0)"
-                  }} 
-                  exit={{
-                    opacity: 0
-                  }} 
-                  transition={{
-                    clipPath: { duration: 0.15, ease: [0.76, 0, 0.24, 1] },
-                    opacity: { duration: 0.1 }
-                  }}
-                />}
-              </AnimatePresence>
+            <div className={`relative flex items-center bg-white border border-slate-300 rounded-xl px-4 py-4 shadow-sm transition-all duration-200 hover:shadow-md focus-within:border-slate-400 backdrop-blur-sm ${isSubmitted ? 'opacity-75' : ''}`}>
               {/* Upload indicator */}
-              <AnimatePresence>
-                {!isSubmitted && <motion.div initial={{
-                opacity: 1,
-                scale: 1,
-                x: 0
-              }} exit={{
-                opacity: 0,
-                scale: 0.8,
-                x: -20
-              }} transition={{
-                duration: 0.3,
-                ease: "easeOut"
-              }} className="flex-shrink-0 mr-6">
-                    <motion.div whileHover={{
-                  scale: 1.05
-                }} whileTap={{
-                  scale: 0.95
-                }} transition={{
-                  duration: 0.2
-                }} className="w-8 h-8 flex items-center justify-center opacity-100">
-                      <Upload className="w-6 h-6" style={{
-                    color: '#CBD9DA'
-                  }} strokeWidth={1.5} />
-                    </motion.div>
-                  </motion.div>}
-              </AnimatePresence>
+              <div className="flex-shrink-0 mr-3">
+                <div className="w-6 h-6 flex items-center justify-center">
+                  <Upload className="w-5 h-5 text-slate-500" strokeWidth={1.5} />
+                </div>
+              </div>
               
               {/* Search input */}
-              <div className="flex-1 relative overflow-hidden">
+              <div className="flex-1 relative">
                 <input type="text" value={searchValue} onChange={e => setSearchValue(e.target.value)} onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} onKeyDown={e => {
                 if (e.key === 'Enter') {
                   handleSubmit(e);
                 }
-              }} placeholder="" className={`w-full bg-transparent text-xl font-light focus:outline-none transition-none ${isSubmitted ? 'opacity-0' : 'opacity-100'}`} style={{
-                color: '#E5F0F1'
-              }} autoComplete="off" disabled={isSubmitted} />
-                
-                {/* Animated placeholder */}
-                <AnimatePresence>
-                  {!searchValue && !isSubmitted && <motion.div initial={{
-                  opacity: 0
-                }} animate={{
-                  opacity: isFocused ? 0.6 : 0.8,
-                  y: isFocused ? -1 : 0
-                }} exit={{
-                  opacity: 0
-                }} transition={{
-                  duration: 0.2
-                }} className="absolute inset-0 flex items-center pointer-events-none">
-                      <span className="text-xl font-light tracking-wide" style={{
-                    color: '#CBD9DA'
-                  }}>
-                        <span>What can I help you find today?</span>
-                      </span>
-                    </motion.div>}
-                </AnimatePresence>
+              }} placeholder="What can I help you find today?" className="w-full bg-transparent text-slate-800 placeholder:text-slate-500 focus:outline-none text-base" autoComplete="off" disabled={isSubmitted} />
               </div>
               
               {/* Action buttons */}
-              <div className={`flex items-center space-x-3 ml-4 transition-opacity duration-300 ${isSubmitted ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
-                <motion.button type="button" whileHover={!isSubmitted ? {
-                scale: 1.1,
-                backgroundColor: "rgba(203, 217, 218, 0.1)"
-              } : {}} whileTap={!isSubmitted ? {
-                scale: 0.95
-              } : {}} className={`w-12 h-12 flex items-center justify-center transition-all duration-200 rounded-2xl ${isSubmitted ? 'opacity-0 pointer-events-none' : 'opacity-100'}`} style={{
-                color: '#CBD9DA'
-              }}>
+              <div className="flex items-center space-x-2 ml-3">
+                <button type="button" className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors duration-200">
                   <Mic className="w-5 h-5" strokeWidth={1.5} />
-                </motion.button>
+                </button>
                 
-                {!isSubmitted && <motion.button type="submit" onClick={e => {
+                <button type="submit" onClick={e => {
                 e.preventDefault();
                 if (searchValue.trim() && !isSubmitted) {
                   console.log('SearchBar: Button clicked, submitting search with value:', searchValue.trim());
@@ -162,28 +72,13 @@ export const SearchBar = ({
                     onSearch?.(searchValue.trim());
                   }, 600);
                 }
-              }} whileHover={!isSubmitted ? {
-                scale: 1.02,
-                boxShadow: "0 0 12px rgba(99, 102, 241, 0.15)"
-              } : {}} whileTap={!isSubmitted ? {
-                scale: 0.98
-              } : {}} className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-300 border ${isSubmitted ? 'bg-emerald-500 border-emerald-400 shadow-lg' : 'bg-slate-600 border-slate-500 hover:bg-slate-700 hover:border-slate-400 shadow-sm'} text-white`} disabled={isSubmitted}>
-                  <AnimatePresence mode="wait">
-                    {!isSubmitted && <motion.div key="send" initial={{
-                    scale: 0
-                  }} animate={{
-                    scale: 1
-                  }} exit={{
-                    scale: 0
-                  }} transition={{
-                    duration: 0.2
-                  }}>
-                        <Send className={`w-5 h-5 transition-opacity duration-300 ${isSubmitted ? 'opacity-0' : 'opacity-100'}`} strokeWidth={2.5} style={{
-                      color: '#CBD9DA'
-                    }} />
-                      </motion.div>}
-                  </AnimatePresence>
-                </motion.button>}
+              }} className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200 ${
+                searchValue.trim() && !isSubmitted 
+                  ? 'bg-slate-800 text-white hover:bg-slate-700 shadow-sm' 
+                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+              }`} disabled={isSubmitted || !searchValue.trim()}>
+                  <Send className="w-4 h-4" strokeWidth={2} />
+                </button>
               </div>
             </div>
           </form>
