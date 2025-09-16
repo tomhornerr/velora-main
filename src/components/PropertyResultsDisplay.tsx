@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Scan } from "lucide-react";
+import { ChevronLeft, ChevronRight, Scan, MapPin } from "lucide-react";
 
 // Import property images
 import property1 from "@/assets/property-1.jpg";
@@ -64,6 +64,8 @@ export default function PropertyResultsDisplay({
   className
 }: PropertyResultsDisplayProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [activeScan, setActiveScan] = useState(false);
+  const [activeLocation, setActiveLocation] = useState(false);
   const nextProperty = () => {
     setCurrentIndex(prev => (prev + 1) % properties.length);
   };
@@ -145,16 +147,6 @@ export default function PropertyResultsDisplay({
                           </h3>
                         </div>
                       </div>
-
-                      {/* Floating Scan Button */}
-                      <motion.button className="absolute bottom-2 right-2 w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg flex items-center justify-center shadow-lg border border-white/20" whileHover={{
-                    scale: 1.1,
-                    y: -1
-                  }} whileTap={{
-                    scale: 0.9
-                  }}>
-                        <Scan className="w-4 h-4 text-white" strokeWidth={2} />
-                      </motion.button>
                     </div>
 
                     {/* Property Details */}
@@ -190,6 +182,47 @@ export default function PropertyResultsDisplay({
                 </motion.div>}
             </AnimatePresence>;
         })}
+        </div>
+
+        {/* Floating Action Panel */}
+        <div className="relative ml-8 flex items-center">
+          <motion.div 
+            className="flex flex-col bg-white/95 backdrop-blur-xl border border-blue-200/60 rounded-3xl p-3 shadow-xl"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            style={{
+              boxShadow: '0 8px 32px rgba(59, 130, 246, 0.1), 0 4px 16px rgba(0, 0, 0, 0.04)'
+            }}
+          >
+            {/* Scan Button */}
+            <motion.button
+              onClick={() => setActiveScan(!activeScan)}
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-200 ${
+                activeScan 
+                  ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg' 
+                  : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200/80'
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Scan className="w-5 h-5" strokeWidth={2} />
+            </motion.button>
+
+            {/* Location Button */}
+            <motion.button
+              onClick={() => setActiveLocation(!activeLocation)}
+              className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-200 ${
+                activeLocation 
+                  ? 'bg-gradient-to-r from-emerald-500 to-green-500 text-white shadow-lg' 
+                  : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200/80'
+              }`}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <MapPin className="w-5 h-5" strokeWidth={2} />
+            </motion.button>
+          </motion.div>
         </div>
       </div>
 
