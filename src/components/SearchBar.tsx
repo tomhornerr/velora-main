@@ -100,61 +100,29 @@ export const SearchBar = ({
                 color: '#E5F0F1'
               }} autoComplete="off" disabled={isSubmitted} />
                 
-                {/* Processing overlay */}
+                {/* Processing overlay with full bar animation */}
                 <AnimatePresence>
-                  {isSubmitted && <motion.div initial={{
-                  opacity: 0,
-                  scale: 0.8
-                }} animate={{
-                  opacity: 1,
-                  scale: 1
-                }} exit={{
-                  opacity: 0,
-                  scale: 0.8
-                }} transition={{
-                  duration: 0.3
-                }} className="absolute inset-0 flex items-center justify-center px-4">
-                      {/* Full search bar symmetric fill animation - matching exact border radius */}
-                      <motion.div className="absolute inset-0 rounded-3xl overflow-hidden">
-                        {/* Main fill animation - perfectly matches container shape */}
-                        <motion.div 
-                          className="absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600" 
-                          style={{
-                            borderRadius: 'inherit' // Inherit exact border radius from parent
-                          }}
-                          initial={{
-                            scaleX: 0,
-                            transformOrigin: "center center"
-                          }} 
-                          animate={{
-                            scaleX: 1,
-                            transformOrigin: "center center"
-                          }} 
-                          transition={{
-                            duration: 0.35,
-                            ease: [0.68, -0.55, 0.265, 1.55]  // Dramatic spring-like easing
-                          }} 
-                        />
-                        {/* Shimmer overlay effect - also rounded */}
-                        <motion.div 
-                          className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/25 to-transparent" 
-                          style={{
-                            borderRadius: 'inherit'
-                          }}
-                          initial={{
-                            x: "-150%"
-                          }} 
-                          animate={{
-                            x: "150%"
-                          }} 
-                          transition={{
-                            duration: 0.6,
-                            delay: 0.05,
-                            ease: [0.25, 0.46, 0.45, 0.94]
-                          }} 
-                        />
-                      </motion.div>
-                    </motion.div>}
+                  {isSubmitted && <motion.div 
+                    className="absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600" 
+                    initial={{
+                      width: "0%",
+                      left: "50%",
+                      transform: "translateX(-50%)"
+                    }} 
+                    animate={{
+                      width: "100%",
+                      left: "0%",
+                      transform: "translateX(0%)"
+                    }} 
+                    exit={{
+                      opacity: 0
+                    }} 
+                    transition={{
+                      width: { duration: 0.4, ease: [0.76, 0, 0.24, 1] },
+                      left: { duration: 0.4, ease: [0.76, 0, 0.24, 1] },
+                      transform: { duration: 0.4, ease: [0.76, 0, 0.24, 1] }
+                    }} 
+                  />}
                 </AnimatePresence>
                 
                 {/* Animated placeholder */}
