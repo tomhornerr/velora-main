@@ -62,10 +62,10 @@ export const SearchBar = ({
             backdropFilter: 'blur(20px) saturate(180%)',
             WebkitBackdropFilter: 'blur(20px) saturate(180%)'
           }}>
-              {/* Full search bar fill animation overlay - positioned to cover entire container */}
+              {/* Refined fill animation overlay - slightly inset for elegance */}
               <AnimatePresence>
                 {isSubmitted && <motion.div 
-                  className="absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600 z-10" 
+                  className="absolute top-1 bottom-1 left-1 right-1 rounded-[calc(1.5rem-4px)] bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600 z-10" 
                   initial={{
                     clipPath: "inset(0 100% 0 0)"
                   }} 
