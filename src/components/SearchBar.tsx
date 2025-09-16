@@ -114,54 +114,43 @@ export const SearchBar = ({
                 }} transition={{
                   duration: 0.3
                 }} className="absolute inset-0 flex items-center justify-center px-4">
-                      {/* Full search bar symmetric fill animation */}
+                      {/* Full search bar symmetric fill animation - matching exact border radius */}
                       <motion.div className="absolute inset-0 rounded-3xl overflow-hidden">
-                        {/* Main fill animation - expands from center */}
+                        {/* Main fill animation - perfectly matches container shape */}
                         <motion.div 
-                          className="absolute inset-0 bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600" 
+                          className="absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-400 via-green-500 to-emerald-600" 
+                          style={{
+                            borderRadius: 'inherit' // Inherit exact border radius from parent
+                          }}
                           initial={{
                             scaleX: 0,
-                            transformOrigin: "center"
+                            transformOrigin: "center center"
                           }} 
                           animate={{
                             scaleX: 1,
-                            transformOrigin: "center"
+                            transformOrigin: "center center"
                           }} 
                           transition={{
-                            duration: 0.4,
+                            duration: 0.35,
                             ease: [0.68, -0.55, 0.265, 1.55]  // Dramatic spring-like easing
                           }} 
                         />
-                        {/* Shimmer overlay effect */}
+                        {/* Shimmer overlay effect - also rounded */}
                         <motion.div 
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent" 
+                          className="absolute inset-0 rounded-3xl bg-gradient-to-r from-transparent via-white/25 to-transparent" 
+                          style={{
+                            borderRadius: 'inherit'
+                          }}
                           initial={{
-                            x: "-100%"
+                            x: "-150%"
                           }} 
                           animate={{
-                            x: "100%"
-                          }} 
-                          transition={{
-                            duration: 0.8,
-                            delay: 0.1,
-                            ease: [0.25, 0.46, 0.45, 0.94]
-                          }} 
-                        />
-                        {/* Pulse overlay for depth */}
-                        <motion.div 
-                          className="absolute inset-0 bg-white/10" 
-                          initial={{
-                            opacity: 0,
-                            scale: 0.95
-                          }} 
-                          animate={{
-                            opacity: [0, 0.5, 0],
-                            scale: [0.95, 1.02, 1]
+                            x: "150%"
                           }} 
                           transition={{
                             duration: 0.6,
-                            times: [0, 0.5, 1],
-                            ease: [0.76, 0, 0.24, 1]
+                            delay: 0.05,
+                            ease: [0.25, 0.46, 0.45, 0.94]
                           }} 
                         />
                       </motion.div>
