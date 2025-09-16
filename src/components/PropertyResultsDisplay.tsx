@@ -92,36 +92,29 @@ export default function PropertyResultsDisplay({
           const isVisible = Math.abs(offset) <= 2;
           return <AnimatePresence key={property.id}>
               {isVisible && <motion.div key={property.id} className="absolute inset-0 cursor-pointer" onClick={() => goToProperty(index)} initial={{
-              scale: 0.8,
-              y: 20,
-              opacity: 0,
-              rotateY: offset * 15,
-              z: -Math.abs(offset) * 50
+              scale: 0.9,
+              y: 10,
+              opacity: 0
             }} animate={{
-              scale: isActive ? 1 : 0.85 - Math.abs(offset) * 0.05,
-              y: Math.abs(offset) * 8,
-              opacity: isActive ? 1 : 0.7 - Math.abs(offset) * 0.2,
-              rotateY: offset * 8,
-              z: -Math.abs(offset) * 30,
+              scale: isActive ? 1 : 0.95 - Math.abs(offset) * 0.02,
+              y: Math.abs(offset) * 4,
+              opacity: isActive ? 1 : 0.8 - Math.abs(offset) * 0.1,
               zIndex: properties.length - Math.abs(offset)
             }} exit={{
-              scale: 0.7,
-              y: 40,
+              scale: 0.85,
+              y: 20,
               opacity: 0,
               transition: {
-                duration: 0.2
+                duration: 0.15
               }
             }} transition={{
-              duration: 0.4,
-              ease: [0.25, 0.1, 0.25, 1]
+              duration: 0.25,
+              ease: [0.4, 0, 0.2, 1]
             }} whileHover={isActive ? {
-              y: -4,
-              scale: 1.02
+              y: -2,
+              scale: 1.01
             } : {
-              scale: 0.87 - Math.abs(offset) * 0.05
-            }} style={{
-              transformStyle: 'preserve-3d',
-              perspective: '1000px'
+              scale: 0.97 - Math.abs(offset) * 0.02
             }}>
                   {/* Card */}
                   <div className={`w-full h-full bg-white/95 backdrop-blur-xl rounded-2xl overflow-hidden border transition-all duration-300 ${isActive ? 'border-indigo-200 shadow-2xl ring-2 ring-indigo-100' : 'border-white/30 shadow-lg'}`}>
