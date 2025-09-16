@@ -119,7 +119,7 @@ export default function PropertyResultsDisplay({
               scale: 0.97 - Math.abs(offset) * 0.02
             }}>
                   {/* Card */}
-                  <div className={`w-full h-full bg-white/95 backdrop-blur-xl rounded-2xl overflow-hidden border transition-all duration-300 ${isActive ? 'border-indigo-200 shadow-2xl ring-2 ring-indigo-100' : 'border-white/30 shadow-lg'}`}>
+                  <div className={`w-full h-full bg-white/95 backdrop-blur-xl rounded-2xl overflow-hidden border transition-all duration-300 ${isActive ? 'border-indigo-300/70 shadow-2xl ring-2 ring-indigo-100' : 'border-slate-200/50 shadow-lg'}`}>
                     {/* Property Image */}
                     <div className="relative h-40 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
                       {/* Mock property image with gradient overlay */}
