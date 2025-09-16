@@ -212,7 +212,7 @@ export default function PropertyResultsDisplay({
       </div>
 
       {/* Navigation Controls */}
-      <div className="flex items-center justify-start space-x-6 mt-3 ml-24">
+      <div className="flex items-center justify-start space-x-6 mt-1 ml-24">
         {/* Left Arrow */}
         <motion.button 
           onClick={prevProperty} 
