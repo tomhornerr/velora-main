@@ -230,8 +230,8 @@ export default function ChatInterface({
     duration: 0.2,
     ease: smoothEasing
   }} className={`flex flex-col h-full w-full relative ${className || ''}`}>
-      {/* Fullscreen Chat Container - No Cards, No Rounded Corners */}
-      <div className="w-full h-full bg-white flex flex-col relative">
+      {/* Fullscreen Chat Container - Matching Search Page Background */}
+      <div className="w-full h-full bg-gradient-to-br from-blue-50 to-blue-100 flex flex-col relative">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-100/60">
           <div className="flex items-center space-x-4">
