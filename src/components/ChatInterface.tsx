@@ -40,8 +40,23 @@ export default function ChatInterface({
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [likedMessages, setLikedMessages] = useState<Set<string>>(new Set());
   const [dislikedMessages, setDislikedMessages] = useState<Set<string>>(new Set());
+  const [isPropertyQuery, setIsPropertyQuery] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Function to check if query is property-related
+  const isPropertyRelatedQuery = (query: string): boolean => {
+    const propertyKeywords = [
+      'property', 'properties', 'comp', 'comps', 'comparable', 'comparables', 
+      'house', 'houses', 'home', 'homes', 'real estate', 'listing', 'listings',
+      'valuation', 'value', 'price', 'appraisal', 'market analysis',
+      'bedroom', 'bedrooms', 'bathroom', 'bathrooms', 'sqft', 'square feet',
+      'address', 'neighborhood', 'area', 'location', 'sold', 'for sale'
+    ];
+    
+    const lowerQuery = query.toLowerCase();
+    return propertyKeywords.some(keyword => lowerQuery.includes(keyword));
+  };
 
   // Mock property data
   const propertyResults = [{
@@ -93,6 +108,9 @@ export default function ChatInterface({
     }
   }, [initialQuery, isInitialized]);
   const handleInitialQuery = async (query: string) => {
+    const isPropertyRelated = isPropertyRelatedQuery(query);
+    setIsPropertyQuery(isPropertyRelated);
+    
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       content: query,
@@ -106,7 +124,7 @@ export default function ChatInterface({
     setTimeout(() => {
       const aiResponse: Message = {
         id: `ai-${Date.now()}`,
-        content: `Here are the most suitable comps I found for "${query}":`,
+        content: isPropertyRelated ? `Here are the most suitable comps I found for "${query}":` : `I'll help you with "${query}". Let me provide you with some information on this topic.`,
         role: 'assistant',
         timestamp: new Date()
       };
@@ -119,6 +137,10 @@ export default function ChatInterface({
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || isTyping) return;
+    
+    const isPropertyRelated = isPropertyRelatedQuery(inputValue.trim());
+    setIsPropertyQuery(isPropertyRelated);
+    
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       content: inputValue.trim(),
@@ -343,7 +365,7 @@ export default function ChatInterface({
             </AnimatePresence>
 
             {/* Property Results Display */}
-            {messages.length > 0 && messages[messages.length - 1]?.role === 'assistant' && <motion.div initial={{
+            {messages.length > 0 && messages[messages.length - 1]?.role === 'assistant' && isPropertyQuery && <motion.div initial={{
             opacity: 0,
             y: 12,
             scale: 0.98
