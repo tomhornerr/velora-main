@@ -114,20 +114,39 @@ export const SearchBar = ({
                 }} transition={{
                   duration: 0.3
                 }} className="absolute inset-0 flex items-center justify-center px-4">
-                      {/* Horizontal loading bar animation */}
-                      <motion.div className="relative h-1 bg-transparent rounded-full w-full max-w-md mx-auto">
-                        <motion.div className="absolute h-full bg-green-500 rounded-full" initial={{
-                      left: "50%",
-                      right: "50%",
-                      transform: "translateX(-50%)"
-                    }} animate={{
-                      left: "0%",
-                      right: "0%",
-                      transform: "translateX(0%)"
-                    }} transition={{
-                      duration: 0.6,
-                      ease: [0.25, 0.46, 0.45, 0.94]
-                    }} />
+                      {/* Full search bar fill animation */}
+                      <motion.div className="absolute inset-0 rounded-3xl overflow-hidden">
+                        <motion.div 
+                          className="absolute inset-0 bg-gradient-to-r from-emerald-500/90 to-green-500/90 backdrop-blur-sm" 
+                          initial={{
+                            scaleX: 0,
+                            transformOrigin: "left"
+                          }} 
+                          animate={{
+                            scaleX: 1,
+                            transformOrigin: "left"
+                          }} 
+                          transition={{
+                            duration: 0.45,
+                            ease: [0.76, 0, 0.24, 1]  // Sudden acceleration, sharp deceleration
+                          }} 
+                        />
+                        <motion.div 
+                          className="absolute inset-0 bg-white/10 backdrop-blur-sm" 
+                          initial={{
+                            scaleX: 0,
+                            transformOrigin: "right"
+                          }} 
+                          animate={{
+                            scaleX: 1,
+                            transformOrigin: "right"
+                          }} 
+                          transition={{
+                            duration: 0.3,
+                            delay: 0.15,
+                            ease: [0.87, 0, 0.13, 1]  // Even more dramatic velocity shift
+                          }} 
+                        />
                       </motion.div>
                     </motion.div>}
                 </AnimatePresence>
