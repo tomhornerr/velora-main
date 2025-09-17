@@ -121,16 +121,58 @@ export default function PropertyValuationUpload({
   const getStatusIcon = (status: string) => {
     switch (status) {
       case 'completed':
-        return <Check className="w-4 h-4 text-emerald-600" />;
-      case 'error':
-        return <AlertCircle className="w-4 h-4 text-red-600" />;
-      default:
         return (
           <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-            className="w-4 h-4 border-2 border-slate-300 border-t-slate-600 rounded-full"
-          />
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="w-4 h-4 bg-emerald-100 rounded-full flex items-center justify-center"
+          >
+            <Check className="w-3 h-3 text-emerald-600" />
+          </motion.div>
+        );
+      case 'error':
+        return (
+          <motion.div
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            className="w-4 h-4 bg-red-100 rounded-full flex items-center justify-center"
+          >
+            <AlertCircle className="w-3 h-3 text-red-600" />
+          </motion.div>
+        );
+      default:
+        return (
+          <div className="w-4 h-4 relative">
+            <motion.div
+              animate={{ rotate: 360 }}
+              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              className="w-4 h-4 border-2 border-slate-200 border-t-blue-500 rounded-full"
+            />
+            <div className="absolute inset-0 bg-blue-50 rounded-full opacity-50 animate-pulse" />
+          </div>
+        );
+    }
+  };
+
+  const getFileTypeIcon = (type: string) => {
+    switch (type) {
+      case 'PDF':
+        return (
+          <div className="w-8 h-8 bg-red-100 rounded-md flex items-center justify-center">
+            <FileText className="w-4 h-4 text-red-600" />
+          </div>
+        );
+      case 'Image':
+        return (
+          <div className="w-8 h-8 bg-blue-100 rounded-md flex items-center justify-center">
+            <FileText className="w-4 h-4 text-blue-600" />
+          </div>
+        );
+      default:
+        return (
+          <div className="w-8 h-8 bg-slate-100 rounded-md flex items-center justify-center">
+            <FileText className="w-4 h-4 text-slate-600" />
+          </div>
         );
     }
   };
@@ -227,7 +269,7 @@ export default function PropertyValuationUpload({
                 {uploadedFiles.map((file, index) => (
                   <motion.div
                     key={file.id}
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
                     animate={{ 
                       opacity: deletingIds.has(file.id) ? 0 : 1,
                       y: 0,
@@ -235,71 +277,186 @@ export default function PropertyValuationUpload({
                     }}
                     exit={{ opacity: 0, y: -10, scale: 0.95 }}
                     transition={{ duration: 0.2, delay: index * 0.03 }}
-                    className="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200"
+                    whileHover={{ 
+                      scale: 1.02,
+                      y: -2,
+                      boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)"
+                    }}
+                    className={`group relative flex items-center justify-between p-3 bg-white rounded-lg border transition-all duration-200 cursor-pointer ${
+                      file.status === 'completed' 
+                        ? 'border-emerald-200 hover:border-emerald-300 hover:bg-emerald-50/30' 
+                        : file.status === 'uploading'
+                        ? 'border-blue-200 hover:border-blue-300 hover:bg-blue-50/30'
+                        : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                    }`}
                   >
-                    <div className="flex items-center space-x-3 flex-1 min-w-0">
-                      <div className="w-8 h-8 bg-slate-100 rounded-md flex items-center justify-center flex-shrink-0">
-                        <FileText className="w-4 h-4 text-slate-600" />
+                    {/* Progress bar for uploading files */}
+                    {file.status === 'uploading' && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-100 rounded-b-lg overflow-hidden">
+                        <motion.div
+                          className="h-full bg-blue-500"
+                          initial={{ width: "0%" }}
+                          animate={{ width: "100%" }}
+                          transition={{ duration: 1.5, ease: "easeInOut" }}
+                        />
                       </div>
+                    )}
+
+                    {/* Completion glow effect */}
+                    {file.status === 'completed' && (
+                      <motion.div
+                        className="absolute inset-0 rounded-lg bg-gradient-to-r from-emerald-400/5 to-green-400/5 opacity-0 group-hover:opacity-100"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: [0, 0.3, 0] }}
+                        transition={{ duration: 2, delay: 0.5 }}
+                      />
+                    )}
+
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      <motion.div
+                        whileHover={{ scale: 1.1, rotate: 5 }}
+                        transition={{ duration: 0.2 }}
+                        className="flex-shrink-0"
+                      >
+                        {getFileTypeIcon(file.type)}
+                      </motion.div>
                       
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-900 truncate">
+                        <p className="text-sm font-medium text-slate-900 truncate group-hover:text-slate-800">
                           {file.name}
                         </p>
-                        <div className="flex items-center space-x-2 text-xs text-slate-500">
-                          <span>{file.type}</span>
-                          <span>•</span>
-                          <span>{file.size}</span>
+                        <div className="flex items-center space-x-2 text-xs">
+                          <motion.span 
+                            className={`px-1.5 py-0.5 rounded text-xs font-medium ${
+                              file.type === 'PDF' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
+                            }`}
+                            whileHover={{ scale: 1.05 }}
+                          >
+                            {file.type}
+                          </motion.span>
+                          <span className="text-slate-400">•</span>
+                          <span className="text-slate-500">{file.size}</span>
                           {index === 0 && file.status === 'completed' && (
-                            <>
-                              <span>•</span>
-                              <span className="text-emerald-600 font-medium">Latest</span>
-                            </>
+                            <motion.span
+                              initial={{ opacity: 0, scale: 0 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded text-xs font-medium"
+                            >
+                              Latest
+                            </motion.span>
+                          )}
+                          {file.status === 'uploading' && (
+                            <motion.span
+                              animate={{ opacity: [0.5, 1, 0.5] }}
+                              transition={{ duration: 1.5, repeat: Infinity }}
+                              className="text-blue-600 font-medium"
+                            >
+                              Processing...
+                            </motion.span>
                           )}
                         </div>
                       </div>
                     </div>
 
                     <div className="flex items-center space-x-2 flex-shrink-0">
-                      <div className="w-4 h-4 flex items-center justify-center">
+                      <div className="flex items-center justify-center">
                         {getStatusIcon(file.status)}
                       </div>
                       
-                      <button
+                      <motion.button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDelete(file.id);
                         }}
-                        className="w-6 h-6 rounded-md flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                        className="w-6 h-6 rounded-md flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100"
                         disabled={deletingIds.has(file.id)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
                       >
                         <X className="w-3 h-3" />
-                      </button>
+                      </motion.button>
                     </div>
                   </motion.div>
                 ))}
               </AnimatePresence>
+
+              {/* Empty state when scrolling */}
+              {uploadedFiles.length === 0 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="text-center py-8 text-slate-500"
+                >
+                  <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No files uploaded yet</p>
+                </motion.div>
+              )}
             </div>
 
-            {/* Files Summary */}
+            {/* Enhanced Files Summary */}
             {uploadedFiles.length > 0 && (
-              <div className="mt-3 p-2 bg-slate-50 rounded-md">
-                <div className="flex items-center justify-between text-xs text-slate-600">
-                  <div className="flex items-center space-x-3">
-                    <span>
-                      <strong>{uploadedFiles.filter(f => f.status === 'completed').length}</strong> completed
-                    </span>
-                    {uploadedFiles.filter(f => f.status === 'uploading').length > 0 && (
-                      <span>
-                        <strong>{uploadedFiles.filter(f => f.status === 'uploading').length}</strong> processing
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-3 p-3 bg-gradient-to-r from-slate-50 to-slate-100/50 rounded-lg border border-slate-200"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <motion.div
+                      className="flex items-center space-x-1"
+                      whileHover={{ scale: 1.05 }}
+                    >
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
+                      <span className="text-xs text-slate-600">
+                        <strong className="text-emerald-700">{uploadedFiles.filter(f => f.status === 'completed').length}</strong> ready
                       </span>
+                    </motion.div>
+                    
+                    {uploadedFiles.filter(f => f.status === 'uploading').length > 0 && (
+                      <motion.div
+                        className="flex items-center space-x-1"
+                        animate={{ opacity: [0.5, 1, 0.5] }}
+                        transition={{ duration: 2, repeat: Infinity }}
+                      >
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                        <span className="text-xs text-slate-600">
+                          <strong className="text-blue-700">{uploadedFiles.filter(f => f.status === 'uploading').length}</strong> processing
+                        </span>
+                      </motion.div>
+                    )}
+                    
+                    {uploadedFiles.filter(f => f.status === 'error').length > 0 && (
+                      <motion.div
+                        className="flex items-center space-x-1"
+                        whileHover={{ scale: 1.05 }}
+                      >
+                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                        <span className="text-xs text-slate-600">
+                          <strong className="text-red-700">{uploadedFiles.filter(f => f.status === 'error').length}</strong> failed
+                        </span>
+                      </motion.div>
                     )}
                   </div>
-                  <div className="text-slate-500">
+                  
+                  <div className="text-xs text-slate-500 font-medium">
                     {uploadedFiles.length} file{uploadedFiles.length !== 1 ? 's' : ''}
                   </div>
                 </div>
-              </div>
+                
+                {/* Progress bar for overall completion */}
+                <div className="mt-2">
+                  <div className="w-full bg-slate-200 rounded-full h-1">
+                    <motion.div
+                      className="bg-gradient-to-r from-emerald-500 to-green-500 h-1 rounded-full"
+                      initial={{ width: 0 }}
+                      animate={{ 
+                        width: `${(uploadedFiles.filter(f => f.status === 'completed').length / uploadedFiles.length) * 100}%` 
+                      }}
+                      transition={{ duration: 0.5, ease: "easeOut" }}
+                    />
+                  </div>
+                </div>
+              </motion.div>
             )}
 
             {/* Continue Button */}
