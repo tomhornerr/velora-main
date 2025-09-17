@@ -264,7 +264,7 @@ export default function PropertyValuationUpload({
             </div>
             
             {/* Scrollable container */}
-            <div className="max-h-48 overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 hover:scrollbar-thumb-slate-400">
+            <div className="max-h-64 overflow-y-auto pr-3 space-y-3 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 hover:scrollbar-thumb-slate-400">
               <AnimatePresence>
                 {uploadedFiles.map((file, index) => (
                   <motion.div
@@ -282,7 +282,7 @@ export default function PropertyValuationUpload({
                       y: -2,
                       boxShadow: "0 8px 25px rgba(0, 0, 0, 0.1)"
                     }}
-                    className={`group relative flex items-center justify-between p-3 bg-white rounded-lg border transition-all duration-200 cursor-pointer ${
+                    className={`group relative flex items-center justify-between p-4 bg-white rounded-xl border transition-all duration-200 cursor-pointer ${
                       file.status === 'completed' 
                         ? 'border-emerald-200 hover:border-emerald-300 hover:bg-emerald-50/30' 
                         : file.status === 'uploading'
@@ -292,7 +292,7 @@ export default function PropertyValuationUpload({
                   >
                     {/* Progress bar for uploading files */}
                     {file.status === 'uploading' && (
-                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-100 rounded-b-lg overflow-hidden">
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-100 rounded-b-xl overflow-hidden">
                         <motion.div
                           className="h-full bg-blue-500"
                           initial={{ width: "0%" }}
@@ -305,14 +305,14 @@ export default function PropertyValuationUpload({
                     {/* Completion glow effect */}
                     {file.status === 'completed' && (
                       <motion.div
-                        className="absolute inset-0 rounded-lg bg-gradient-to-r from-emerald-400/5 to-green-400/5 opacity-0 group-hover:opacity-100"
+                        className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-400/5 to-green-400/5 opacity-0 group-hover:opacity-100"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: [0, 0.3, 0] }}
                         transition={{ duration: 2, delay: 0.5 }}
                       />
                     )}
 
-                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                    <div className="flex items-center space-x-4 flex-1 min-w-0">
                       <motion.div
                         whileHover={{ scale: 1.1, rotate: 5 }}
                         transition={{ duration: 0.2 }}
@@ -322,12 +322,12 @@ export default function PropertyValuationUpload({
                       </motion.div>
                       
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-900 truncate group-hover:text-slate-800">
+                        <p className="text-sm font-medium text-slate-900 truncate group-hover:text-slate-800 mb-1">
                           {file.name}
                         </p>
-                        <div className="flex items-center space-x-2 text-xs">
+                        <div className="flex items-center space-x-3 text-xs">
                           <motion.span 
-                            className={`px-1.5 py-0.5 rounded text-xs font-medium ${
+                            className={`px-2 py-1 rounded-md text-xs font-medium ${
                               file.type === 'PDF' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
                             }`}
                             whileHover={{ scale: 1.05 }}
@@ -335,12 +335,12 @@ export default function PropertyValuationUpload({
                             {file.type}
                           </motion.span>
                           <span className="text-slate-400">•</span>
-                          <span className="text-slate-500">{file.size}</span>
+                          <span className="text-slate-500 font-medium">{file.size}</span>
                           {index === 0 && file.status === 'completed' && (
                             <motion.span
                               initial={{ opacity: 0, scale: 0 }}
                               animate={{ opacity: 1, scale: 1 }}
-                              className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded text-xs font-medium"
+                              className="px-2 py-1 bg-emerald-100 text-emerald-700 rounded-md text-xs font-medium"
                             >
                               Latest
                             </motion.span>
@@ -358,7 +358,7 @@ export default function PropertyValuationUpload({
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-2 flex-shrink-0">
+                    <div className="flex items-center space-x-3 flex-shrink-0">
                       <div className="flex items-center justify-center">
                         {getStatusIcon(file.status)}
                       </div>
@@ -368,12 +368,12 @@ export default function PropertyValuationUpload({
                           e.stopPropagation();
                           handleDelete(file.id);
                         }}
-                        className="w-6 h-6 rounded-md flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100"
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100"
                         disabled={deletingIds.has(file.id)}
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                       >
-                        <X className="w-3 h-3" />
+                        <X className="w-4 h-4" />
                       </motion.button>
                     </div>
                   </motion.div>
@@ -385,9 +385,9 @@ export default function PropertyValuationUpload({
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
-                  className="text-center py-8 text-slate-500"
+                  className="text-center py-12 text-slate-500"
                 >
-                  <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                  <FileText className="w-10 h-10 mx-auto mb-3 opacity-50" />
                   <p className="text-sm">No files uploaded yet</p>
                 </motion.div>
               )}
@@ -398,28 +398,28 @@ export default function PropertyValuationUpload({
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mt-3 p-3 bg-gradient-to-r from-slate-50 to-slate-100/50 rounded-lg border border-slate-200"
+                className="mt-4 p-4 bg-gradient-to-r from-slate-50 to-slate-100/50 rounded-xl border border-slate-200"
               >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center space-x-6">
                     <motion.div
-                      className="flex items-center space-x-1"
+                      className="flex items-center space-x-2"
                       whileHover={{ scale: 1.05 }}
                     >
-                      <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                      <span className="text-xs text-slate-600">
+                      <div className="w-3 h-3 bg-emerald-500 rounded-full"></div>
+                      <span className="text-sm text-slate-600">
                         <strong className="text-emerald-700">{uploadedFiles.filter(f => f.status === 'completed').length}</strong> ready
                       </span>
                     </motion.div>
                     
                     {uploadedFiles.filter(f => f.status === 'uploading').length > 0 && (
                       <motion.div
-                        className="flex items-center space-x-1"
+                        className="flex items-center space-x-2"
                         animate={{ opacity: [0.5, 1, 0.5] }}
                         transition={{ duration: 2, repeat: Infinity }}
                       >
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                        <span className="text-xs text-slate-600">
+                        <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                        <span className="text-sm text-slate-600">
                           <strong className="text-blue-700">{uploadedFiles.filter(f => f.status === 'uploading').length}</strong> processing
                         </span>
                       </motion.div>
@@ -427,27 +427,27 @@ export default function PropertyValuationUpload({
                     
                     {uploadedFiles.filter(f => f.status === 'error').length > 0 && (
                       <motion.div
-                        className="flex items-center space-x-1"
+                        className="flex items-center space-x-2"
                         whileHover={{ scale: 1.05 }}
                       >
-                        <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                        <span className="text-xs text-slate-600">
+                        <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <span className="text-sm text-slate-600">
                           <strong className="text-red-700">{uploadedFiles.filter(f => f.status === 'error').length}</strong> failed
                         </span>
                       </motion.div>
                     )}
                   </div>
                   
-                  <div className="text-xs text-slate-500 font-medium">
+                  <div className="text-sm text-slate-500 font-medium">
                     {uploadedFiles.length} file{uploadedFiles.length !== 1 ? 's' : ''}
                   </div>
                 </div>
                 
                 {/* Progress bar for overall completion */}
                 <div className="mt-2">
-                  <div className="w-full bg-slate-200 rounded-full h-1">
+                  <div className="w-full bg-slate-200 rounded-full h-2">
                     <motion.div
-                      className="bg-gradient-to-r from-emerald-500 to-green-500 h-1 rounded-full"
+                      className="bg-gradient-to-r from-emerald-500 to-green-500 h-2 rounded-full"
                       initial={{ width: 0 }}
                       animate={{ 
                         width: `${(uploadedFiles.filter(f => f.status === 'completed').length / uploadedFiles.length) * 100}%` 
