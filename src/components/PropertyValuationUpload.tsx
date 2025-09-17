@@ -210,13 +210,21 @@ export default function PropertyValuationUpload({
         {/* Uploaded Files List */}
         {uploadedFiles.length > 0 && (
           <div className="mt-8">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">
-              Uploaded Files ({uploadedFiles.length})
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-slate-800">
+                Uploaded Files ({uploadedFiles.length})
+              </h3>
+              {uploadedFiles.length > 3 && (
+                <div className="text-sm text-slate-500">
+                  Scroll to see all files
+                </div>
+              )}
+            </div>
             
-            <div className="space-y-3">
+            {/* Scrollable container */}
+            <div className="max-h-80 overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 hover:scrollbar-thumb-slate-400">
               <AnimatePresence>
-                {uploadedFiles.map((file) => (
+                {uploadedFiles.map((file, index) => (
                   <motion.div
                     key={file.id}
                     initial={{ opacity: 0, y: 20 }}
@@ -225,12 +233,12 @@ export default function PropertyValuationUpload({
                       y: 0,
                       scale: deletingIds.has(file.id) ? 0.95 : 1
                     }}
-                    exit={{ opacity: 0, y: -20 }}
-                    transition={{ duration: 0.3 }}
-                    className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 shadow-sm"
+                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                    transition={{ duration: 0.3, delay: index * 0.05 }}
+                    className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200"
                   >
                     <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                      <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
                         <FileText className="w-5 h-5 text-slate-600" />
                       </div>
                       
@@ -242,11 +250,17 @@ export default function PropertyValuationUpload({
                           <span>{file.type}</span>
                           <span>•</span>
                           <span>{file.size}</span>
+                          {index === 0 && file.status === 'completed' && (
+                            <>
+                              <span>•</span>
+                              <span className="text-emerald-600 font-medium">Latest</span>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-3">
+                    <div className="flex items-center space-x-3 flex-shrink-0">
                       {getStatusIcon(file.status)}
                       
                       <button
@@ -264,6 +278,31 @@ export default function PropertyValuationUpload({
                 ))}
               </AnimatePresence>
             </div>
+
+            {/* Files Summary */}
+            {uploadedFiles.length > 0 && (
+              <div className="mt-4 p-3 bg-slate-50 rounded-lg">
+                <div className="flex items-center justify-between text-sm text-slate-600">
+                  <div className="flex items-center space-x-4">
+                    <span>
+                      <strong>{uploadedFiles.filter(f => f.status === 'completed').length}</strong> completed
+                    </span>
+                    <span>
+                      <strong>{uploadedFiles.filter(f => f.status === 'uploading').length}</strong> processing
+                    </span>
+                    <span>
+                      <strong>{uploadedFiles.filter(f => f.status === 'error').length}</strong> failed
+                    </span>
+                  </div>
+                  <div className="text-slate-500">
+                    Total: {uploadedFiles.reduce((acc, file) => {
+                      const sizeInMB = parseFloat(file.size.replace(/[^\d.]/g, ''));
+                      return acc + (file.size.includes('KB') ? sizeInMB / 1024 : sizeInMB);
+                    }, 0).toFixed(1)} MB
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Continue Button */}
             {uploadedFiles.some(f => f.status === 'completed') && (
