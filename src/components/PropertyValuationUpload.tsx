@@ -222,24 +222,24 @@ export default function PropertyValuationUpload({
             </div>
             
             {/* Scrollable container */}
-            <div className="max-h-80 overflow-y-auto pr-2 space-y-3 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 hover:scrollbar-thumb-slate-400">
+            <div className="max-h-48 overflow-y-auto pr-2 space-y-2 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300 hover:scrollbar-thumb-slate-400">
               <AnimatePresence>
                 {uploadedFiles.map((file, index) => (
                   <motion.div
                     key={file.id}
-                    initial={{ opacity: 0, y: 20 }}
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ 
                       opacity: deletingIds.has(file.id) ? 0 : 1,
                       y: 0,
                       scale: deletingIds.has(file.id) ? 0.95 : 1
                     }}
-                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                    transition={{ duration: 0.3, delay: index * 0.05 }}
-                    className="flex items-center justify-between p-4 bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200"
+                    exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                    transition={{ duration: 0.2, delay: index * 0.03 }}
+                    className="flex items-center justify-between p-3 bg-white rounded-lg border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200"
                   >
-                    <div className="flex items-center space-x-3">
-                      <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <FileText className="w-5 h-5 text-slate-600" />
+                    <div className="flex items-center space-x-3 flex-1 min-w-0">
+                      <div className="w-8 h-8 bg-slate-100 rounded-md flex items-center justify-center flex-shrink-0">
+                        <FileText className="w-4 h-4 text-slate-600" />
                       </div>
                       
                       <div className="flex-1 min-w-0">
@@ -260,18 +260,20 @@ export default function PropertyValuationUpload({
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-3 flex-shrink-0">
-                      {getStatusIcon(file.status)}
+                    <div className="flex items-center space-x-2 flex-shrink-0">
+                      <div className="w-4 h-4 flex items-center justify-center">
+                        {getStatusIcon(file.status)}
+                      </div>
                       
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleDelete(file.id);
                         }}
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                        className="w-6 h-6 rounded-md flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
                         disabled={deletingIds.has(file.id)}
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-3 h-3" />
                       </button>
                     </div>
                   </motion.div>
@@ -281,24 +283,20 @@ export default function PropertyValuationUpload({
 
             {/* Files Summary */}
             {uploadedFiles.length > 0 && (
-              <div className="mt-4 p-3 bg-slate-50 rounded-lg">
-                <div className="flex items-center justify-between text-sm text-slate-600">
-                  <div className="flex items-center space-x-4">
+              <div className="mt-3 p-2 bg-slate-50 rounded-md">
+                <div className="flex items-center justify-between text-xs text-slate-600">
+                  <div className="flex items-center space-x-3">
                     <span>
                       <strong>{uploadedFiles.filter(f => f.status === 'completed').length}</strong> completed
                     </span>
-                    <span>
-                      <strong>{uploadedFiles.filter(f => f.status === 'uploading').length}</strong> processing
-                    </span>
-                    <span>
-                      <strong>{uploadedFiles.filter(f => f.status === 'error').length}</strong> failed
-                    </span>
+                    {uploadedFiles.filter(f => f.status === 'uploading').length > 0 && (
+                      <span>
+                        <strong>{uploadedFiles.filter(f => f.status === 'uploading').length}</strong> processing
+                      </span>
+                    )}
                   </div>
                   <div className="text-slate-500">
-                    Total: {uploadedFiles.reduce((acc, file) => {
-                      const sizeInMB = parseFloat(file.size.replace(/[^\d.]/g, ''));
-                      return acc + (file.size.includes('KB') ? sizeInMB / 1024 : sizeInMB);
-                    }, 0).toFixed(1)} MB
+                    {uploadedFiles.length} file{uploadedFiles.length !== 1 ? 's' : ''}
                   </div>
                 </div>
               </div>
