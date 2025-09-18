@@ -1,4 +1,5 @@
 import { useRef, useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 interface FlowBackgroundProps {
   className?: string;
@@ -6,17 +7,12 @@ interface FlowBackgroundProps {
 }
 
 const FlowBackground = ({ className = '', style }: FlowBackgroundProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
-      
-      const rect = containerRef.current.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      
+      const x = (e.clientX / window.innerWidth) * 100;
+      const y = (e.clientY / window.innerHeight) * 100;
       setMousePosition({ x, y });
     };
 
@@ -26,88 +22,107 @@ const FlowBackground = ({ className = '', style }: FlowBackgroundProps) => {
 
   return (
     <div 
-      ref={containerRef}
-      className={`flow-background ${className}`} 
+      className={`fixed inset-0 w-full h-full overflow-hidden ${className}`}
       style={{
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
         pointerEvents: 'none',
         zIndex: -1,
-        background: `
-          radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, 
-            hsl(var(--primary) / 0.15) 0%, 
-            hsl(var(--primary) / 0.08) 30%, 
-            transparent 60%
-          ),
-          radial-gradient(circle at 20% 80%, 
-            hsl(220 70% 50% / 0.1) 0%, 
-            transparent 50%
-          ),
-          radial-gradient(circle at 80% 20%, 
-            hsl(200 80% 60% / 0.08) 0%, 
-            transparent 50%
-          ),
-          radial-gradient(circle at 40% 40%, 
-            hsl(240 60% 70% / 0.06) 0%, 
-            transparent 50%
-          ),
-          linear-gradient(135deg, 
-            hsl(var(--background)) 0%, 
-            hsl(var(--muted) / 0.3) 100%
-          )
-        `,
         ...style
       }}
     >
-      {/* Animated flowing elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {[...Array(12)].map((_, i) => (
-          <div
-            key={i}
-            className="absolute rounded-full opacity-30 animate-pulse"
-            style={{
-              left: `${15 + (i * 8)}%`,
-              top: `${10 + (i * 6)}%`,
-              width: `${20 + (i * 3)}px`,
-              height: `${20 + (i * 3)}px`,
-              background: `hsl(${200 + (i * 10)} 70% ${60 + (i * 2)}%)`,
-              animationDelay: `${i * 0.3}s`,
-              animationDuration: `${3 + (i * 0.2)}s`,
-              filter: 'blur(1px)',
-            }}
-          />
-        ))}
-      </div>
+      {/* Base gradient background */}
+      <div 
+        className="absolute inset-0 w-full h-full"
+        style={{
+          background: `
+            radial-gradient(ellipse 80% 50% at ${mousePosition.x}% ${mousePosition.y}%, 
+              hsla(220, 70%, 95%, 0.4) 0%, 
+              hsla(210, 60%, 90%, 0.2) 40%, 
+              transparent 70%
+            ),
+            radial-gradient(ellipse 60% 40% at 20% 80%, 
+              hsla(235, 50%, 90%, 0.3) 0%, 
+              transparent 50%
+            ),
+            radial-gradient(ellipse 70% 50% at 80% 20%, 
+              hsla(200, 60%, 92%, 0.25) 0%, 
+              transparent 50%
+            ),
+            linear-gradient(135deg, 
+              hsla(220, 30%, 98%, 1) 0%, 
+              hsla(210, 25%, 95%, 0.8) 50%,
+              hsla(200, 20%, 92%, 0.6) 100%
+            )
+          `
+        }}
+      />
 
-      {/* Flowing waves */}
-      <div className="absolute inset-0">
-        <svg className="w-full h-full" viewBox="0 0 1200 800" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="wave1" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="hsl(220 70% 50%)" stopOpacity="0.1" />
-              <stop offset="100%" stopColor="hsl(200 80% 60%)" stopOpacity="0.05" />
-            </linearGradient>
-            <linearGradient id="wave2" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="hsl(240 60% 70%)" stopOpacity="0.08" />
-              <stop offset="100%" stopColor="hsl(210 75% 55%)" stopOpacity="0.03" />
-            </linearGradient>
-          </defs>
-          
-          <path
-            d="M0,400 C300,350 600,450 1200,400 L1200,800 L0,800 Z"
-            fill="url(#wave1)"
-            className="animate-[flow_8s_ease-in-out_infinite_alternate]"
-          />
-          <path
-            d="M0,500 C400,400 800,550 1200,500 L1200,800 L0,800 Z"
-            fill="url(#wave2)"
-            className="animate-[flow_12s_ease-in-out_infinite_alternate-reverse]"
-          />
-        </svg>
-      </div>
+      {/* Subtle floating orbs */}
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute rounded-full"
+          style={{
+            width: `${60 + i * 20}px`,
+            height: `${60 + i * 20}px`,
+            left: `${15 + i * 12}%`,
+            top: `${20 + i * 8}%`,
+            background: `radial-gradient(circle, 
+              hsla(${210 + i * 15}, 60%, 85%, 0.1) 0%, 
+              hsla(${220 + i * 10}, 50%, 90%, 0.05) 70%, 
+              transparent 100%
+            )`,
+            filter: 'blur(2px)',
+          }}
+          animate={{
+            y: [-10, 10, -10],
+            x: [-5, 5, -5],
+            scale: [1, 1.1, 1],
+          }}
+          transition={{
+            duration: 8 + i * 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: i * 0.5,
+          }}
+        />
+      ))}
+
+      {/* Animated mesh gradient overlay */}
+      <motion.div
+        className="absolute inset-0 w-full h-full opacity-30"
+        style={{
+          background: `
+            conic-gradient(from 0deg at 50% 50%, 
+              hsla(210, 50%, 95%, 0.1) 0deg,
+              hsla(220, 40%, 92%, 0.2) 90deg,
+              hsla(200, 45%, 94%, 0.15) 180deg,
+              hsla(235, 35%, 90%, 0.1) 270deg,
+              hsla(210, 50%, 95%, 0.1) 360deg
+            )
+          `,
+          filter: 'blur(60px)',
+        }}
+        animate={{
+          rotate: [0, 360],
+        }}
+        transition={{
+          duration: 120,
+          repeat: Infinity,
+          ease: "linear",
+        }}
+      />
+
+      {/* Subtle grid pattern */}
+      <div 
+        className="absolute inset-0 w-full h-full opacity-[0.02]"
+        style={{
+          backgroundImage: `
+            linear-gradient(hsla(220, 50%, 30%, 0.3) 1px, transparent 1px),
+            linear-gradient(90deg, hsla(220, 50%, 30%, 0.3) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px',
+        }}
+      />
     </div>
   );
 };
