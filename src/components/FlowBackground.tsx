@@ -8,6 +8,7 @@ interface FlowBackgroundProps {
 
 const FlowBackground = ({ className = '', style }: FlowBackgroundProps) => {
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -16,8 +17,18 @@ const FlowBackground = ({ className = '', style }: FlowBackgroundProps) => {
       setMousePosition({ x, y });
     };
 
+    const handleMouseEnter = () => setIsHovered(true);
+    const handleMouseLeave = () => setIsHovered(false);
+
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseenter', handleMouseEnter);
+    document.addEventListener('mouseleave', handleMouseLeave);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseenter', handleMouseEnter);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+    };
   }, []);
 
   return (
@@ -29,101 +40,153 @@ const FlowBackground = ({ className = '', style }: FlowBackgroundProps) => {
         ...style
       }}
     >
-      {/* Base gradient background that fills entire viewport */}
+      {/* Subtle base gradient - no strong colors */}
       <div 
         className="absolute inset-0 w-full h-full"
         style={{
           background: `
-            radial-gradient(ellipse 80% 50% at ${mousePosition.x}% ${mousePosition.y}%, 
-              hsla(220, 70%, 95%, 0.6) 0%, 
-              hsla(210, 60%, 90%, 0.3) 40%, 
-              transparent 70%
-            ),
-            radial-gradient(ellipse 60% 40% at 20% 80%, 
-              hsla(235, 50%, 90%, 0.4) 0%, 
-              transparent 50%
-            ),
-            radial-gradient(ellipse 70% 50% at 80% 20%, 
-              hsla(200, 60%, 92%, 0.35) 0%, 
-              transparent 50%
-            ),
             linear-gradient(135deg, 
-              hsla(220, 30%, 98%, 1) 0%, 
-              hsla(210, 25%, 95%, 0.9) 30%,
-              hsla(200, 20%, 92%, 0.8) 70%,
-              hsla(190, 15%, 88%, 0.7) 100%
+              hsl(220, 15%, 97%) 0%, 
+              hsl(210, 12%, 95%) 25%,
+              hsl(200, 10%, 93%) 50%,
+              hsl(190, 8%, 91%) 75%,
+              hsl(180, 6%, 89%) 100%
             )
           `
         }}
       />
 
-      {/* Subtle floating orbs */}
-      {[...Array(12)].map((_, i) => (
+      {/* Interactive gentle highlight that follows mouse */}
+      <motion.div
+        className="absolute w-96 h-96 rounded-full"
+        style={{
+          left: `${mousePosition.x}%`,
+          top: `${mousePosition.y}%`,
+          background: `radial-gradient(circle, 
+            hsla(220, 40%, 85%, 0.08) 0%, 
+            hsla(210, 30%, 90%, 0.04) 40%, 
+            transparent 70%
+          )`,
+          filter: 'blur(40px)',
+          transform: 'translate(-50%, -50%)',
+        }}
+        animate={{
+          scale: isHovered ? 1.2 : 1,
+          opacity: isHovered ? 0.6 : 0.3,
+        }}
+        transition={{
+          duration: 0.8,
+          ease: "easeOut"
+        }}
+      />
+
+      {/* Floating geometric shapes - very subtle */}
+      {[...Array(6)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute rounded-full"
+          className="absolute"
           style={{
-            width: `${40 + i * 15}px`,
-            height: `${40 + i * 15}px`,
-            left: `${8 + i * 8}%`,
-            top: `${15 + i * 6}%`,
-            background: `radial-gradient(circle, 
-              hsla(${200 + i * 12}, 60%, 85%, 0.12) 0%, 
-              hsla(${220 + i * 8}, 50%, 90%, 0.06) 70%, 
-              transparent 100%
+            width: `${20 + i * 8}px`,
+            height: `${20 + i * 8}px`,
+            left: `${20 + i * 15}%`,
+            top: `${15 + i * 12}%`,
+            borderRadius: i % 2 === 0 ? '50%' : '20%',
+            background: `linear-gradient(135deg, 
+              hsla(${200 + i * 20}, 30%, 88%, 0.06) 0%, 
+              hsla(${220 + i * 15}, 25%, 92%, 0.03) 100%
             )`,
-            filter: 'blur(1px)',
+            border: `1px solid hsla(${210 + i * 10}, 20%, 80%, 0.1)`,
           }}
           animate={{
-            y: [-8, 8, -8],
-            x: [-4, 4, -4],
-            scale: [1, 1.05, 1],
+            y: [-5, 5, -5],
+            x: [-3, 3, -3],
+            rotate: [0, 5, -5, 0],
+            scale: [1, 1.02, 1],
           }}
           transition={{
-            duration: 6 + i * 1.5,
+            duration: 8 + i * 2,
             repeat: Infinity,
             ease: "easeInOut",
-            delay: i * 0.3,
+            delay: i * 0.8,
           }}
         />
       ))}
 
-      {/* Large animated mesh gradient overlay */}
+      {/* Subtle parallax layers */}
       <motion.div
-        className="absolute inset-0 w-full h-full opacity-40"
+        className="absolute inset-0 opacity-20"
         style={{
-          background: `
-            conic-gradient(from 0deg at 50% 50%, 
-              hsla(210, 50%, 95%, 0.15) 0deg,
-              hsla(220, 40%, 92%, 0.25) 90deg,
-              hsla(200, 45%, 94%, 0.2) 180deg,
-              hsla(235, 35%, 90%, 0.15) 270deg,
-              hsla(210, 50%, 95%, 0.15) 360deg
-            )
+          backgroundImage: `
+            radial-gradient(circle at 25% 25%, hsla(220, 20%, 90%, 0.3) 1px, transparent 1px),
+            radial-gradient(circle at 75% 75%, hsla(200, 15%, 85%, 0.2) 1px, transparent 1px)
           `,
-          filter: 'blur(80px)',
+          backgroundSize: '80px 80px, 120px 120px',
         }}
         animate={{
-          rotate: [0, 360],
+          backgroundPosition: [`0% 0%`, `100% 100%`],
         }}
         transition={{
-          duration: 180,
+          duration: 60,
           repeat: Infinity,
           ease: "linear",
         }}
       />
 
-      {/* Subtle grid pattern overlay */}
-      <div 
-        className="absolute inset-0 w-full h-full opacity-[0.015]"
-        style={{
-          backgroundImage: `
-            linear-gradient(hsla(220, 50%, 30%, 0.4) 1px, transparent 1px),
-            linear-gradient(90deg, hsla(220, 50%, 30%, 0.4) 1px, transparent 1px)
-          `,
-          backgroundSize: '60px 60px',
-        }}
-      />
+      {/* Soft moving waves */}
+      <svg 
+        className="absolute inset-0 w-full h-full opacity-10" 
+        viewBox="0 0 1200 800" 
+        preserveAspectRatio="none"
+      >
+        <defs>
+          <linearGradient id="wave1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="hsl(220, 30%, 85%)" stopOpacity="0.3" />
+            <stop offset="50%" stopColor="hsl(210, 25%, 88%)" stopOpacity="0.1" />
+            <stop offset="100%" stopColor="hsl(200, 20%, 90%)" stopOpacity="0.3" />
+          </linearGradient>
+        </defs>
+        
+        <motion.path
+          d="M0,400 Q300,350 600,400 T1200,380 V800 H0 Z"
+          fill="url(#wave1)"
+          animate={{
+            d: [
+              "M0,400 Q300,350 600,400 T1200,380 V800 H0 Z",
+              "M0,420 Q300,380 600,420 T1200,400 V800 H0 Z",
+              "M0,400 Q300,350 600,400 T1200,380 V800 H0 Z"
+            ]
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+      </svg>
+
+      {/* Gentle particle effect */}
+      {[...Array(8)].map((_, i) => (
+        <motion.div
+          key={`particle-${i}`}
+          className="absolute w-1 h-1 rounded-full opacity-20"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            background: `hsl(${200 + Math.random() * 40}, 30%, 70%)`,
+          }}
+          animate={{
+            y: [-20, -10, -20],
+            x: [-5, 5, -5],
+            opacity: [0.1, 0.3, 0.1],
+          }}
+          transition={{
+            duration: 15 + Math.random() * 10,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: Math.random() * 5,
+          }}
+        />
+      ))}
     </div>
   );
 };
