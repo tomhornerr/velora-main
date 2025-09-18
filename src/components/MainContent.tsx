@@ -6,6 +6,7 @@ import { SearchBar } from './SearchBar';
 import ChatInterface from './ChatInterface';
 import PropertyValuationUpload from './PropertyValuationUpload';
 import { CloudBackground } from './CloudBackground';
+import DotGrid from './DotGrid';
 export interface MainContentProps {
   className?: string;
   currentView?: string;
@@ -77,8 +78,12 @@ export const MainContent = ({
             duration: 0.3,
             ease: [0.23, 1, 0.32, 1]
           }} className="w-full h-full flex flex-col relative">
-                {/* Interactive Cloud Background for chat mode */}
-                <CloudBackground intensity="medium" interactive={true} className="absolute inset-0 z-0" />
+                {/* Interactive Dot Grid Background for chat mode */}
+                <DotGrid 
+                  baseColor="hsl(var(--primary) / 0.1)" 
+                  activeColor="hsl(var(--primary) / 0.3)"
+                  className="absolute inset-0 z-0" 
+                />
                 
                 {/* Chat Interface with elevated z-index */}
                 <div className="relative z-10 w-full h-full">
@@ -94,8 +99,12 @@ export const MainContent = ({
             duration: 0.3,
             ease: [0.23, 1, 0.32, 1]
           }} className="flex items-center justify-center flex-1 relative">
-                {/* Interactive Cloud Background */}
-                <CloudBackground intensity="subtle" interactive={true} className="absolute inset-0 z-0" />
+                {/* Interactive Dot Grid Background */}
+                <DotGrid 
+                  baseColor="hsl(var(--muted-foreground) / 0.06)" 
+                  activeColor="hsl(var(--primary) / 0.15)"
+                  className="absolute inset-0 z-0" 
+                />
                 
                 {/* Search Bar with elevated z-index */}
                 <div className="relative z-10 w-full">
@@ -201,8 +210,12 @@ export const MainContent = ({
           </div>;
       default:
         return <div className="flex items-center justify-center flex-1 relative">
-            {/* Interactive Cloud Background */}
-            <CloudBackground intensity="subtle" interactive={true} className="absolute inset-0 z-0" />
+            {/* Interactive Dot Grid Background */}
+            <DotGrid 
+              baseColor="hsl(var(--muted-foreground) / 0.06)" 
+              activeColor="hsl(var(--primary) / 0.15)"
+              className="absolute inset-0 z-0" 
+            />
             
             {/* Search Bar with elevated z-index */}
             <div className="relative z-10 w-full">
