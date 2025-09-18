@@ -8,7 +8,6 @@ interface FlowBackgroundProps {
 
 const FlowBackground = ({ className = '', style }: FlowBackgroundProps) => {
   const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
-  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -17,18 +16,8 @@ const FlowBackground = ({ className = '', style }: FlowBackgroundProps) => {
       setMousePosition({ x, y });
     };
 
-    const handleMouseEnter = () => setIsHovered(true);
-    const handleMouseLeave = () => setIsHovered(false);
-
     window.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseenter', handleMouseEnter);
-    document.addEventListener('mouseleave', handleMouseLeave);
-    
-    return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseenter', handleMouseEnter);
-      document.removeEventListener('mouseleave', handleMouseLeave);
-    };
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   return (
@@ -37,153 +26,202 @@ const FlowBackground = ({ className = '', style }: FlowBackgroundProps) => {
       style={{
         pointerEvents: 'none',
         zIndex: -1,
+        background: '#0a0f1c',
         ...style
       }}
     >
-      {/* Subtle base gradient - no strong colors */}
-      <div 
-        className="absolute inset-0 w-full h-full"
-        style={{
-          background: `
-            linear-gradient(135deg, 
-              hsl(220, 15%, 97%) 0%, 
-              hsl(210, 12%, 95%) 25%,
-              hsl(200, 10%, 93%) 50%,
-              hsl(190, 8%, 91%) 75%,
-              hsl(180, 6%, 89%) 100%
-            )
-          `
-        }}
-      />
+      {/* Main flowing shapes with glowing edges */}
+      <svg 
+        className="absolute inset-0 w-full h-full" 
+        viewBox="0 0 1920 1080" 
+        preserveAspectRatio="xMidYMid slice"
+      >
+        <defs>
+          {/* Glowing blue gradient */}
+          <radialGradient id="glowGradient1" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#1e3a8a" stopOpacity="0.8" />
+            <stop offset="30%" stopColor="#1d4ed8" stopOpacity="0.6" />
+            <stop offset="70%" stopColor="#3b82f6" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="#60a5fa" stopOpacity="0.1" />
+          </radialGradient>
+          
+          <radialGradient id="glowGradient2" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#164e63" stopOpacity="0.9" />
+            <stop offset="30%" stopColor="#0891b2" stopOpacity="0.7" />
+            <stop offset="70%" stopColor="#06b6d4" stopOpacity="0.4" />
+            <stop offset="100%" stopColor="#22d3ee" stopOpacity="0.2" />
+          </radialGradient>
 
-      {/* Interactive gentle highlight that follows mouse */}
+          {/* Glow filters */}
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feMorphology operator="dilate" radius="2" />
+            <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+
+          <filter id="strongGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <feMorphology operator="dilate" radius="4" />
+            <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
+            <feMerge>
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        {/* Large flowing shape - top left */}
+        <motion.path
+          d="M-200,0 C200,100 400,200 600,150 C800,100 1000,250 1200,200 C1400,150 1600,300 1920,250 L1920,0 Z"
+          fill="url(#glowGradient1)"
+          filter="url(#glow)"
+          animate={{
+            d: [
+              "M-200,0 C200,100 400,200 600,150 C800,100 1000,250 1200,200 C1400,150 1600,300 1920,250 L1920,0 Z",
+              "M-200,0 C250,120 450,180 650,170 C850,120 1050,280 1250,220 C1450,170 1650,320 1920,270 L1920,0 Z",
+              "M-200,0 C200,100 400,200 600,150 C800,100 1000,250 1200,200 C1400,150 1600,300 1920,250 L1920,0 Z"
+            ]
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+
+        {/* Large flowing shape - bottom right */}
+        <motion.path
+          d="M1920,1080 C1600,980 1400,850 1200,900 C1000,950 800,800 600,850 C400,900 200,750 0,800 L0,1080 Z"
+          fill="url(#glowGradient2)"
+          filter="url(#glow)"
+          animate={{
+            d: [
+              "M1920,1080 C1600,980 1400,850 1200,900 C1000,950 800,800 600,850 C400,900 200,750 0,800 L0,1080 Z",
+              "M1920,1080 C1650,960 1450,870 1250,920 C1050,970 850,820 650,870 C450,920 250,770 0,820 L0,1080 Z",
+              "M1920,1080 C1600,980 1400,850 1200,900 C1000,950 800,800 600,850 C400,900 200,750 0,800 L0,1080 Z"
+            ]
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 5
+          }}
+        />
+
+        {/* Central flowing shape */}
+        <motion.ellipse
+          cx="960"
+          cy="540"
+          rx="400"
+          ry="200"
+          fill="url(#glowGradient1)"
+          filter="url(#strongGlow)"
+          opacity="0.4"
+          animate={{
+            rx: [400, 450, 400],
+            ry: [200, 250, 200],
+            cx: [960, 920, 960],
+          }}
+          transition={{
+            duration: 15,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 2
+          }}
+        />
+
+        {/* Smaller accent shapes */}
+        <motion.circle
+          cx="300"
+          cy="300"
+          r="150"
+          fill="url(#glowGradient2)"
+          filter="url(#glow)"
+          opacity="0.3"
+          animate={{
+            r: [150, 180, 150],
+            cx: [300, 320, 300],
+            cy: [300, 280, 300],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 8
+          }}
+        />
+
+        <motion.circle
+          cx="1620"
+          cy="780"
+          r="120"
+          fill="url(#glowGradient1)"
+          filter="url(#glow)"
+          opacity="0.25"
+          animate={{
+            r: [120, 140, 120],
+            cx: [1620, 1600, 1620],
+            cy: [780, 800, 780],
+          }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 12
+          }}
+        />
+      </svg>
+
+      {/* Interactive mouse glow effect */}
       <motion.div
-        className="absolute w-96 h-96 rounded-full"
+        className="absolute w-96 h-96 rounded-full pointer-events-none"
         style={{
           left: `${mousePosition.x}%`,
           top: `${mousePosition.y}%`,
           background: `radial-gradient(circle, 
-            hsla(220, 40%, 85%, 0.08) 0%, 
-            hsla(210, 30%, 90%, 0.04) 40%, 
+            rgba(59, 130, 246, 0.15) 0%, 
+            rgba(59, 130, 246, 0.08) 40%, 
             transparent 70%
           )`,
           filter: 'blur(40px)',
           transform: 'translate(-50%, -50%)',
         }}
         animate={{
-          scale: isHovered ? 1.2 : 1,
-          opacity: isHovered ? 0.6 : 0.3,
+          scale: [1, 1.1, 1],
+          opacity: [0.3, 0.5, 0.3],
         }}
         transition={{
-          duration: 0.8,
-          ease: "easeOut"
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut"
         }}
       />
 
-      {/* Floating geometric shapes - very subtle */}
-      {[...Array(6)].map((_, i) => (
+      {/* Subtle animated particles */}
+      {[...Array(20)].map((_, i) => (
         <motion.div
           key={i}
-          className="absolute"
-          style={{
-            width: `${20 + i * 8}px`,
-            height: `${20 + i * 8}px`,
-            left: `${20 + i * 15}%`,
-            top: `${15 + i * 12}%`,
-            borderRadius: i % 2 === 0 ? '50%' : '20%',
-            background: `linear-gradient(135deg, 
-              hsla(${200 + i * 20}, 30%, 88%, 0.06) 0%, 
-              hsla(${220 + i * 15}, 25%, 92%, 0.03) 100%
-            )`,
-            border: `1px solid hsla(${210 + i * 10}, 20%, 80%, 0.1)`,
-          }}
-          animate={{
-            y: [-5, 5, -5],
-            x: [-3, 3, -3],
-            rotate: [0, 5, -5, 0],
-            scale: [1, 1.02, 1],
-          }}
-          transition={{
-            duration: 8 + i * 2,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: i * 0.8,
-          }}
-        />
-      ))}
-
-      {/* Subtle parallax layers */}
-      <motion.div
-        className="absolute inset-0 opacity-20"
-        style={{
-          backgroundImage: `
-            radial-gradient(circle at 25% 25%, hsla(220, 20%, 90%, 0.3) 1px, transparent 1px),
-            radial-gradient(circle at 75% 75%, hsla(200, 15%, 85%, 0.2) 1px, transparent 1px)
-          `,
-          backgroundSize: '80px 80px, 120px 120px',
-        }}
-        animate={{
-          backgroundPosition: [`0% 0%`, `100% 100%`],
-        }}
-        transition={{
-          duration: 60,
-          repeat: Infinity,
-          ease: "linear",
-        }}
-      />
-
-      {/* Soft moving waves */}
-      <svg 
-        className="absolute inset-0 w-full h-full opacity-10" 
-        viewBox="0 0 1200 800" 
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <linearGradient id="wave1" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="hsl(220, 30%, 85%)" stopOpacity="0.3" />
-            <stop offset="50%" stopColor="hsl(210, 25%, 88%)" stopOpacity="0.1" />
-            <stop offset="100%" stopColor="hsl(200, 20%, 90%)" stopOpacity="0.3" />
-          </linearGradient>
-        </defs>
-        
-        <motion.path
-          d="M0,400 Q300,350 600,400 T1200,380 V800 H0 Z"
-          fill="url(#wave1)"
-          animate={{
-            d: [
-              "M0,400 Q300,350 600,400 T1200,380 V800 H0 Z",
-              "M0,420 Q300,380 600,420 T1200,400 V800 H0 Z",
-              "M0,400 Q300,350 600,400 T1200,380 V800 H0 Z"
-            ]
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-      </svg>
-
-      {/* Gentle particle effect */}
-      {[...Array(8)].map((_, i) => (
-        <motion.div
-          key={`particle-${i}`}
-          className="absolute w-1 h-1 rounded-full opacity-20"
+          className="absolute w-1 h-1 rounded-full"
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
-            background: `hsl(${200 + Math.random() * 40}, 30%, 70%)`,
+            background: `hsl(${200 + Math.random() * 60}, 70%, 70%)`,
+            boxShadow: `0 0 6px hsl(${200 + Math.random() * 60}, 70%, 70%)`,
           }}
           animate={{
-            y: [-20, -10, -20],
-            x: [-5, 5, -5],
-            opacity: [0.1, 0.3, 0.1],
+            y: [-30, 30, -30],
+            x: [-15, 15, -15],
+            opacity: [0.2, 0.8, 0.2],
+            scale: [0.5, 1.2, 0.5],
           }}
           transition={{
-            duration: 15 + Math.random() * 10,
+            duration: 10 + Math.random() * 20,
             repeat: Infinity,
             ease: "easeInOut",
-            delay: Math.random() * 5,
+            delay: Math.random() * 10,
           }}
         />
       ))}
