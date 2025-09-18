@@ -216,15 +216,17 @@ export const MainContent = ({
     }
   };
   return <div className={`flex-1 relative ${className || ''}`}>
-      {/* Fixed background that covers entire viewport */}
-      <FlowBackground />
+      {/* Fixed background that covers entire viewport - only for non-upload views */}
+      {currentView !== 'upload' && <FlowBackground />}
       
       {/* Content container with glass effect */}
       <div className={`relative z-10 h-full flex flex-col ${
         isInChatMode 
           ? 'bg-transparent' 
-          : `bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg border border-white/30 ${currentView === 'upload' ? 'p-8' : 'p-8 lg:p-16'}`
-      }`}>
+          : currentView === 'upload' 
+            ? 'bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-white/30' 
+            : 'bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg border border-white/30'
+      } ${currentView === 'upload' ? 'p-8' : 'p-8 lg:p-16'}`}>
         <div className={`relative w-full ${
           isInChatMode 
             ? 'h-full w-full' 
