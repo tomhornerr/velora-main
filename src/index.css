@@ -285,6 +285,19 @@
     }
   }
 
+  /* Flow Animation */
+  @keyframes flow {
+    0% {
+      transform: translateX(-20px) translateY(10px);
+    }
+    50% {
+      transform: translateX(20px) translateY(-5px);
+    }
+    100% {
+      transform: translateX(-20px) translateY(10px);
+    }
+  }
+
   .pulse-glow {
     animation: pulseGlow 3s ease-in-out infinite;
   }

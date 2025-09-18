@@ -191,7 +191,7 @@ const DotGrid = ({
           ro.observe(wrapperRef.current);
         }
       } else {
-        window.addEventListener('resize', handleResize);
+        (window as any).addEventListener('resize', handleResize);
       }
     }
     
