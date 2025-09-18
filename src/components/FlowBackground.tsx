@@ -26,205 +26,176 @@ const FlowBackground = ({ className = '', style }: FlowBackgroundProps) => {
       style={{
         pointerEvents: 'none',
         zIndex: -1,
-        background: '#0a0f1c',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
         ...style
       }}
     >
-      {/* Main flowing shapes with glowing edges */}
       <svg 
         className="absolute inset-0 w-full h-full" 
         viewBox="0 0 1920 1080" 
         preserveAspectRatio="xMidYMid slice"
       >
         <defs>
-          {/* Glowing blue gradient */}
-          <radialGradient id="glowGradient1" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#1e3a8a" stopOpacity="0.8" />
-            <stop offset="30%" stopColor="#1d4ed8" stopOpacity="0.6" />
-            <stop offset="70%" stopColor="#3b82f6" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#60a5fa" stopOpacity="0.1" />
-          </radialGradient>
-          
-          <radialGradient id="glowGradient2" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stopColor="#164e63" stopOpacity="0.9" />
-            <stop offset="30%" stopColor="#0891b2" stopOpacity="0.7" />
-            <stop offset="70%" stopColor="#06b6d4" stopOpacity="0.4" />
-            <stop offset="100%" stopColor="#22d3ee" stopOpacity="0.2" />
-          </radialGradient>
-
-          {/* Glow filters */}
-          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feMorphology operator="dilate" radius="2" />
+          {/* Bright cyan glow filter */}
+          <filter id="brightGlow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
-            <feMerge>
+            <feMerge> 
               <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
+              <feMergeNode in="SourceGraphic"/> 
+            </feMerge>
+          </filter>
+          
+          <filter id="strongGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="20" result="coloredBlur"/>
+            <feMerge> 
+              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="SourceGraphic"/> 
             </feMerge>
           </filter>
 
-          <filter id="strongGlow" x="-100%" y="-100%" width="300%" height="300%">
-            <feMorphology operator="dilate" radius="4" />
-            <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
+          {/* Gradient for the blob shapes */}
+          <radialGradient id="blobGradient" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stopColor="#1e293b" stopOpacity="1" />
+            <stop offset="60%" stopColor="#334155" stopOpacity="0.8" />
+            <stop offset="90%" stopColor="#0ea5e9" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="#38bdf8" stopOpacity="1" />
+          </radialGradient>
         </defs>
 
-        {/* Large flowing shape - top left */}
+        {/* Large blob shape - top left area */}
         <motion.path
-          d="M-200,0 C200,100 400,200 600,150 C800,100 1000,250 1200,200 C1400,150 1600,300 1920,250 L1920,0 Z"
-          fill="url(#glowGradient1)"
-          filter="url(#glow)"
+          d="M-100,-100 C200,50 350,200 500,250 C700,350 800,500 900,600 C1000,700 1100,800 1200,750 C1300,700 1400,600 1500,500 C1600,400 1700,200 1800,100 C1900,0 2000,-50 2100,-100 L2100,-200 L-100,-200 Z"
+          fill="url(#blobGradient)"
+          stroke="#0ea5e9"
+          strokeWidth="3"
+          filter="url(#brightGlow)"
           animate={{
             d: [
-              "M-200,0 C200,100 400,200 600,150 C800,100 1000,250 1200,200 C1400,150 1600,300 1920,250 L1920,0 Z",
-              "M-200,0 C250,120 450,180 650,170 C850,120 1050,280 1250,220 C1450,170 1650,320 1920,270 L1920,0 Z",
-              "M-200,0 C200,100 400,200 600,150 C800,100 1000,250 1200,200 C1400,150 1600,300 1920,250 L1920,0 Z"
+              "M-100,-100 C200,50 350,200 500,250 C700,350 800,500 900,600 C1000,700 1100,800 1200,750 C1300,700 1400,600 1500,500 C1600,400 1700,200 1800,100 C1900,0 2000,-50 2100,-100 L2100,-200 L-100,-200 Z",
+              "M-100,-80 C220,70 370,220 520,270 C720,370 820,520 920,620 C1020,720 1120,820 1220,770 C1320,720 1420,620 1520,520 C1620,420 1720,220 1820,120 C1920,20 2020,-30 2100,-80 L2100,-200 L-100,-200 Z",
+              "M-100,-100 C200,50 350,200 500,250 C700,350 800,500 900,600 C1000,700 1100,800 1200,750 C1300,700 1400,600 1500,500 C1600,400 1700,200 1800,100 C1900,0 2000,-50 2100,-100 L2100,-200 L-100,-200 Z"
             ]
           }}
           transition={{
-            duration: 20,
+            duration: 15,
             repeat: Infinity,
             ease: "easeInOut"
           }}
         />
 
-        {/* Large flowing shape - bottom right */}
+        {/* Large blob shape - bottom right area */}
         <motion.path
-          d="M1920,1080 C1600,980 1400,850 1200,900 C1000,950 800,800 600,850 C400,900 200,750 0,800 L0,1080 Z"
-          fill="url(#glowGradient2)"
-          filter="url(#glow)"
+          d="M2020,1180 C1800,1050 1650,950 1500,900 C1300,800 1200,650 1100,550 C1000,450 900,350 800,400 C700,450 600,550 500,650 C400,750 300,850 200,950 C100,1050 0,1100 -100,1150 L-100,1280 L2020,1280 Z"
+          fill="url(#blobGradient)"
+          stroke="#22d3ee"
+          strokeWidth="3"
+          filter="url(#brightGlow)"
           animate={{
             d: [
-              "M1920,1080 C1600,980 1400,850 1200,900 C1000,950 800,800 600,850 C400,900 200,750 0,800 L0,1080 Z",
-              "M1920,1080 C1650,960 1450,870 1250,920 C1050,970 850,820 650,870 C450,920 250,770 0,820 L0,1080 Z",
-              "M1920,1080 C1600,980 1400,850 1200,900 C1000,950 800,800 600,850 C400,900 200,750 0,800 L0,1080 Z"
+              "M2020,1180 C1800,1050 1650,950 1500,900 C1300,800 1200,650 1100,550 C1000,450 900,350 800,400 C700,450 600,550 500,650 C400,750 300,850 200,950 C100,1050 0,1100 -100,1150 L-100,1280 L2020,1280 Z",
+              "M2020,1160 C1820,1030 1670,930 1520,880 C1320,780 1220,630 1120,530 C1020,430 920,330 820,380 C720,430 620,530 520,630 C420,730 320,830 220,930 C120,1030 20,1080 -100,1130 L-100,1280 L2020,1280 Z",
+              "M2020,1180 C1800,1050 1650,950 1500,900 C1300,800 1200,650 1100,550 C1000,450 900,350 800,400 C700,450 600,550 500,650 C400,750 300,850 200,950 C100,1050 0,1100 -100,1150 L-100,1280 L2020,1280 Z"
             ]
           }}
           transition={{
-            duration: 25,
+            duration: 18,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 3
+          }}
+        />
+
+        {/* Center intersecting blob */}
+        <motion.ellipse
+          cx="960"
+          cy="540"
+          rx="300"
+          ry="180"
+          fill="url(#blobGradient)"
+          stroke="#06b6d4"
+          strokeWidth="2"
+          filter="url(#strongGlow)"
+          opacity="0.8"
+          animate={{
+            rx: [300, 320, 300],
+            ry: [180, 200, 180],
+            cx: [960, 980, 960],
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+        />
+
+        {/* Additional glowing accent shapes */}
+        <motion.circle
+          cx="400"
+          cy="300"
+          r="80"
+          fill="none"
+          stroke="#38bdf8"
+          strokeWidth="2"
+          filter="url(#brightGlow)"
+          opacity="0.6"
+          animate={{
+            r: [80, 90, 80],
+            cx: [400, 420, 400],
+          }}
+          transition={{
+            duration: 10,
             repeat: Infinity,
             ease: "easeInOut",
             delay: 5
           }}
         />
 
-        {/* Central flowing shape */}
-        <motion.ellipse
-          cx="960"
-          cy="540"
-          rx="400"
-          ry="200"
-          fill="url(#glowGradient1)"
-          filter="url(#strongGlow)"
-          opacity="0.4"
-          animate={{
-            rx: [400, 450, 400],
-            ry: [200, 250, 200],
-            cx: [960, 920, 960],
-          }}
-          transition={{
-            duration: 15,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2
-          }}
-        />
-
-        {/* Smaller accent shapes */}
         <motion.circle
-          cx="300"
-          cy="300"
-          r="150"
-          fill="url(#glowGradient2)"
-          filter="url(#glow)"
-          opacity="0.3"
-          animate={{
-            r: [150, 180, 150],
-            cx: [300, 320, 300],
-            cy: [300, 280, 300],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 8
-          }}
-        />
-
-        <motion.circle
-          cx="1620"
+          cx="1520"
           cy="780"
-          r="120"
-          fill="url(#glowGradient1)"
-          filter="url(#glow)"
-          opacity="0.25"
+          r="60"
+          fill="none"
+          stroke="#0ea5e9"
+          strokeWidth="2"
+          filter="url(#brightGlow)"
+          opacity="0.5"
           animate={{
-            r: [120, 140, 120],
-            cx: [1620, 1600, 1620],
-            cy: [780, 800, 780],
+            r: [60, 75, 60],
+            cy: [780, 760, 780],
           }}
           transition={{
-            duration: 18,
+            duration: 14,
             repeat: Infinity,
             ease: "easeInOut",
-            delay: 12
+            delay: 7
           }}
         />
       </svg>
 
-      {/* Interactive mouse glow effect */}
+      {/* Interactive mouse effect - subtle cyan glow */}
       <motion.div
-        className="absolute w-96 h-96 rounded-full pointer-events-none"
+        className="absolute w-80 h-80 rounded-full pointer-events-none opacity-30"
         style={{
           left: `${mousePosition.x}%`,
           top: `${mousePosition.y}%`,
           background: `radial-gradient(circle, 
-            rgba(59, 130, 246, 0.15) 0%, 
-            rgba(59, 130, 246, 0.08) 40%, 
+            rgba(14, 165, 233, 0.2) 0%, 
+            rgba(34, 211, 238, 0.1) 40%, 
             transparent 70%
           )`,
-          filter: 'blur(40px)',
+          filter: 'blur(30px)',
           transform: 'translate(-50%, -50%)',
         }}
         animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.3, 0.5, 0.3],
+          scale: [1, 1.05, 1],
         }}
         transition={{
-          duration: 3,
+          duration: 2,
           repeat: Infinity,
           ease: "easeInOut"
         }}
       />
-
-      {/* Subtle animated particles */}
-      {[...Array(20)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-1 h-1 rounded-full"
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            background: `hsl(${200 + Math.random() * 60}, 70%, 70%)`,
-            boxShadow: `0 0 6px hsl(${200 + Math.random() * 60}, 70%, 70%)`,
-          }}
-          animate={{
-            y: [-30, 30, -30],
-            x: [-15, 15, -15],
-            opacity: [0.2, 0.8, 0.2],
-            scale: [0.5, 1.2, 0.5],
-          }}
-          transition={{
-            duration: 10 + Math.random() * 20,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: Math.random() * 10,
-          }}
-        />
-      ))}
     </div>
   );
 };
