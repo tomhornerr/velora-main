@@ -7,6 +7,7 @@ import ChatInterface from './ChatInterface';
 import PropertyValuationUpload from './PropertyValuationUpload';
 import { CloudBackground } from './CloudBackground';
 import FlowBackground from './FlowBackground';
+import DotGrid from './DotGrid';
 export interface MainContentProps {
   className?: string;
   currentView?: string;
@@ -216,8 +217,12 @@ export const MainContent = ({
     }
   };
   return <div className={`flex-1 relative ${className || ''}`}>
-      {/* Fixed background that covers entire viewport - only for non-upload views */}
-      {currentView !== 'upload' && <FlowBackground />}
+      {/* Background based on current view */}
+      {currentView !== 'upload' && (
+        currentView === 'search' || currentView === 'home' ? 
+          <DotGrid /> : 
+          <FlowBackground />
+      )}
       
       {/* Content container with glass effect */}
       <div className={`relative z-10 h-full flex flex-col ${
