@@ -179,7 +179,7 @@ export default function PropertyValuationUpload({
                       step.completed 
                         ? 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-200' 
                         : step.active
-                        ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200'
+                        ? 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-200'
                         : 'bg-slate-200 text-slate-400'
                     }`}
                     whileHover={{ scale: 1.05 }}
@@ -221,7 +221,7 @@ export default function PropertyValuationUpload({
           {/* Card Header */}
           <div className="flex-shrink-0 p-4 border-b border-slate-100">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-indigo-100 to-blue-100 rounded-lg flex items-center justify-center">
                 <Upload className="w-4 h-4 text-indigo-600" />
               </div>
               <div>
@@ -241,8 +241,8 @@ export default function PropertyValuationUpload({
                 onDrop={handleDrop}
                 className={`relative border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-200 ${
                   isDragOver
-                    ? 'border-indigo-400 bg-gradient-to-br from-indigo-50 to-purple-50'
-                    : 'border-slate-300 hover:border-indigo-400 hover:bg-gradient-to-br hover:from-indigo-50 hover:to-purple-50/50'
+                    ? 'border-indigo-400 bg-gradient-to-br from-indigo-50 to-blue-50'
+                    : 'border-slate-300 hover:border-indigo-400 hover:bg-gradient-to-br hover:from-indigo-50 hover:to-blue-50/50'
                 }`}
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
@@ -258,7 +258,7 @@ export default function PropertyValuationUpload({
 
                 <div className="flex flex-col items-center space-y-3">
                   <motion.div
-                    className="w-12 h-12 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center"
+                    className="w-12 h-12 bg-gradient-to-br from-indigo-100 to-blue-100 rounded-xl flex items-center justify-center"
                     animate={{ 
                       scale: isDragOver ? 1.1 : 1,
                       rotate: isDragOver ? 5 : 0 
@@ -282,7 +282,7 @@ export default function PropertyValuationUpload({
                       <span>Secure Upload</span>
                     </div>
                     <div className="flex items-center space-x-1">
-                      <div className="w-1.5 h-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"></div>
+                      <div className="w-1.5 h-1.5 bg-gradient-to-r from-indigo-500 to-blue-500 rounded-full"></div>
                       <span>AI Analysis</span>
                     </div>
                   </div>
@@ -324,7 +324,7 @@ export default function PropertyValuationUpload({
                                    </div>
                                  ) : (
                                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                                     file.type === 'PDF' ? 'bg-gradient-to-br from-rose-100 to-orange-100' : 'bg-gradient-to-br from-indigo-100 to-purple-100'
+                                     file.type === 'PDF' ? 'bg-gradient-to-br from-rose-100 to-orange-100' : 'bg-gradient-to-br from-indigo-100 to-blue-100'
                                    }`}>
                                      {file.type === 'PDF' ? (
                                        <FileText className={`w-5 h-5 ${
@@ -343,7 +343,7 @@ export default function PropertyValuationUpload({
                                        <Check className="w-2.5 h-2.5 text-white" />
                                      </div>
                                    ) : file.status === 'uploading' ? (
-                                     <div className="w-4 h-4 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
+                                     <div className="w-4 h-4 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-full flex items-center justify-center">
                                        <motion.div
                                          animate={{ rotate: 360 }}
                                          transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
@@ -364,7 +364,7 @@ export default function PropertyValuationUpload({
                                    <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
                                      file.type === 'PDF' 
                                        ? 'bg-gradient-to-r from-rose-100 to-orange-100 text-rose-700' 
-                                       : 'bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700'
+                                       : 'bg-gradient-to-r from-indigo-100 to-blue-100 text-indigo-700'
                                    }`}>
                                      {file.type}
                                    </span>
@@ -433,7 +433,7 @@ export default function PropertyValuationUpload({
                   disabled={!canContinue}
                   className={`px-4 py-2 rounded-lg font-semibold text-white transition-all duration-200 text-sm ${
                     canContinue
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl'
+                      ? 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 shadow-lg hover:shadow-xl'
                       : 'bg-slate-300 cursor-not-allowed'
                   }`}
                   whileHover={canContinue ? { scale: 1.02 } : {}}
