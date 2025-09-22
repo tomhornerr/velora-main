@@ -22,7 +22,8 @@ const DashboardLayoutContent = ({
     timestamp: Date;
   } | null>(null);
   const {
-    addChatToHistory
+    addChatToHistory,
+    getChatById
   } = useChatHistory();
   const handleViewChange = (viewId: string) => {
     // If we're currently in chat mode and navigating away, save the chat to history
@@ -60,7 +61,20 @@ const DashboardLayoutContent = ({
   }, [isChatPanelOpen, hasPerformedSearch]);
   const handleChatSelect = (chatId: string) => {
     console.log('Selected chat:', chatId);
-    setIsInChatMode(true);
+    
+    // Get the chat data from history
+    const selectedChat = getChatById(chatId);
+    if (selectedChat) {
+      // Set the chat mode and load the chat data
+      setCurrentChatData({
+        query: selectedChat.title,
+        messages: selectedChat.messages || [],
+        timestamp: new Date(selectedChat.timestamp)
+      });
+      setIsInChatMode(true);
+      setIsChatPanelOpen(false); // Close the chat panel when selecting a chat
+      console.log('Loaded chat data:', selectedChat);
+    }
   };
   return <motion.div initial={{
     opacity: 0,
@@ -84,7 +98,12 @@ const DashboardLayoutContent = ({
       <Sidebar onItemClick={handleViewChange} onChatToggle={handleChatPanelToggle} isChatPanelOpen={isChatPanelOpen} activeItem={currentView} />
       
       {/* Main Content */}
-      <MainContent currentView={currentView} onChatModeChange={handleChatModeChange} />
+      <MainContent 
+        currentView={currentView} 
+        onChatModeChange={handleChatModeChange}
+        currentChatData={currentChatData}
+        isInChatMode={isInChatMode}
+      />
     </motion.div>;
 };
 export const DashboardLayout = (props: DashboardLayoutProps) => {

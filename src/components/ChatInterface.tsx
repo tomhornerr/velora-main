@@ -21,6 +21,7 @@ export interface ChatInterfaceProps {
   onBack?: () => void;
   onMessagesUpdate?: (messages: Message[]) => void;
   className?: string;
+  loadedMessages?: Message[];
 }
 
 // Smooth transition easing - using framer motion easing arrays  
@@ -31,7 +32,8 @@ export default function ChatInterface({
   initialQuery = "",
   onBack,
   onMessagesUpdate,
-  className
+  className,
+  loadedMessages
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -43,6 +45,15 @@ export default function ChatInterface({
   const [propertyQueries, setPropertyQueries] = useState<Set<string>>(new Set()); // Track which messages are property responses
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Load messages when loadedMessages prop changes
+  React.useEffect(() => {
+    if (loadedMessages && loadedMessages.length > 0) {
+      console.log('Loading messages from history:', loadedMessages);
+      setMessages(loadedMessages);
+      setIsInitialized(true);
+    }
+  }, [loadedMessages]);
 
   // Function to check if query is property-related
   const isPropertyRelatedQuery = (query: string): boolean => {

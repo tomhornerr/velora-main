@@ -13,19 +13,28 @@ export interface MainContentProps {
   className?: string;
   currentView?: string;
   onChatModeChange?: (inChatMode: boolean, chatData?: any) => void;
+  currentChatData?: {
+    query: string;
+    messages: any[];
+    timestamp: Date;
+  } | null;
+  isInChatMode?: boolean;
 }
 export const MainContent = ({
   className,
   currentView = 'search',
-  onChatModeChange
+  onChatModeChange,
+  currentChatData,
+  isInChatMode: inChatMode = false
 }: MainContentProps) => {
   const [chatQuery, setChatQuery] = React.useState<string>("");
-  const [isInChatMode, setIsInChatMode] = React.useState(false);
   const [chatMessages, setChatMessages] = React.useState<any[]>([]);
+  
+  // Use the prop value for chat mode
+  const isInChatMode = inChatMode;
   const handleSearch = (query: string) => {
     console.log('MainContent: Search triggered with query:', query);
     setChatQuery(query);
-    setIsInChatMode(true);
     setChatMessages([]); // Reset messages for new chat
 
     // Pass chat data to parent
@@ -37,11 +46,10 @@ export const MainContent = ({
     onChatModeChange?.(true, chatData);
   };
   const handleBackToSearch = () => {
-    // When going back to search, we exit chat mode but don't save to history
-    // The chat will only be saved if user navigates to a different page via sidebar
-    setIsInChatMode(false);
-    setChatQuery("");
+    console.log('MainContent: Back to search triggered');
+    setChatQuery('');
     setChatMessages([]);
+    // Exit chat mode
     onChatModeChange?.(false);
   };
   const handleChatMessagesUpdate = (messages: any[]) => {
@@ -60,11 +68,12 @@ export const MainContent = ({
   // Reset chat mode when currentView changes (sidebar navigation)
   React.useEffect(() => {
     if (currentView !== 'search' && currentView !== 'home') {
-      setIsInChatMode(false);
       setChatQuery("");
       setChatMessages([]);
+      // Let the parent handle chat mode changes
+      onChatModeChange?.(false);
     }
-  }, [currentView]);
+  }, [currentView, onChatModeChange]);
   const renderViewContent = () => {
     switch (currentView) {
       case 'home':
@@ -86,7 +95,12 @@ export const MainContent = ({
                 
                 {/* Chat Interface with elevated z-index */}
                 <div className="relative z-10 w-full h-full">
-                  <ChatInterface initialQuery={chatQuery} onBack={handleBackToSearch} onMessagesUpdate={handleChatMessagesUpdate} />
+                  <ChatInterface 
+                    initialQuery={chatQuery} 
+                    onBack={handleBackToSearch} 
+                    onMessagesUpdate={handleChatMessagesUpdate}
+                    loadedMessages={currentChatData?.messages}
+                  />
                 </div>
               </motion.div> : <motion.div key="search" initial={{
             opacity: 0
