@@ -152,29 +152,22 @@ export const ChatPanel = ({
       duration: 0.4,
       ease: [0.23, 1, 0.32, 1]
     }} className={`fixed left-10 lg:left-14 top-0 h-full w-80 bg-white/90 backdrop-blur-xl border-r border-slate-200/60 flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.08)] z-40 ${className || ''}`}>
-          {/* Header with Archive Toggle */}
-          <div className="flex items-center justify-between p-6 border-b border-slate-200/60">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl flex items-center justify-center border-2 border-indigo-100/60">
-                <Sparkles className="w-5 h-5 text-indigo-600" strokeWidth={1.5} />
+          {/* Header */}
+          <div className="flex items-center justify-between p-4 border-b border-slate-200/40">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg flex items-center justify-center">
+                <Sparkles className="w-4 h-4 text-slate-600" strokeWidth={1.5} />
               </div>
-              <div>
-                <h3 className="text-slate-800 font-semibold text-lg tracking-tight">
-                  <span>{showArchived ? 'Archived Chats' : 'Chat History'}</span>
-                </h3>
-                <p className="text-xs text-slate-500">
-                  {showArchived ? `${archivedChats.length} archived` : `${activeChats.length} active`}
-                </p>
-              </div>
+              <span className="text-slate-800 font-medium text-sm">Chat History</span>
             </div>
             
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1">
               {archivedChats.length > 0 && (
                 <motion.button
                   onClick={() => setShowArchived(!showArchived)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`px-3 py-1.5 text-xs rounded-lg transition-all duration-200 ${
+                  className={`p-1.5 text-xs rounded-md transition-all duration-200 ${
                     showArchived 
                       ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' 
                       : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
@@ -184,27 +177,28 @@ export const ChatPanel = ({
                 </motion.button>
               )}
               
-              <motion.button onClick={onToggle} whileHover={{
-            scale: 1.05
-          }} whileTap={{
-            scale: 0.95
-          }} className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all duration-200">
+              <motion.button 
+                onClick={onToggle} 
+                whileHover={{ scale: 1.05 }} 
+                whileTap={{ scale: 0.95 }} 
+                className="p-1.5 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-all duration-200"
+              >
                 <X className="w-4 h-4" strokeWidth={1.5} />
               </motion.button>
             </div>
           </div>
 
           {/* New Chat Button */}
-          <div className="px-6 py-4 border-b border-slate-200/40">
+          <div className="p-4">
             <motion.button 
               onClick={handleNewChat} 
               whileHover={{ scale: 1.01 }} 
               whileTap={{ scale: 0.99 }} 
-              className="mx-auto flex items-center space-x-2 px-4 py-2 border border-slate-200/60 hover:border-slate-300/80 bg-white/50 hover:bg-slate-50/80 rounded-lg transition-all duration-200 group backdrop-blur-sm"
+              className="w-full flex items-center space-x-2.5 px-3 py-2.5 border border-slate-200/60 hover:border-slate-300/80 bg-white/70 hover:bg-slate-50/80 rounded-lg transition-all duration-200 group"
             >
               <Plus className="w-4 h-4 text-slate-600 group-hover:text-slate-700" strokeWidth={1.5} />
-              <span className="text-slate-600 group-hover:text-slate-700 font-medium text-sm">
-                New Chat
+              <span className="text-slate-700 group-hover:text-slate-800 font-medium text-sm">
+                New chat
               </span>
             </motion.button>
           </div>
