@@ -192,7 +192,7 @@ export const ChatPanel = ({
               duration: 0.2,
               delay: isPendingDeletion ? 0 : index * 0.02,
               ease: [0.23, 1, 0.32, 1]
-            }} onClick={() => handleChatClick(chat.id)} className={`group relative px-3 py-3 rounded-lg transition-all duration-75 cursor-pointer mb-1 ${isPendingDeletion ? 'bg-red-50' : 'hover:bg-slate-100/80 hover:scale-[1.02] hover:shadow-sm'}`}>
+            }} onClick={() => handleChatClick(chat.id)} className={`group relative px-3 py-3 rounded-lg transition-all duration-50 cursor-pointer mb-1 transform-gpu ${isPendingDeletion ? 'bg-red-50' : 'hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 hover:scale-[1.025] hover:shadow-md hover:-translate-y-0.5'}`}>
                       
                       {isEditing ? (
                         <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
@@ -211,7 +211,7 @@ export const ChatPanel = ({
                         </div>
                       ) : (
                         <div className="flex items-center justify-between">
-                          <span className={`text-sm font-medium truncate pr-2 transition-all duration-75 ${isPendingDeletion ? 'text-red-600' : 'text-slate-800 group-hover:text-slate-900 group-hover:font-semibold'}`}>
+                          <span className={`text-sm font-medium truncate pr-2 transition-all duration-50 transform-gpu ${isPendingDeletion ? 'text-red-600' : 'text-slate-700 group-hover:text-slate-900 group-hover:font-bold group-hover:tracking-wide'}`}>
                             {chat.title}
                           </span>
                           
@@ -219,58 +219,59 @@ export const ChatPanel = ({
                             <div className="relative">
                               <button
                                 onClick={(e) => handleMenuToggle(e, chat.id)}
-                                className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-slate-200/80 transition-all duration-100 transform hover:scale-110"
+                                className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md hover:bg-slate-200 transition-all duration-50 transform hover:scale-125 hover:rotate-90 active:scale-95"
                               >
-                                <MoreVertical className="w-4 h-4 text-slate-500 hover:text-slate-700 transition-colors duration-75" />
+                                <MoreVertical className="w-3.5 h-3.5 text-slate-400 hover:text-slate-700 transition-all duration-50" />
                               </button>
                               
                               {openMenuId === chat.id && (
-                                <motion.div
-                                  initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                                  exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                                  className="absolute right-0 top-8 w-48 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50"
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <button
-                                    onClick={(e) => handleRename(e, chat.id, chat.title)}
-                                    className="w-full flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
-                                  >
-                                    <Edit className="w-4 h-4 mr-3" />
-                                    Rename
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setOpenMenuId(null);
-                                    }}
-                                    className="w-full flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
-                                  >
-                                    <Share className="w-4 h-4 mr-3" />
-                                    Share
-                                  </button>
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setOpenMenuId(null);
-                                    }}
-                                    className="w-full flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
-                                  >
-                                    <Archive className="w-4 h-4 mr-3" />
-                                    Archive
-                                  </button>
-                                  <div className="h-px bg-slate-200 mx-2 my-1" />
-                                  <button
-                                    onClick={(e) => handleDeleteChat(e, chat.id)}
-                                    className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                                  >
-                                    <Trash2 className="w-4 h-4 mr-3" />
-                                    Delete
-                                  </button>
-                                </motion.div>
-                              )}
-                            </div>
-                          )}
+                                 <motion.div
+                                   initial={{ opacity: 0, scale: 0.9, y: -12 }}
+                                   animate={{ opacity: 1, scale: 1, y: 0 }}
+                                   exit={{ opacity: 0, scale: 0.9, y: -12 }}
+                                   transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}
+                                   className="absolute right-0 top-10 w-48 bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-200/60 py-2 z-50"
+                                   onClick={(e) => e.stopPropagation()}
+                                 >
+                                   <button
+                                     onClick={(e) => handleRename(e, chat.id, chat.title)}
+                                     className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
+                                   >
+                                     <Edit className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:rotate-12 group-hover/item:text-indigo-600" />
+                                     <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">Rename</span>
+                                   </button>
+                                   <button
+                                     onClick={(e) => {
+                                       e.stopPropagation();
+                                       setOpenMenuId(null);
+                                     }}
+                                     className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
+                                   >
+                                     <Share className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:-rotate-12 group-hover/item:text-blue-600" />
+                                     <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">Share</span>
+                                   </button>
+                                   <button
+                                     onClick={(e) => {
+                                       e.stopPropagation();
+                                       setOpenMenuId(null);
+                                     }}
+                                     className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
+                                   >
+                                     <Archive className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:text-amber-600" />
+                                     <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">Archive</span>
+                                   </button>
+                                   <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent mx-2 my-1" />
+                                   <button
+                                     onClick={(e) => handleDeleteChat(e, chat.id)}
+                                     className="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
+                                   >
+                                     <Trash2 className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:rotate-12 group-hover/item:text-red-700" />
+                                     <span className="group-hover/item:font-semibold group-hover/item:text-red-700 transition-all duration-50">Delete</span>
+                                   </button>
+                                  </motion.div>
+                               )}
+                             </div>
+                           )}
                         </div>
                       )}
 
@@ -279,15 +280,15 @@ export const ChatPanel = ({
                         <motion.div
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.1, ease: [0.16, 1, 0.3, 1] }}
-                          className="absolute inset-0 flex items-center justify-center bg-red-50/90 backdrop-blur-sm rounded-lg"
+                          transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}
+                          className="absolute inset-0 flex items-center justify-center bg-red-50/95 backdrop-blur-sm rounded-lg"
                         >
                           <button
                             onClick={handleUndoDelete}
-                            className="flex items-center space-x-2 px-3 py-1 bg-white rounded-md shadow-sm border hover:scale-105 transition-transform duration-75"
+                            className="flex items-center space-x-2 px-4 py-2 bg-white rounded-lg shadow-lg border hover:scale-110 hover:shadow-xl transition-all duration-50 active:scale-95"
                           >
-                            <Undo2 className="w-4 h-4 text-red-600" />
-                            <span className="text-sm text-red-600 font-medium">Undo</span>
+                            <Undo2 className="w-4 h-4 text-red-600 hover:rotate-180 transition-transform duration-200" />
+                            <span className="text-sm text-red-600 font-semibold">Undo</span>
                           </button>
                         </motion.div>
                       )}
