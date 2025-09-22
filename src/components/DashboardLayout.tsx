@@ -36,30 +36,26 @@ const DashboardLayoutContent = ({
     console.log('DashboardLayout: Chat mode changed to:', inChatMode, 'with data:', chatData);
     
     setIsInChatMode(inChatMode);
-    if (chatData && chatData.messages && chatData.messages.length > 0) {
+    if (chatData) {
       setCurrentChatData(chatData);
       setHasPerformedSearch(true);
       
-      // ChatGPT-like behavior: Always save/update chat when messages change
+      // Instantly create/update chat history when any query or message is entered
       if (currentChatId) {
         // Update existing chat
-        updateChatInHistory(currentChatId, chatData.messages);
-        console.log('Updated existing chat:', currentChatId, 'with', chatData.messages.length, 'messages');
+        updateChatInHistory(currentChatId, chatData.messages || []);
+        console.log('Updated existing chat:', currentChatId, 'with', (chatData.messages || []).length, 'messages');
       } else {
-        // Create new chat - this happens on first message
+        // Create new chat instantly - happens as soon as user enters text
         const newChatId = addChatToHistory({
           title: '', // Will be auto-generated from first message
           timestamp: new Date().toISOString(),
-          preview: chatData.query || '',
-          messages: chatData.messages
+          preview: chatData.query || (chatData.messages && chatData.messages.length > 0 ? chatData.messages[0].content : ''),
+          messages: chatData.messages || []
         });
         setCurrentChatId(newChatId);
-        console.log('Created new chat:', newChatId, 'with', chatData.messages.length, 'messages');
+        console.log('Created new chat instantly:', newChatId, 'for query/input');
       }
-    } else if (chatData) {
-      // Handle case where chatData exists but no messages yet
-      setCurrentChatData(chatData);
-      setHasPerformedSearch(true);
     } else if (!inChatMode) {
       // Don't clear currentChatId immediately to allow for re-entering
       setCurrentChatData(null);
