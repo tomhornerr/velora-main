@@ -291,39 +291,53 @@ export default function ChatInterface({
     >
       {/* Fullscreen Chat Container - Gradient Background */}
       <div className="w-full h-full relative overflow-hidden">
-        {/* Flowing gradient background matching the reference image */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-cyan-600 to-teal-300">
-          {/* Main flowing curve overlay */}
+        {/* Smooth curved gradient background matching the reference design */}
+        <div className="absolute inset-0" style={{
+          background: `
+            radial-gradient(ellipse 120% 80% at 20% 50%, #1e1b4b 0%, #0c4a6e 30%, #0891b2 60%),
+            radial-gradient(ellipse 150% 100% at 80% 30%, rgba(6, 182, 212, 0.8) 0%, rgba(20, 184, 166, 0.6) 40%, transparent 70%),
+            linear-gradient(135deg, #0f172a 0%, #1e293b 20%, #0369a1 50%, #0891b2 70%, #14b8a6 90%, #a7f3d0 100%)
+          `
+        }}>
+          {/* Large curved flowing shape */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-full" 
-                 style={{
-                   background: `
-                     radial-gradient(ellipse 800px 400px at 60% 30%, rgba(255, 159, 67, 0.3) 0%, transparent 50%),
-                     radial-gradient(ellipse 600px 800px at 80% 70%, rgba(52, 211, 153, 0.4) 0%, transparent 60%),
-                     radial-gradient(ellipse 1000px 600px at 20% 80%, rgba(14, 165, 233, 0.3) 0%, transparent 50%),
-                     linear-gradient(135deg, #1e293b 0%, #0891b2 40%, #14b8a6 70%, #fbbf24 100%)
-                   `
-                 }}>
-            </div>
-            
-            {/* Curved flowing element */}
-            <div className="absolute top-1/4 left-1/3 w-96 h-96 rounded-full"
-                 style={{
-                   background: 'radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, rgba(245, 101, 101, 0.3) 30%, transparent 70%)',
-                   transform: 'rotate(-15deg) scale(1.5, 0.8)',
-                   filter: 'blur(40px)'
-                 }}>
-            </div>
-            
-            {/* Additional flowing shapes */}
-            <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full"
-                 style={{
-                   background: 'radial-gradient(ellipse, rgba(20, 184, 166, 0.3) 0%, rgba(6, 182, 212, 0.2) 50%, transparent 70%)',
-                   transform: 'rotate(25deg) scale(1.2, 0.6)',
-                   filter: 'blur(30px)'
-                 }}>
-            </div>
+            <div 
+              className="absolute w-[200%] h-[200%] -top-1/2 -left-1/4"
+              style={{
+                background: `
+                  radial-gradient(ellipse 60% 40% at 40% 60%, rgba(251, 146, 60, 0.3) 0%, rgba(249, 115, 22, 0.2) 30%, transparent 60%),
+                  radial-gradient(ellipse 80% 60% at 60% 40%, rgba(6, 182, 212, 0.4) 0%, rgba(14, 165, 233, 0.3) 40%, transparent 70%)
+                `,
+                borderRadius: '50%',
+                transform: 'rotate(-25deg)',
+                filter: 'blur(60px)'
+              }}
+            />
           </div>
+          
+          {/* Smooth organic curve overlay */}
+          <div className="absolute inset-0">
+            <div 
+              className="absolute w-[180%] h-[150%] -top-1/3 -right-1/4"
+              style={{
+                background: `
+                  radial-gradient(ellipse 50% 70% at 30% 70%, rgba(20, 184, 166, 0.4) 0%, rgba(6, 182, 212, 0.3) 50%, transparent 80%),
+                  radial-gradient(ellipse 70% 50% at 70% 30%, rgba(245, 101, 101, 0.2) 0%, rgba(251, 146, 60, 0.3) 40%, transparent 70%)
+                `,
+                borderRadius: '60% 40% 50% 70%',
+                transform: 'rotate(15deg)',
+                filter: 'blur(40px)'
+              }}
+            />
+          </div>
+          
+          {/* Additional soft glow elements */}
+          <div className="absolute bottom-0 left-0 w-full h-1/2"
+               style={{
+                 background: 'radial-gradient(ellipse 100% 60% at 50% 100%, rgba(14, 165, 233, 0.3) 0%, rgba(6, 182, 212, 0.2) 40%, transparent 80%)',
+                 filter: 'blur(30px)'
+               }}
+          />
         </div>
 
         {/* White floating chat panel */}
