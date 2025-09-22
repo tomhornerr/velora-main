@@ -96,7 +96,7 @@ export const Sidebar = ({
       }
         }} onClick={onChatToggle} className={`
           w-11 h-11 lg:w-13 lg:h-13 flex items-center justify-center mb-6
-          transition-all duration-100 group cursor-pointer
+          transition-all duration-300 ease-out group cursor-pointer
         `} aria-label="Toggle Chat History">
         <AnimatePresence>
           {isChatPanelOpen && <motion.div initial={{
@@ -114,7 +114,7 @@ export const Sidebar = ({
         }} className="absolute -left-[2px] top-1/2 -translate-y-1/2 w-1 h-6 bg-sidebar-primary rounded-full" />}
         </AnimatePresence>
         
-        <MessageSquare className="w-4 h-4 lg:w-5 lg:h-5 text-white drop-shadow-sm" strokeWidth={1.8} />
+        <MessageSquare className="w-4 h-4 lg:w-5 lg:h-5 text-white drop-shadow-sm transition-all duration-300 ease-out" strokeWidth={1.8} />
       </motion.button>
 
       {/* Navigation Items */}
@@ -148,9 +148,9 @@ export const Sidebar = ({
         }} onClick={() => {
           // Always navigate to the selected page, regardless of current state
           handleItemClick(item.id);
-        }} className="w-11 h-11 lg:w-13 lg:h-13 flex items-center justify-center transition-all duration-200 group" aria-label={item.label}>
+        }} className="w-11 h-11 lg:w-13 lg:h-13 flex items-center justify-center transition-all duration-300 ease-out group" aria-label={item.label}>
               {/* Icon */}
-              <Icon className={`w-4 h-4 lg:w-5 lg:h-5 transition-all duration-200 drop-shadow-sm ${isActive ? 'text-sidebar-active scale-110' : 'text-white hover:scale-105'}`} strokeWidth={1.8} />
+              <Icon className={`w-4 h-4 lg:w-5 lg:h-5 transition-all duration-300 ease-out drop-shadow-sm ${isActive ? 'text-sidebar-active scale-105' : 'text-white hover:scale-102'}`} strokeWidth={1.8} />
             </motion.button>;
       })}
       </div>
