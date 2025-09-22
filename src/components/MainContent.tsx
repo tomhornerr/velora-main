@@ -259,7 +259,7 @@ export const MainContent = ({
             : currentView === 'upload' ? 'h-full' : 'max-w-5xl mx-auto'
         } flex-1 flex flex-col`}>
           <motion.div initial={{
-          opacity: 0,
+          opacity: 1,
           y: 20
         }} animate={{
           opacity: 1,
