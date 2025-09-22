@@ -102,9 +102,9 @@ export default function PropertyResultsDisplay({
       
       // Sensitivity thresholds
       const sensitivityMap = {
-        low: 30,
-        medium: 15,
-        high: 5
+        low: 27,
+        medium: 12,
+        high: 3
       };
       
       const threshold = sensitivityMap[scrollSensitivity];
