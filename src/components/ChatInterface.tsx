@@ -320,12 +320,13 @@ export default function ChatInterface({
                   <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                     <div className={`flex max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start space-x-3`}>
                       {/* Message Content */}
-                      <motion.div className={`group relative ${message.role === 'user' ? 'px-3 py-2 rounded-2xl text-slate-800 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/50' : 'text-slate-700'}`} whileHover={{
-                    y: message.role === 'user' ? -1 : 0,
-                    scale: message.role === 'user' ? 1.005 : 1
+                      <motion.div className={`group relative ${message.role === 'user' ? 'px-4 py-3 rounded-2xl text-slate-800 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/50 backdrop-blur-sm' : 'text-slate-700'}`} whileHover={{
+                    y: message.role === 'user' ? -2 : 0,
+                    scale: message.role === 'user' ? 1.02 : 1,
+                    boxShadow: message.role === 'user' ? '0 8px 25px -5px rgba(59, 130, 246, 0.15)' : undefined
                   }} transition={{
-                    duration: 0.1,
-                    ease: snapEasing
+                    duration: 0.2,
+                    ease: [0.4, 0, 0.2, 1]
                   }}>
                         <motion.p className="text-xs leading-relaxed whitespace-pre-wrap font-medium">
                           <motion.span initial={{
