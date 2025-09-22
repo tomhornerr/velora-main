@@ -289,24 +289,24 @@ export const ChatPanel = ({
                                     animate={{ opacity: 1, scale: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.9, y: -12 }}
                                     transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}
-                                    className="absolute right-0 top-10 w-48 bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-200/60 py-2 z-50"
+                                    className="absolute right-[-8px] top-10 w-48 bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-200/60 py-2 z-50"
                                     onClick={(e) => e.stopPropagation()}
                                   >
                                      <button
                                        onClick={(e) => handleRename(e, chat.id, chat.title)}
-                                       className="w-full flex items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors duration-150 group/item"
+                                       className="w-full flex items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors duration-75 group/item"
                                      >
-                                       <Edit className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-150" />
+                                       <Edit className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-75" />
                                        <span className="font-medium">Rename</span>
                                      </button>
                                      <button
                                        onClick={(e) => chat.archived ? handleUnarchiveChat(e, chat.id) : handleArchiveChat(e, chat.id)}
-                                       className="w-full flex items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors duration-150 group/item"
+                                       className="w-full flex items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors duration-75 group/item"
                                      >
                                        {chat.archived ? (
-                                         <ArchiveRestore className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-150" />
+                                         <ArchiveRestore className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-75" />
                                        ) : (
-                                         <Archive className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-150" />
+                                         <Archive className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-75" />
                                        )}
                                        <span className="font-medium">
                                          {chat.archived ? 'Unarchive' : 'Archive'}
@@ -315,9 +315,9 @@ export const ChatPanel = ({
                                      <div className="h-px bg-slate-200 mx-2 my-1" />
                                      <button
                                        onClick={(e) => handleDeleteChat(e, chat.id)}
-                                       className="w-full flex items-center px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 transition-colors duration-150 group/item"
+                                       className="w-full flex items-center px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 transition-colors duration-75 group/item"
                                      >
-                                       <Trash2 className="w-3.5 h-3.5 mr-2.5 text-red-500 group-hover/item:text-red-600 transition-colors duration-150" />
+                                       <Trash2 className="w-3.5 h-3.5 mr-2.5 text-red-500 group-hover/item:text-red-600 transition-colors duration-75" />
                                        <span className="font-medium">Delete</span>
                                      </button>
                                    </motion.div>
