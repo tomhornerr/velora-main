@@ -118,12 +118,22 @@ export default function ChatInterface({
   }] as any[];
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
-      behavior: "smooth"
+      behavior: "smooth",
+      block: "end"
     });
   };
+  
   useEffect(() => {
+    // Auto-scroll to bottom when new messages are added
     scrollToBottom();
   }, [messages]);
+  
+  useEffect(() => {
+    // Auto-scroll to bottom when typing indicator changes
+    if (isTyping) {
+      setTimeout(() => scrollToBottom(), 100);
+    }
+  }, [isTyping]);
   // Auto-focus behavior for chat input after activation
   useEffect(() => {
     if (isInputActivated) {
