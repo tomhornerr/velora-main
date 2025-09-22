@@ -133,7 +133,7 @@ export const MainContent = ({
                 
                 {/* Search Bar with elevated z-index */}
                 <div className="relative z-10 w-full">
-                  <SearchBar onSearch={handleSearch} />
+                  <SearchBar onSearch={handleSearch} onQueryStart={handleSearch} />
                 </div>
               </motion.div>}
           </AnimatePresence>;
@@ -241,7 +241,7 @@ export const MainContent = ({
             
             {/* Search Bar with elevated z-index */}
             <div className="relative z-10 w-full">
-              <SearchBar onSearch={handleSearch} />
+              <SearchBar onSearch={handleSearch} onQueryStart={handleSearch} />
             </div>
           </div>;
     }

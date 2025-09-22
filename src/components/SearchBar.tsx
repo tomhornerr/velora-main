@@ -7,14 +7,17 @@ import { Sparkles, Mic, ChevronRight, Upload } from "lucide-react";
 export interface SearchBarProps {
   className?: string;
   onSearch?: (query: string) => void;
+  onQueryStart?: (query: string) => void;
 }
 export const SearchBar = ({
   className,
-  onSearch
+  onSearch,
+  onQueryStart
 }: SearchBarProps) => {
   const [searchValue, setSearchValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [hasStartedTyping, setHasStartedTyping] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   
   // Auto-focus on any keypress for search bar
@@ -109,7 +112,17 @@ export const SearchBar = ({
                   ref={inputRef}
                   type="text" 
                   value={searchValue} 
-                  onChange={e => setSearchValue(e.target.value)} 
+                  onChange={e => {
+                    const value = e.target.value;
+                    setSearchValue(value);
+                    
+                    // Create chat history the moment user starts typing
+                    if (value.trim() && !hasStartedTyping) {
+                      console.log('SearchBar: First character typed, creating chat history');
+                      setHasStartedTyping(true);
+                      onQueryStart?.(value.trim());
+                    }
+                  }}
                   onFocus={() => setIsFocused(true)} 
                   onBlur={() => setIsFocused(false)} 
                   onKeyDown={e => {
