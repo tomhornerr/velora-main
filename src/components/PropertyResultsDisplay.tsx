@@ -70,6 +70,7 @@ export default function PropertyResultsDisplay({
   const [isMapOpen, setIsMapOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const isScrollingRef = useRef(false);
+  const swipeRef = useRef(false);
   const [isHovering, setIsHovering] = useState(false);
   const [scrollSensitivity, setScrollSensitivity] = useState<'low' | 'medium' | 'high'>('medium');
   const [showSettings, setShowSettings] = useState(false);
@@ -108,18 +109,22 @@ export default function PropertyResultsDisplay({
       };
       
       const threshold = sensitivityMap[scrollSensitivity];
+      // Slightly less sensitive for horizontal swipes (0.1 less sensitive)
+      const horizontalThreshold = threshold * 1.3;
       
       // Check for horizontal swipe (trackpad swipe left/right on Mac)
-      const isHorizontalSwipe = Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > threshold;
+      const isHorizontalSwipe = Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > horizontalThreshold;
       // Check for vertical scroll
       const isVerticalScroll = Math.abs(e.deltaY) > threshold && !isHorizontalSwipe;
       
       // Only proceed if scroll/swipe exceeds sensitivity threshold
       if (!isHorizontalSwipe && !isVerticalScroll) return;
       
-      isScrollingRef.current = true;
-
       if (isHorizontalSwipe) {
+        // Prevent multiple swipe changes from single gesture
+        if (swipeRef.current) return;
+        swipeRef.current = true;
+        
         // Horizontal trackpad swipe navigation
         const swipingLeft = e.deltaX > 0;
         const swipingRight = e.deltaX < 0;
@@ -129,7 +134,15 @@ export default function PropertyResultsDisplay({
         } else if (swipingRight) {
           prevProperty();
         }
+        
+        // Reset swipe lock after longer delay to prevent multiple changes
+        setTimeout(() => {
+          swipeRef.current = false;
+        }, 500);
       } else if (isVerticalScroll) {
+        // Prevent rapid scrolling for vertical scroll
+        if (isScrollingRef.current) return;
+        isScrollingRef.current = true;
         // Vertical scroll navigation
         const scrollingDown = e.deltaY > 0;
         const scrollingUp = e.deltaY < 0;
@@ -139,18 +152,18 @@ export default function PropertyResultsDisplay({
         } else if (scrollingUp) {
           prevProperty();
         }
+        
+        // Reset scroll lock after a delay (longer for lower sensitivity)
+        const delayMap = {
+          low: 400,
+          medium: 250,
+          high: 150
+        };
+        
+        setTimeout(() => {
+          isScrollingRef.current = false;
+        }, delayMap[scrollSensitivity]);
       }
-
-      // Reset scroll lock after a delay (longer for lower sensitivity)
-      const delayMap = {
-        low: 400,
-        medium: 250,
-        high: 150
-      };
-      
-      setTimeout(() => {
-        isScrollingRef.current = false;
-      }, delayMap[scrollSensitivity]);
     };
 
     const handleMouseEnter = () => {
