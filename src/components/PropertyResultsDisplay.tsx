@@ -109,8 +109,8 @@ export default function PropertyResultsDisplay({
       };
       
       const threshold = sensitivityMap[scrollSensitivity];
-      // Slightly less sensitive for horizontal swipes (0.1 less sensitive)
-      const horizontalThreshold = threshold * 1.3;
+      // More sensitive for horizontal swipes now that we have proper debouncing
+      const horizontalThreshold = threshold * 0.8;
       
       // Check for horizontal swipe (trackpad swipe left/right on Mac)
       const isHorizontalSwipe = Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > horizontalThreshold;
