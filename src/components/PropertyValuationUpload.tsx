@@ -232,7 +232,11 @@ export default function PropertyValuationUpload({
       }} animate={{
         opacity: 1,
         y: 0
-      }} className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+      }} className="bg-white rounded-2xl overflow-hidden"
+        style={{
+          boxShadow: 'none',
+          border: 'none'
+        }}>
           {/* Card Header */}
           <div className="flex-shrink-0 p-4 border-b border-slate-100">
             <div className="flex items-center space-x-3">
