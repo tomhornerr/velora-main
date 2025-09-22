@@ -101,31 +101,23 @@ export default function PropertyResultsDisplay({
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       
-      // Immediately block if already processed a scroll
+      // Block all scroll events if we've already processed one
       if (hasScrolled.current) return;
       
-      // Process the scroll direction once
+      // Set flag immediately to block further scrolls
       hasScrolled.current = true;
       
-      if (Math.abs(e.deltaY) > 0) {
-        if (e.deltaY > 0) {
-          // Scroll down - next property
-          setCurrentIndex(prev => (prev + 1) % properties.length);
-        } else {
-          // Scroll up - previous property  
-          setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
-        }
+      // Process scroll direction
+      if (e.deltaY > 0) {
+        setCurrentIndex(prev => (prev + 1) % properties.length);
+      } else if (e.deltaY < 0) {
+        setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
       }
       
-      // Clear existing timeout
-      if (scrollTimeout.current) {
-        clearTimeout(scrollTimeout.current);
-      }
-      
-      // Reset flag after a longer delay to ensure gesture completion
-      scrollTimeout.current = setTimeout(() => {
+      // Reset after short delay
+      setTimeout(() => {
         hasScrolled.current = false;
-      }, 500);
+      }, 300);
     };
 
     // Add event listeners
