@@ -262,13 +262,13 @@ export default function ChatInterface({
     ease: smoothEasing
   }} className={`flex flex-col h-full w-full relative ${className || ''}`}>
       {/* Fullscreen Chat Container - Animated Background */}
-      <div className="w-full h-full relative overflow-hidden rounded-lg">
-        {/* White Background */}
-        <div className="absolute inset-0 bg-white rounded-lg">
+      <div className="w-full h-full relative overflow-hidden rounded-lg p-8">
+        {/* White Background with extended padding */}
+        <div className="absolute inset-8 bg-white rounded-lg">
         </div>
         
         {/* Content Layer */}
-        <div className="relative z-10 flex flex-col h-full">
+        <div className="relative z-10 flex flex-col h-full py-8">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-3 mx-4 mt-4 border-b border-slate-100/20">
           <div className="flex items-center space-x-2">
