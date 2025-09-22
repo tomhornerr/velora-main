@@ -195,16 +195,16 @@ export const ChatPanel = ({
           </div>
 
           {/* New Chat Button */}
-          <div className="p-6 border-b border-slate-200/40">
-            <motion.button onClick={handleNewChat} whileHover={{
-          scale: 1.02,
-          y: -1
-        }} whileTap={{
-          scale: 0.98
-        }} className="w-full flex items-center justify-center space-x-2 p-2.5 bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 border-2 border-indigo-100/60 hover:border-indigo-200/80 rounded-xl transition-all duration-300 group shadow-[0_4px_20px_rgba(99,102,241,0.08)]">
-              <Plus className="w-5 h-5 text-indigo-600 group-hover:text-indigo-700" strokeWidth={1.5} />
-              <span className="text-indigo-600 group-hover:text-indigo-700 font-semibold">
-                <span>New Chat</span>
+          <div className="px-6 py-4 border-b border-slate-200/40">
+            <motion.button 
+              onClick={handleNewChat} 
+              whileHover={{ scale: 1.01 }} 
+              whileTap={{ scale: 0.99 }} 
+              className="mx-auto flex items-center space-x-2 px-4 py-2 border border-slate-200/60 hover:border-slate-300/80 bg-white/50 hover:bg-slate-50/80 rounded-lg transition-all duration-200 group backdrop-blur-sm"
+            >
+              <Plus className="w-4 h-4 text-slate-600 group-hover:text-slate-700" strokeWidth={1.5} />
+              <span className="text-slate-600 group-hover:text-slate-700 font-medium text-sm">
+                New Chat
               </span>
             </motion.button>
           </div>
