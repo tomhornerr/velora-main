@@ -45,6 +45,7 @@ export default function ChatInterface({
   const [likedMessages, setLikedMessages] = useState<Set<string>>(new Set());
   const [dislikedMessages, setDislikedMessages] = useState<Set<string>>(new Set());
   const [propertyQueries, setPropertyQueries] = useState<Set<string>>(new Set()); // Track which messages are property responses
+  const [isInputActivated, setIsInputActivated] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -123,6 +124,30 @@ export default function ChatInterface({
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+  // Auto-focus behavior for chat input after activation
+  useEffect(() => {
+    if (isInputActivated) {
+      const handleGlobalKeyDown = (e: KeyboardEvent) => {
+        // Don't interfere with form inputs, buttons, or modifier keys
+        if (e.target instanceof HTMLInputElement || 
+            e.target instanceof HTMLTextAreaElement || 
+            e.target instanceof HTMLButtonElement ||
+            e.ctrlKey || e.metaKey || e.altKey || 
+            e.key === 'Tab' || e.key === 'Escape') {
+          return;
+        }
+        
+        // Focus input for normal typing
+        if (e.key.length === 1 && inputRef.current) {
+          inputRef.current.focus();
+        }
+      };
+
+      window.addEventListener('keydown', handleGlobalKeyDown);
+      return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    }
+  }, [isInputActivated]);
+
   useEffect(() => {
     if (inputRef.current && document.activeElement === inputRef.current) {
       const timeoutId = setTimeout(() => {
@@ -459,14 +484,24 @@ export default function ChatInterface({
         <div className="absolute bottom-6 left-6 right-6 z-50">
           <form onSubmit={handleSendMessage} className="relative">
             <div className="relative flex items-center bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200/50 rounded-full px-5 py-2.5 shadow-lg hover:shadow-xl focus-within:shadow-xl focus-within:border-blue-300/70 transition-all duration-300 max-w-xl mx-auto">
-              <input ref={inputRef} type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={e => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                if (inputValue.trim() && !isTyping) {
-                  handleSendMessage(e as any);
-                }
-              }
-            }} placeholder="Ask anything..." className="flex-1 bg-transparent text-slate-700 placeholder:text-slate-400 focus:outline-none text-sm font-normal" disabled={isTyping} />
+              <input 
+                ref={inputRef} 
+                type="text" 
+                value={inputValue} 
+                onChange={e => setInputValue(e.target.value)} 
+                onFocus={() => setIsInputActivated(true)}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    if (inputValue.trim() && !isTyping) {
+                      handleSendMessage(e as any);
+                    }
+                  }
+                }} 
+                placeholder="Ask anything..." 
+                className="flex-1 bg-transparent text-slate-700 placeholder:text-slate-400 focus:outline-none text-sm font-normal" 
+                disabled={isTyping} 
+              />
               
               <button type="submit" disabled={!inputValue.trim() || isTyping} className={`ml-3 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 ${
                 inputValue.trim() && !isTyping 
