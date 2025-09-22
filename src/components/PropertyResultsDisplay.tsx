@@ -70,6 +70,7 @@ export default function PropertyResultsDisplay({
   const [isMapOpen, setIsMapOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const isScrollingRef = useRef(false);
+  const [isHovering, setIsHovering] = useState(false);
 
   const nextProperty = () => {
     setCurrentIndex(prev => (prev + 1) % properties.length);
@@ -83,12 +84,15 @@ export default function PropertyResultsDisplay({
     setCurrentIndex(index);
   };
 
-  // Scroll-based navigation
+  // Scroll-based navigation (only when hovering)
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
 
     const handleWheel = (e: WheelEvent) => {
+      // Only prevent default and handle navigation when hovering over the card
+      if (!isHovering) return;
+      
       e.preventDefault();
       
       // Prevent rapid scrolling
@@ -111,17 +115,29 @@ export default function PropertyResultsDisplay({
       }, 300);
     };
 
+    const handleMouseEnter = () => {
+      setIsHovering(true);
+    };
+
+    const handleMouseLeave = () => {
+      setIsHovering(false);
+    };
+
     const handleTouchStart = (e: TouchEvent) => {
+      // Only handle touch events when hovering/touching the card
+      if (!isHovering) return;
       const touch = e.touches[0];
       container.dataset.touchStartY = touch.clientY.toString();
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+      // Only prevent default when touching the card
+      if (!isHovering) return;
       e.preventDefault();
     };
 
     const handleTouchEnd = (e: TouchEvent) => {
-      if (isScrollingRef.current) return;
+      if (isScrollingRef.current || !isHovering) return;
       
       const touch = e.changedTouches[0];
       const startY = parseFloat(container.dataset.touchStartY || '0');
@@ -146,18 +162,23 @@ export default function PropertyResultsDisplay({
       }
     };
 
+    // Add event listeners
     container.addEventListener('wheel', handleWheel, { passive: false });
+    container.addEventListener('mouseenter', handleMouseEnter);
+    container.addEventListener('mouseleave', handleMouseLeave);
     container.addEventListener('touchstart', handleTouchStart);
     container.addEventListener('touchmove', handleTouchMove, { passive: false });
     container.addEventListener('touchend', handleTouchEnd);
 
     return () => {
       container.removeEventListener('wheel', handleWheel);
+      container.removeEventListener('mouseenter', handleMouseEnter);
+      container.removeEventListener('mouseleave', handleMouseLeave);
       container.removeEventListener('touchstart', handleTouchStart);
       container.removeEventListener('touchmove', handleTouchMove);
       container.removeEventListener('touchend', handleTouchEnd);
     };
-  }, []);
+  }, [isHovering]);
 
   const currentProperty = properties[currentIndex];
 
@@ -172,12 +193,14 @@ export default function PropertyResultsDisplay({
           Here are the most suitable comps I found for your search
         </p>
         <p className="text-xs text-slate-500 mt-2">
-          💡 Scroll up or down to navigate through properties
+          💡 Hover over the property card and scroll to navigate
         </p>
       </div>
 
       {/* Main Property Card */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div className={`bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden transition-all duration-200 ${
+        isHovering ? 'ring-2 ring-blue-200 shadow-md' : ''
+      }`}>
         {/* Property Image */}
         <div className="relative h-48 bg-gradient-to-br from-slate-100 to-slate-200">
           <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
