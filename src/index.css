@@ -74,7 +74,7 @@
     --shadow-property: 0 8px 32px rgba(99, 102, 241, 0.15);
 
     /* Sidebar Variables - Exact Gradient Match */
-    --sidebar-background: linear-gradient(180deg, hsl(25, 45%, 60%) 0%, hsl(220, 80%, 45%) 30%, hsl(230, 90%, 35%) 70%, hsl(240, 95%, 25%) 100%);
+    --sidebar-background: linear-gradient(180deg, hsl(20, 60%, 65%) 0%, hsl(260, 70%, 50%) 25%, hsl(240, 85%, 40%) 50%, hsl(230, 90%, 30%) 75%, hsl(220, 95%, 20%) 100%);
     --sidebar-foreground: 255 255 255;
     --sidebar-primary: 255 255 255;
     --sidebar-primary-foreground: 255 255 255;
@@ -153,7 +153,7 @@
     --shadow-property: 0 8px 32px rgba(99, 102, 241, 0.25);
 
     /* Dark Sidebar - Exact Gradient Match */
-    --sidebar-background: linear-gradient(180deg, hsl(25, 45%, 50%) 0%, hsl(220, 80%, 35%) 30%, hsl(230, 90%, 25%) 70%, hsl(240, 95%, 15%) 100%);
+    --sidebar-background: linear-gradient(180deg, hsl(20, 60%, 55%) 0%, hsl(260, 70%, 40%) 25%, hsl(240, 85%, 30%) 50%, hsl(230, 90%, 20%) 75%, hsl(220, 95%, 15%) 100%);
     --sidebar-foreground: 255 255 255;
     --sidebar-primary: 255 255 255;
     --sidebar-primary-foreground: 255 255 255;
