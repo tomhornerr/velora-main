@@ -7,12 +7,15 @@ export interface ChatHistoryEntry {
   timestamp: string;
   preview: string;
   messages: any[];
+  archived?: boolean;
 }
 interface ChatHistoryContextType {
   chatHistory: ChatHistoryEntry[];
   addChatToHistory: (chat: Omit<ChatHistoryEntry, 'id'>) => void;
   removeChatFromHistory: (chatId: string) => void;
   updateChatTitle: (chatId: string, newTitle: string) => void;
+  archiveChat: (chatId: string) => void;
+  unarchiveChat: (chatId: string) => void;
   getChatById: (chatId: string) => ChatHistoryEntry | undefined;
   formatTimestamp: (date: Date) => string;
 }
@@ -87,6 +90,22 @@ export function ChatHistoryProvider({
     ));
   }, []);
 
+  const archiveChat = React.useCallback((chatId: string) => {
+    setChatHistory(prev => prev.map(chat => 
+      chat.id === chatId 
+        ? { ...chat, archived: true }
+        : chat
+    ));
+  }, []);
+
+  const unarchiveChat = React.useCallback((chatId: string) => {
+    setChatHistory(prev => prev.map(chat => 
+      chat.id === chatId 
+        ? { ...chat, archived: false }
+        : chat
+    ));
+  }, []);
+
   const getChatById = React.useCallback((chatId: string) => {
     return chatHistory.find(chat => chat.id === chatId);
   }, [chatHistory]);
@@ -95,9 +114,11 @@ export function ChatHistoryProvider({
     addChatToHistory,
     removeChatFromHistory,
     updateChatTitle,
+    archiveChat,
+    unarchiveChat,
     getChatById,
     formatTimestamp
-  }), [chatHistory, addChatToHistory, removeChatFromHistory, updateChatTitle, getChatById]);
+  }), [chatHistory, addChatToHistory, removeChatFromHistory, updateChatTitle, archiveChat, unarchiveChat, getChatById]);
   return <ChatHistoryContext.Provider value={value}>
       {children}
     </ChatHistoryContext.Provider>;

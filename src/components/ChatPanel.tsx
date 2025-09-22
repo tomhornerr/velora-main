@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, Clock, X, Trash2, Plus, Undo2, Sparkles, MoreVertical, Share, Edit, Archive, Folder } from "lucide-react";
+import { MessageSquare, Clock, X, Trash2, Plus, Undo2, Sparkles, MoreVertical, Edit, Archive, Folder, ArchiveRestore } from "lucide-react";
 import { useChatHistory } from "./ChatHistoryContext";
 export interface ChatPanelProps {
   isOpen?: boolean;
@@ -23,12 +23,16 @@ export const ChatPanel = ({
   const {
     chatHistory,
     removeChatFromHistory,
-    updateChatTitle
+    updateChatTitle,
+    archiveChat,
+    unarchiveChat
   } = useChatHistory();
+  
   const [hoveredChat, setHoveredChat] = React.useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = React.useState<string | null>(null);
   const [editingChatId, setEditingChatId] = React.useState<string | null>(null);
   const [editingTitle, setEditingTitle] = React.useState<string>('');
+  const [showArchived, setShowArchived] = React.useState<boolean>(false);
   const [pendingDeletion, setPendingDeletion] = React.useState<{
     chatId: string;
     chat: any;
@@ -63,6 +67,23 @@ export const ChatPanel = ({
     setEditingChatId(null);
     setEditingTitle('');
   };
+
+  const handleArchiveChat = (e: React.MouseEvent, chatId: string) => {
+    e.stopPropagation();
+    archiveChat(chatId);
+    setOpenMenuId(null);
+  };
+
+  const handleUnarchiveChat = (e: React.MouseEvent, chatId: string) => {
+    e.stopPropagation();
+    unarchiveChat(chatId);
+    setOpenMenuId(null);
+  };
+
+  // Filter chats based on archived status
+  const activeChats = chatHistory.filter(chat => !chat.archived);
+  const archivedChats = chatHistory.filter(chat => chat.archived);
+  const displayedChats = showArchived ? archivedChats : activeChats;
   const handleDeleteChat = (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
     if (pendingDeletion) {
@@ -131,24 +152,46 @@ export const ChatPanel = ({
       duration: 0.4,
       ease: [0.23, 1, 0.32, 1]
     }} className={`fixed left-10 lg:left-14 top-0 h-full w-80 bg-white/90 backdrop-blur-xl border-r border-slate-200/60 flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.08)] z-40 ${className || ''}`}>
-          {/* Header */}
+          {/* Header with Archive Toggle */}
           <div className="flex items-center justify-between p-6 border-b border-slate-200/60">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl flex items-center justify-center border-2 border-indigo-100/60">
                 <Sparkles className="w-5 h-5 text-indigo-600" strokeWidth={1.5} />
               </div>
-              <h3 className="text-slate-800 font-semibold text-lg tracking-tight">
-                <span>Chat History</span>
-              </h3>
+              <div>
+                <h3 className="text-slate-800 font-semibold text-lg tracking-tight">
+                  <span>{showArchived ? 'Archived Chats' : 'Chat History'}</span>
+                </h3>
+                <p className="text-xs text-slate-500">
+                  {showArchived ? `${archivedChats.length} archived` : `${activeChats.length} active`}
+                </p>
+              </div>
             </div>
             
-            <motion.button onClick={onToggle} whileHover={{
-          scale: 1.05
-        }} whileTap={{
-          scale: 0.95
-        }} className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all duration-200">
-              <X className="w-4 h-4" strokeWidth={1.5} />
-            </motion.button>
+            <div className="flex items-center space-x-2">
+              {archivedChats.length > 0 && (
+                <motion.button
+                  onClick={() => setShowArchived(!showArchived)}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`px-3 py-1.5 text-xs rounded-lg transition-all duration-200 ${
+                    showArchived 
+                      ? 'bg-amber-100 text-amber-700 hover:bg-amber-200' 
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  {showArchived ? <ArchiveRestore className="w-3 h-3" /> : <Archive className="w-3 h-3" />}
+                </motion.button>
+              )}
+              
+              <motion.button onClick={onToggle} whileHover={{
+            scale: 1.05
+          }} whileTap={{
+            scale: 0.95
+          }} className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-all duration-200">
+                <X className="w-4 h-4" strokeWidth={1.5} />
+              </motion.button>
+            </div>
           </div>
 
           {/* New Chat Button */}
@@ -169,7 +212,7 @@ export const ChatPanel = ({
           {/* Chat List */}
           {showChatHistory && <div className="flex-1 overflow-y-auto px-2 py-2">
               <AnimatePresence mode="popLayout">
-                {chatHistory.map((chat, index) => {
+                {displayedChats.map((chat, index) => {
             const isPendingDeletion = pendingDeletion?.chatId === chat.id;
             const isEditing = editingChatId === chat.id;
             return <motion.div key={chat.id} layout initial={{
@@ -233,41 +276,34 @@ export const ChatPanel = ({
                                    className="absolute right-0 top-10 w-48 bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-200/60 py-2 z-50"
                                    onClick={(e) => e.stopPropagation()}
                                  >
-                                   <button
-                                     onClick={(e) => handleRename(e, chat.id, chat.title)}
-                                     className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
-                                   >
-                                     <Edit className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:rotate-12 group-hover/item:text-indigo-600" />
-                                     <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">Rename</span>
-                                   </button>
-                                   <button
-                                     onClick={(e) => {
-                                       e.stopPropagation();
-                                       setOpenMenuId(null);
-                                     }}
-                                     className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
-                                   >
-                                     <Share className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:-rotate-12 group-hover/item:text-blue-600" />
-                                     <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">Share</span>
-                                   </button>
-                                   <button
-                                     onClick={(e) => {
-                                       e.stopPropagation();
-                                       setOpenMenuId(null);
-                                     }}
-                                     className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
-                                   >
-                                     <Archive className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:text-amber-600" />
-                                     <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">Archive</span>
-                                   </button>
-                                   <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent mx-2 my-1" />
-                                   <button
-                                     onClick={(e) => handleDeleteChat(e, chat.id)}
-                                     className="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
-                                   >
-                                     <Trash2 className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:rotate-12 group-hover/item:text-red-700" />
-                                     <span className="group-hover/item:font-semibold group-hover/item:text-red-700 transition-all duration-50">Delete</span>
-                                   </button>
+                                    <button
+                                      onClick={(e) => handleRename(e, chat.id, chat.title)}
+                                      className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
+                                    >
+                                      <Edit className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:rotate-12 group-hover/item:text-indigo-600" />
+                                      <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">Rename</span>
+                                    </button>
+                                    <button
+                                      onClick={(e) => chat.archived ? handleUnarchiveChat(e, chat.id) : handleArchiveChat(e, chat.id)}
+                                      className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
+                                    >
+                                      {chat.archived ? (
+                                        <ArchiveRestore className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:text-green-600" />
+                                      ) : (
+                                        <Archive className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:text-amber-600" />
+                                      )}
+                                      <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">
+                                        {chat.archived ? 'Unarchive' : 'Archive'}
+                                      </span>
+                                    </button>
+                                    <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent mx-2 my-1" />
+                                    <button
+                                      onClick={(e) => handleDeleteChat(e, chat.id)}
+                                      className="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
+                                    >
+                                      <Trash2 className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:rotate-12 group-hover/item:text-red-700" />
+                                      <span className="group-hover/item:font-semibold group-hover/item:text-red-700 transition-all duration-50">Delete</span>
+                                    </button>
                                   </motion.div>
                                )}
                              </div>
@@ -328,10 +364,16 @@ export const ChatPanel = ({
               </motion.div>
             </div>}
 
-          {/* Footer */}
+          {/* Footer with counts */}
           <div className="p-6 border-t border-slate-200/60">
             <p className="text-slate-400 text-xs text-center font-medium">
-              <span>{chatHistory.length} conversations</span>
+              <span>
+                {showArchived 
+                  ? `${archivedChats.length} archived conversations` 
+                  : `${activeChats.length} active conversations`
+                }
+                {!showArchived && archivedChats.length > 0 && ` • ${archivedChats.length} archived`}
+              </span>
             </p>
           </div>
         </motion.div>}
