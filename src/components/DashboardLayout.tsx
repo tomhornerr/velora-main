@@ -81,7 +81,7 @@ const DashboardLayoutContent = ({
         messages: chat.messages
       });
       setIsInChatMode(true);
-      setCurrentView('chat');
+      setCurrentView('search');
       setIsChatPanelOpen(false);
     }
   }, [getChatById]);
@@ -90,8 +90,8 @@ const DashboardLayoutContent = ({
     console.log('Starting new chat');
     setCurrentChatId(null);
     setCurrentChatData(null);
-    setIsInChatMode(false);
-    setCurrentView('chat');
+    setIsInChatMode(true);
+    setCurrentView('search');
     setIsChatPanelOpen(false);
   }, []);
 
