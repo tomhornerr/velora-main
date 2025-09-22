@@ -50,10 +50,23 @@ export const MainContent = ({
   };
   const handleBackToSearch = () => {
     console.log('MainContent: Back to search triggered');
+    
+    // Store current chat data before clearing for potential notification
+    if (chatQuery || chatMessages.length > 0) {
+      const chatDataToStore = {
+        query: chatQuery,
+        messages: chatMessages,
+        timestamp: new Date()
+      };
+      console.log('Storing chat data before back:', chatDataToStore);
+      // Pass the chat data one final time before exiting
+      onChatModeChange?.(false, chatDataToStore);
+    } else {
+      onChatModeChange?.(false);
+    }
+    
     setChatQuery('');
     setChatMessages([]);
-    // Exit chat mode
-    onChatModeChange?.(false);
   };
   const handleChatMessagesUpdate = (messages: any[]) => {
     setChatMessages(messages);

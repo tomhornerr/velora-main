@@ -46,31 +46,46 @@ const DashboardLayoutContent = ({
   const handleChatModeChange = (inChatMode: boolean, chatData?: any) => {
     console.log('DashboardLayout: Chat mode changed to:', inChatMode, 'with data:', chatData);
     
-    setIsInChatMode(inChatMode);
-    if (chatData) {
-      setCurrentChatData(chatData);
-      // Always store the latest chat data for potential notification
-      setPreviousChatData(chatData);
-      setHasPerformedSearch(true);
-      
-      // Instantly create/update chat history when any query or message is entered
-      if (currentChatId) {
-        // Update existing chat
-        updateChatInHistory(currentChatId, chatData.messages || []);
-        console.log('Updated existing chat:', currentChatId, 'with', (chatData.messages || []).length, 'messages');
-      } else {
-        // Create new chat instantly - happens as soon as user enters text
-        const newChatId = addChatToHistory({
-          title: '', // Will be auto-generated from first message
-          timestamp: new Date().toISOString(),
-          preview: chatData.query || (chatData.messages && chatData.messages.length > 0 ? chatData.messages[0].content : ''),
-          messages: chatData.messages || []
-        });
-        setCurrentChatId(newChatId);
-        console.log('Created new chat instantly:', newChatId, 'for query/input');
+    if (inChatMode) {
+      setIsInChatMode(true);
+      if (chatData) {
+        setCurrentChatData(chatData);
+        // Always store the latest chat data for potential notification
+        setPreviousChatData(chatData);
+        setHasPerformedSearch(true);
+        
+        // Instantly create/update chat history when any query or message is entered
+        if (currentChatId) {
+          // Update existing chat
+          updateChatInHistory(currentChatId, chatData.messages || []);
+          console.log('Updated existing chat:', currentChatId, 'with', (chatData.messages || []).length, 'messages');
+        } else {
+          // Create new chat instantly - happens as soon as user enters text
+          const newChatId = addChatToHistory({
+            title: '', // Will be auto-generated from first message
+            timestamp: new Date().toISOString(),
+            preview: chatData.query || (chatData.messages && chatData.messages.length > 0 ? chatData.messages[0].content : ''),
+            messages: chatData.messages || []
+          });
+          setCurrentChatId(newChatId);
+          console.log('Created new chat instantly:', newChatId, 'for query/input');
+        }
       }
-    } else if (!inChatMode) {
-      // Don't clear currentChatId immediately to allow for re-entering
+    } else {
+      // Exiting chat mode
+      if (chatData) {
+        // Store the final chat data before exiting
+        setPreviousChatData(chatData);
+        console.log('Stored final chat data before exit:', chatData);
+      }
+      
+      // Show notification if we have chat data to store
+      if (chatData && (chatData.query || chatData.messages?.length > 0)) {
+        console.log('Showing notification for back button exit');
+        setShowChatNotification(true);
+      }
+      
+      setIsInChatMode(false);
       setCurrentChatData(null);
     }
   };
