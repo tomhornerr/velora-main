@@ -150,7 +150,7 @@ export const Sidebar = ({
           handleItemClick(item.id);
         }} className="w-11 h-11 lg:w-13 lg:h-13 rounded-none flex items-center justify-center transition-all duration-100 group" aria-label={item.label}>
               {/* Icon */}
-              <Icon className="w-4 h-4 lg:w-5 lg:h-5 text-white" strokeWidth={1.5} />
+              <Icon className={`w-4 h-4 lg:w-5 lg:h-5 transition-all duration-200 ${isActive ? 'text-sidebar-active scale-110' : 'text-white hover:scale-105'}`} strokeWidth={1.5} />
             </motion.button>;
       })}
       </div>
