@@ -109,8 +109,8 @@ export default function PropertyResultsDisplay({
       };
       
       const threshold = sensitivityMap[scrollSensitivity];
-      // Maximum sensitivity for horizontal swipes
-      const horizontalThreshold = 0.3;
+      // 10x more sensitive for horizontal swipes
+      const horizontalThreshold = 0.03;
       
       // Check for horizontal swipe (trackpad swipe left/right on Mac)
       const isHorizontalSwipe = Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > horizontalThreshold;
