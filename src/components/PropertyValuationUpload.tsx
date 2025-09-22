@@ -173,7 +173,7 @@ export default function PropertyValuationUpload({
   const canContinue = completedFiles.length > 0;
 
   return (
-    <div className={`w-full h-full flex items-center justify-center p-4 overflow-hidden relative ${className || ''}`} 
+    <div className={`w-full h-full flex items-center justify-center overflow-hidden relative ${className || ''}`} 
          style={{
            background: `
              radial-gradient(ellipse at 20% 80%, rgba(16, 185, 129, 0.3) 0%, transparent 50%),
@@ -194,7 +194,7 @@ export default function PropertyValuationUpload({
           filter: 'blur(1px)'
         }}
       />
-      <div className="w-full max-w-2xl relative z-10">
+      <div className="w-full max-w-2xl relative z-10 px-4">
         {/* Step Indicator */}
         <div className="flex-shrink-0 flex items-center justify-center mb-6">
           <div className="flex items-center space-x-4">
@@ -222,7 +222,7 @@ export default function PropertyValuationUpload({
                     )}
                   </motion.div>
                   <span className={`text-xs mt-1 font-medium ${
-                    step.active ? 'text-slate-900' : 'text-slate-500'
+                    step.active ? 'text-white' : 'text-slate-300'
                   }`}>
                     {step.title}
                   </span>
@@ -427,20 +427,20 @@ export default function PropertyValuationUpload({
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                 className="w-16 h-16 border-4 border-slate-200 border-t-indigo-500 rounded-full mx-auto mb-4"
               />
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
+              <h3 className="text-lg font-semibold text-white mb-2">
                 {currentStep === 2 ? 'Processing Documents...' : 'Analyzing Properties...'}
               </h3>
-              <p className="text-slate-500 mb-3">
+              <p className="text-slate-300 mb-3">
                 {currentStep === 2 
                   ? 'We\'re extracting information from your documents' 
                   : 'AI is analyzing your property details'
                 }
               </p>
-              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mx-auto max-w-md">
-                <p className="text-sm text-slate-700 font-medium">
+              <div className="bg-slate-800 border border-slate-600 rounded-lg p-3 mx-auto max-w-md">
+                <p className="text-sm text-slate-200 font-medium">
                   💡 You can leave this screen and continue working
                 </p>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-slate-300 mt-1">
                   We'll notify you when the analysis is complete
                 </p>
               </div>
