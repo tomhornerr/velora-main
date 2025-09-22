@@ -35,12 +35,26 @@ export const MainContent = ({
   
   // Use the prop value for chat mode
   const isInChatMode = inChatMode;
+  const handleQueryStart = (query: string) => {
+    console.log('MainContent: Query started with:', query);
+    setChatQuery(query);
+    setChatMessages([]);
+
+    // Create a preliminary chat entry without submitting
+    const chatData = {
+      query,
+      messages: [],
+      timestamp: new Date()
+    };
+    onChatModeChange?.(true, chatData);
+  };
+
   const handleSearch = (query: string) => {
     console.log('MainContent: Search triggered with query:', query);
     setChatQuery(query);
     setChatMessages([]); // Reset messages for new chat
 
-    // Pass chat data to parent
+    // Pass chat data to parent for actual search submission
     const chatData = {
       query,
       messages: [],
@@ -133,7 +147,7 @@ export const MainContent = ({
                 
                 {/* Search Bar with elevated z-index */}
                 <div className="relative z-10 w-full">
-                  <SearchBar onSearch={handleSearch} onQueryStart={handleSearch} />
+                  <SearchBar onSearch={handleSearch} onQueryStart={handleQueryStart} />
                 </div>
               </motion.div>}
           </AnimatePresence>;
@@ -241,7 +255,7 @@ export const MainContent = ({
             
             {/* Search Bar with elevated z-index */}
             <div className="relative z-10 w-full">
-              <SearchBar onSearch={handleSearch} onQueryStart={handleSearch} />
+              <SearchBar onSearch={handleSearch} onQueryStart={handleQueryStart} />
             </div>
           </div>;
     }
