@@ -327,7 +327,7 @@ export default function ChatInterface({
                     duration: 0.1,
                     ease: snapEasing
                   }}>
-                        <motion.p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                        <motion.p className="text-xs leading-relaxed whitespace-pre-wrap font-medium">
                           <motion.span initial={{
                         opacity: 0,
                         y: 2
