@@ -70,19 +70,29 @@ export const ChatPanel = ({
     };
   }, [pendingDeletion]);
   return <AnimatePresence>
+      {/* Backdrop overlay - click outside to close */}
+      {isOpen && <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30"
+        onClick={onToggle}
+      />}
+      
       {isOpen && <motion.div initial={{
-      x: -320,
+      x: -80,
       opacity: 0
     }} animate={{
       x: 0,
       opacity: 1
     }} exit={{
-      x: -320,
+      x: -80,
       opacity: 0
     }} transition={{
       duration: 0.4,
       ease: [0.23, 1, 0.32, 1]
-    }} className={`fixed left-0 top-0 h-full w-80 bg-white/90 backdrop-blur-xl border-r border-slate-200/60 flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.08)] z-50 ${className || ''}`}>
+    }} className={`fixed left-10 lg:left-14 top-0 h-full w-80 bg-white/90 backdrop-blur-xl border-r border-slate-200/60 flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.08)] z-40 ${className || ''}`}>
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-slate-200/60">
             <div className="flex items-center space-x-3">
