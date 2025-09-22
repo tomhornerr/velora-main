@@ -20,6 +20,7 @@ const DashboardLayoutContent = ({
     query: string;
     messages: any[];
     timestamp: Date;
+    isFromHistory?: boolean;
   } | null>(null);
   const {
     addChatToHistory,
@@ -71,7 +72,8 @@ const DashboardLayoutContent = ({
       const chatData = {
         query: selectedChat.title,
         messages: selectedChat.messages || [],
-        timestamp: new Date(selectedChat.timestamp)
+        timestamp: new Date(), // Use current time since timestamp might be a string like "Just now"
+        isFromHistory: true // Flag to indicate this is loaded from history
       };
       console.log('Setting chat data:', chatData);
       

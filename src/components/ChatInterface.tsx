@@ -22,6 +22,7 @@ export interface ChatInterfaceProps {
   onMessagesUpdate?: (messages: Message[]) => void;
   className?: string;
   loadedMessages?: Message[];
+  isFromHistory?: boolean;
 }
 
 // Smooth transition easing - using framer motion easing arrays  
@@ -33,7 +34,8 @@ export default function ChatInterface({
   onBack,
   onMessagesUpdate,
   className,
-  loadedMessages
+  loadedMessages,
+  isFromHistory = false
 }: ChatInterfaceProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -53,6 +55,19 @@ export default function ChatInterface({
       console.log('Loading messages from history:', loadedMessages);
       setMessages(loadedMessages);
       setIsInitialized(true);
+      
+      // Update property queries for loaded messages to preserve UI state
+      const propertyMessageIds = new Set<string>();
+      loadedMessages.forEach((message, index) => {
+        if (message.role === 'assistant' && index > 0) {
+          const previousMessage = loadedMessages[index - 1];
+          if (previousMessage && isPropertyRelatedQuery(previousMessage.content)) {
+            propertyMessageIds.add(message.id);
+          }
+        }
+      });
+      setPropertyQueries(propertyMessageIds);
+      
     } else if (loadedMessages && loadedMessages.length === 0) {
       console.log('No messages to load, starting fresh chat');
       setMessages([]);
@@ -117,12 +132,12 @@ export default function ChatInterface({
     }
   }, [messages]);
   useEffect(() => {
-    if (initialQuery && !isInitialized) {
+    if (initialQuery && !isInitialized && !isFromHistory) {
       console.log('ChatInterface: Initializing with query:', initialQuery);
       handleInitialQuery(initialQuery);
       setIsInitialized(true);
     }
-  }, [initialQuery, isInitialized]);
+  }, [initialQuery, isInitialized, isFromHistory]);
   const handleInitialQuery = async (query: string) => {
     const isPropertyRelated = isPropertyRelatedQuery(query);
     
@@ -306,7 +321,7 @@ export default function ChatInterface({
               // Check if this is a property-related assistant message
               const isPropertyResponse = message.role === 'assistant' && propertyQueries.has(message.id);
               
-              return <motion.div key={message.id} initial={{
+              return <motion.div key={message.id} initial={isFromHistory ? { opacity: 1, y: 0, scale: 1 } : {
               opacity: 0,
               y: 6,
               scale: 0.98
@@ -318,7 +333,7 @@ export default function ChatInterface({
               opacity: 0,
               y: -4,
               scale: 0.98
-            }} transition={{
+            }} transition={isFromHistory ? { duration: 0 } : {
               duration: 0.15,
               ease: smoothEasing,
               delay: index * 0.02

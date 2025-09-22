@@ -17,6 +17,7 @@ export interface MainContentProps {
     query: string;
     messages: any[];
     timestamp: Date;
+    isFromHistory?: boolean;
   } | null;
   isInChatMode?: boolean;
 }
@@ -100,6 +101,7 @@ export const MainContent = ({
                     onBack={handleBackToSearch} 
                     onMessagesUpdate={handleChatMessagesUpdate}
                     loadedMessages={currentChatData?.messages}
+                    isFromHistory={currentChatData?.isFromHistory}
                   />
                 </div>
               </motion.div> : <motion.div key="search" initial={{
