@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Mic, Zap, Upload } from "lucide-react";
+import { Sparkles, Mic, ChevronRight, Upload } from "lucide-react";
 export interface SearchBarProps {
   className?: string;
   onSearch?: (query: string) => void;
@@ -86,7 +86,7 @@ export const SearchBar = ({
                   ? 'text-white hover:scale-110 active:scale-95' 
                   : 'text-white/50 cursor-not-allowed'
               }`} disabled={isSubmitted || !searchValue.trim()}>
-                  <Zap className="w-5 h-5" strokeWidth={2.5} />
+                  <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
                 </button>
               </div>
             </div>
