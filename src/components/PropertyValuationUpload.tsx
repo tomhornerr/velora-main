@@ -408,11 +408,11 @@ export default function PropertyValuationUpload({
                   : 'AI is analyzing your property details'
                 }
               </p>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mx-auto max-w-md">
-                <p className="text-sm text-blue-800 font-medium">
+              <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mx-auto max-w-md">
+                <p className="text-sm text-slate-700 font-medium">
                   💡 You can leave this screen and continue working
                 </p>
-                <p className="text-xs text-blue-600 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   We'll notify you when the analysis is complete
                 </p>
               </div>
