@@ -81,12 +81,12 @@ export const SearchBar = ({
                     onSearch?.(searchValue.trim());
                   }, 600);
                 }
-              }} className={`w-9 h-9 flex items-center justify-center rounded-md transition-all duration-150 ${
+              }} className={`w-10 h-8 flex items-center justify-center rounded-sm transition-all duration-100 ${
                 searchValue.trim() && !isSubmitted 
-                  ? 'bg-white/15 text-white hover:bg-white/25 hover:scale-105 shadow-sm backdrop-blur-md border border-white/10 hover:border-white/20' 
-                  : 'bg-white/5 text-white/40 cursor-not-allowed border border-white/5'
+                  ? 'bg-white text-black hover:bg-white/90 hover:scale-110 shadow-lg backdrop-blur-lg border-none active:scale-95' 
+                  : 'bg-white/20 text-white/50 cursor-not-allowed border border-white/10'
               }`} disabled={isSubmitted || !searchValue.trim()}>
-                  <Send className="w-4 h-4" strokeWidth={2.5} />
+                  <Send className="w-3.5 h-3.5" strokeWidth={3} />
                 </button>
               </div>
             </div>
