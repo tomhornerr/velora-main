@@ -26,8 +26,11 @@ const DashboardLayoutContent = ({
   const { addChatToHistory, updateChatInHistory, getChatById } = useChatHistory();
 
   const handleViewChange = (viewId: string) => {
+    console.log('handleViewChange called:', { viewId, isInChatMode, currentChatData, currentView });
+    
     // Store current chat data if exiting from a chat
     if (isInChatMode && currentChatData && (viewId !== 'search')) {
+      console.log('Storing chat data for notification:', currentChatData);
       setPreviousChatData(currentChatData);
       setShowChatNotification(true);
     }
@@ -132,6 +135,12 @@ const DashboardLayoutContent = ({
         onReturnToChat={handleReturnToChat}
         onDismiss={handleDismissNotification}
       />
+      
+      {showChatNotification && (
+        <div className="fixed top-20 left-4 z-50 bg-red-500 text-white p-2 rounded">
+          Debug: Notification should be visible
+        </div>
+      )}
       
       {/* Chat Panel */}
       <ChatPanel 
