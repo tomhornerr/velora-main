@@ -233,8 +233,8 @@ export const MainContent = ({
         isInChatMode 
           ? 'bg-transparent' 
           : currentView === 'upload' 
-            ? 'bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg border border-white/30' 
-            : 'bg-white/20 backdrop-blur-sm rounded-2xl shadow-lg border border-white/30'
+            ? 'bg-white/95 backdrop-blur-sm shadow-lg border border-white/30' 
+            : 'bg-white/20 backdrop-blur-sm shadow-lg border border-white/30'
       } ${currentView === 'upload' ? 'p-8' : 'p-8 lg:p-16'}`}>
         <div className={`relative w-full ${
           isInChatMode 
