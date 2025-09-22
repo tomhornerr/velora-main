@@ -86,8 +86,8 @@ export const SearchBar = ({
                   ? 'text-white hover:scale-110 active:scale-95' 
                   : 'text-white/50 cursor-not-allowed'
               }`} disabled={isSubmitted || !searchValue.trim()}>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="ml-0.5">
-                    <path d="M8 5v14l11-7z"/>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="5,3 19,12 5,21"/>
                   </svg>
                 </button>
               </div>
