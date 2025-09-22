@@ -263,17 +263,38 @@ export default function ChatInterface({
   }} className={`flex flex-col h-full w-full relative ${className || ''}`}>
       {/* Fullscreen Chat Container - Animated Background */}
       <div className="w-full h-full relative overflow-hidden">
-        {/* Flowing Gradient Background matching the reference image */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-800 to-teal-400">
-          {/* Additional gradient layers to match the flowing effect */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-teal-500/60 via-emerald-400/40 to-amber-200/30"></div>
-          <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-blue-600/30 to-coral-400/20"></div>
-          
-          {/* Flowing curved overlays */}
+        {/* Exact flowing gradient background matching the uploaded image */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-cyan-600 to-teal-300">
+          {/* Main flowing curve overlay */}
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-bl from-teal-300/30 to-emerald-400/20 rounded-full blur-3xl"></div>
-            <div className="absolute top-1/2 -left-20 w-80 h-80 bg-gradient-to-tr from-blue-500/25 to-cyan-400/15 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-gradient-to-tl from-amber-300/25 to-orange-400/15 rounded-full blur-3xl"></div>
+            <div className="absolute top-0 left-0 w-full h-full" 
+                 style={{
+                   background: `
+                     radial-gradient(ellipse 800px 400px at 60% 30%, rgba(255, 159, 67, 0.3) 0%, transparent 50%),
+                     radial-gradient(ellipse 600px 800px at 80% 70%, rgba(52, 211, 153, 0.4) 0%, transparent 60%),
+                     radial-gradient(ellipse 1000px 600px at 20% 80%, rgba(14, 165, 233, 0.3) 0%, transparent 50%),
+                     linear-gradient(135deg, #1e293b 0%, #0891b2 40%, #14b8a6 70%, #fbbf24 100%)
+                   `
+                 }}>
+            </div>
+            
+            {/* Curved flowing element */}
+            <div className="absolute top-1/4 left-1/3 w-96 h-96 rounded-full"
+                 style={{
+                   background: 'radial-gradient(circle, rgba(251, 191, 36, 0.4) 0%, rgba(245, 101, 101, 0.3) 30%, transparent 70%)',
+                   transform: 'rotate(-15deg) scale(1.5, 0.8)',
+                   filter: 'blur(40px)'
+                 }}>
+            </div>
+            
+            {/* Additional flowing shapes */}
+            <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full"
+                 style={{
+                   background: 'radial-gradient(ellipse, rgba(20, 184, 166, 0.3) 0%, rgba(6, 182, 212, 0.2) 50%, transparent 70%)',
+                   transform: 'rotate(25deg) scale(1.2, 0.6)',
+                   filter: 'blur(30px)'
+                 }}>
+            </div>
           </div>
         </div>
         
