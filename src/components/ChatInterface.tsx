@@ -458,7 +458,7 @@ export default function ChatInterface({
         {/* Chat Input at Bottom of White Container */}
         <div className="absolute bottom-6 left-6 right-6 z-50">
           <form onSubmit={handleSendMessage} className="relative">
-            <div className="relative flex items-center bg-white/95 backdrop-blur-sm border border-slate-200/60 rounded-full px-5 py-3 shadow-lg hover:shadow-xl focus-within:shadow-xl focus-within:border-blue-300/70 transition-all duration-300">
+            <div className="relative flex items-center bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200/50 rounded-full px-5 py-3 shadow-lg hover:shadow-xl focus-within:shadow-xl focus-within:border-blue-300/70 transition-all duration-300 max-w-md mx-auto">
               <input ref={inputRef} type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={e => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
