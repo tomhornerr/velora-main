@@ -217,11 +217,9 @@ export const MainContent = ({
     }
   };
   return <div className={`flex-1 relative ${className || ''}`}>
-      {/* Background based on current view */}
-      {currentView !== 'upload' && (
-        currentView === 'search' || currentView === 'home' ? 
-          <DotGrid /> : 
-          <FlowBackground />
+      {/* Background for non-upload views */}
+      {currentView !== 'upload' && currentView !== 'search' && currentView !== 'home' && (
+        <FlowBackground />
       )}
       
       {/* Content container with glass effect */}
