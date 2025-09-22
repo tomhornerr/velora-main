@@ -113,7 +113,7 @@ export const Sidebar = ({
         }} transition={{
           duration: 0.1,
           ease: [0.4, 0, 0.2, 1]
-        }} className="absolute -left-[2px] top-[calc(50%-1px)] -translate-y-1/2 w-1 h-6 bg-sidebar-primary rounded-full" />}
+        }} className="absolute -left-[2px] top-[calc(50%-2px)] -translate-y-1/2 w-1 h-6 bg-sidebar-primary rounded-full" />}
         </AnimatePresence>
         
         <PanelLeft className="w-4 h-4 lg:w-5 lg:h-5 text-white drop-shadow-sm transition-all duration-300 ease-out" strokeWidth={1.8} />
