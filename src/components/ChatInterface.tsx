@@ -123,14 +123,57 @@ export default function ChatInterface({
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Enhanced focus management - keep input focused at all times
   useEffect(() => {
-    if (inputRef.current && document.activeElement === inputRef.current) {
-      const timeoutId = setTimeout(() => {
-        inputRef.current?.focus();
-      }, 0);
-      return () => clearTimeout(timeoutId);
+    const focusInput = () => {
+      if (inputRef.current && !isTyping) {
+        inputRef.current.focus();
+      }
+    };
+
+    // Focus on mount and after messages
+    focusInput();
+
+    // Re-focus when clicking anywhere in the chat area
+    const handleClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      // Don't refocus if clicking on buttons, links, or other interactive elements
+      if (!target.closest('button') && !target.closest('a') && !target.closest('[contenteditable]')) {
+        setTimeout(focusInput, 0);
+      }
+    };
+
+    // Re-focus when losing focus (unless user is interacting with other elements)
+    const handleFocusOut = (e: FocusEvent) => {
+      const relatedTarget = e.relatedTarget as HTMLElement;
+      // Only refocus if not moving to another interactive element
+      if (!relatedTarget || (!relatedTarget.closest('button') && !relatedTarget.closest('a'))) {
+        setTimeout(focusInput, 100);
+      }
+    };
+
+    document.addEventListener('click', handleClick);
+    if (inputRef.current) {
+      inputRef.current.addEventListener('blur', handleFocusOut);
     }
-  }, [messages]);
+
+    return () => {
+      document.removeEventListener('click', handleClick);
+      if (inputRef.current) {
+        inputRef.current.removeEventListener('blur', handleFocusOut);
+      }
+    };
+  }, [messages, isTyping]);
+
+  // Re-focus after sending a message
+  useEffect(() => {
+    if (!isTyping && inputRef.current) {
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  }, [isTyping]);
   useEffect(() => {
     if (initialQuery && !isInitialized && !isFromHistory) {
       console.log('ChatInterface: Initializing with query:', initialQuery);
