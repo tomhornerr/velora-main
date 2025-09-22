@@ -8,6 +8,7 @@ export interface ChatPanelProps {
   isOpen?: boolean;
   onToggle?: () => void;
   onChatSelect?: (chatId: string) => void;
+  onNewChat?: () => void;
   className?: string;
   showChatHistory?: boolean;
 }
@@ -15,6 +16,7 @@ export const ChatPanel = ({
   isOpen = false,
   onToggle,
   onChatSelect,
+  onNewChat,
   className,
   showChatHistory = false
 }: ChatPanelProps) => {
@@ -111,6 +113,8 @@ export const ChatPanel = ({
   };
   const handleNewChat = () => {
     console.log('Create new chat');
+    onNewChat?.();
+    onToggle?.(); // Close the chat panel after creating new chat
   };
   React.useEffect(() => {
     // Close menu when clicking outside

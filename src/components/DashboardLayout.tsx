@@ -85,6 +85,23 @@ const DashboardLayoutContent = ({
       console.error('Chat not found:', chatId);
     }
   };
+
+  const handleNewChat = () => {
+    console.log('Creating new chat');
+    
+    // Create a blank chat data object
+    const newChatData = {
+      query: '',
+      messages: [],
+      timestamp: new Date(),
+      isFromHistory: false
+    };
+    
+    setCurrentChatData(newChatData);
+    setIsInChatMode(true);
+    setIsChatPanelOpen(false); // Close the chat panel
+    console.log('New chat created, entering chat mode');
+  };
   return <motion.div initial={{
     opacity: 0,
     scale: 0.98
@@ -100,6 +117,7 @@ const DashboardLayoutContent = ({
         isOpen={isChatPanelOpen} 
         onToggle={handleChatPanelToggle} 
         onChatSelect={handleChatSelect} 
+        onNewChat={handleNewChat}
         showChatHistory={true}
       />
       
