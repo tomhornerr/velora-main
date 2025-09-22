@@ -44,7 +44,7 @@ export const SearchBar = ({
               relative flex items-center 
               bg-black/20 backdrop-blur-xl 
               border border-white/20 
-              rounded-full px-6 py-4 
+              rounded-full px-6 py-3 
               shadow-2xl transition-all duration-300 
               hover:bg-black/25 hover:border-white/30
               focus-within:bg-black/30 focus-within:border-white/40
