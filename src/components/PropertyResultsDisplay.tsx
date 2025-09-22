@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Scan, MapPin, Settings } from "lucide-react";
+import { ChevronLeft, ChevronRight, Scan, MapPin } from "lucide-react";
 import { MapPopup } from './MapPopup';
 
 // Import property images
@@ -69,11 +69,7 @@ export default function PropertyResultsDisplay({
   const [activeLocation, setActiveLocation] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const isScrollingRef = useRef(false);
-  const swipeRef = useRef(false);
   const [isHovering, setIsHovering] = useState(false);
-  const [scrollSensitivity, setScrollSensitivity] = useState<'low' | 'medium' | 'high'>('medium');
-  const [showSettings, setShowSettings] = useState(false);
 
   const nextProperty = () => {
     setCurrentIndex(prev => (prev + 1) % properties.length);
@@ -87,88 +83,10 @@ export default function PropertyResultsDisplay({
     setCurrentIndex(index);
   };
 
-  // Scroll-based navigation (only when hovering)
+  // Navigation button controls only
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
-
-    const handleWheel = (e: WheelEvent) => {
-      // Only prevent default and handle navigation when hovering over the card
-      if (!isHovering) return;
-      
-      e.preventDefault();
-      
-      // Prevent rapid scrolling
-      if (isScrollingRef.current) return;
-      
-      // Sensitivity thresholds
-      const sensitivityMap = {
-        low: 27,
-        medium: 12,
-        high: 3
-      };
-      
-      const threshold = sensitivityMap[scrollSensitivity];
-      // Maximum possible sensitivity for horizontal swipes
-      const horizontalThreshold = 0.001;
-      
-      // Check for horizontal swipe (trackpad swipe left/right on Mac)
-      const isHorizontalSwipe = Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > horizontalThreshold;
-      // Check for vertical scroll
-      const isVerticalScroll = Math.abs(e.deltaY) > threshold && !isHorizontalSwipe;
-      
-      // Only proceed if scroll/swipe exceeds sensitivity threshold
-      if (!isHorizontalSwipe && !isVerticalScroll) return;
-      
-      if (isHorizontalSwipe) {
-        // Prevent multiple swipe changes from single gesture - more aggressive debouncing
-        if (swipeRef.current) return;
-        swipeRef.current = true;
-        
-        // Also prevent any scroll events during swipe
-        isScrollingRef.current = true;
-        
-        // Horizontal trackpad swipe navigation
-        const swipingLeft = e.deltaX > 0;
-        const swipingRight = e.deltaX < 0;
-        
-        if (swipingLeft) {
-          nextProperty();
-        } else if (swipingRight) {
-          prevProperty();
-        }
-        
-        // Reset both locks after longer delay to ensure gesture is complete
-        setTimeout(() => {
-          swipeRef.current = false;
-          isScrollingRef.current = false;
-        }, 800);
-      } else if (isVerticalScroll) {
-        // Prevent rapid scrolling for vertical scroll
-        if (isScrollingRef.current) return;
-        isScrollingRef.current = true;
-        // Vertical scroll navigation
-        const scrollingDown = e.deltaY > 0;
-        const scrollingUp = e.deltaY < 0;
-
-        if (scrollingDown) {
-          nextProperty();
-        } else if (scrollingUp) {
-          prevProperty();
-        }
-        
-        // Reset scroll lock after a delay (longer for lower sensitivity)
-        const delayMap = {
-          low: 400,
-          medium: 250,
-          high: 150
-        };
-        
-        setTimeout(() => {
-          isScrollingRef.current = false;
-        }, delayMap[scrollSensitivity]);
-      }
-    };
 
     const handleMouseEnter = () => {
       setIsHovering(true);
@@ -178,62 +96,15 @@ export default function PropertyResultsDisplay({
       setIsHovering(false);
     };
 
-    const handleTouchStart = (e: TouchEvent) => {
-      // Only handle touch events when hovering/touching the card
-      if (!isHovering) return;
-      const touch = e.touches[0];
-      container.dataset.touchStartY = touch.clientY.toString();
-    };
-
-    const handleTouchMove = (e: TouchEvent) => {
-      // Only prevent default when touching the card
-      if (!isHovering) return;
-      e.preventDefault();
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (isScrollingRef.current || !isHovering) return;
-      
-      const touch = e.changedTouches[0];
-      const startY = parseFloat(container.dataset.touchStartY || '0');
-      const endY = touch.clientY;
-      const diffY = startY - endY;
-
-      // Minimum swipe distance
-      if (Math.abs(diffY) > 50) {
-        isScrollingRef.current = true;
-        
-        if (diffY > 0) {
-          // Swiped up - next property
-          nextProperty();
-        } else {
-          // Swiped down - previous property
-          prevProperty();
-        }
-
-        setTimeout(() => {
-          isScrollingRef.current = false;
-        }, 300);
-      }
-    };
-
-    // Add event listeners
-    container.addEventListener('wheel', handleWheel, { passive: false });
+    // Add event listeners for hover effects only
     container.addEventListener('mouseenter', handleMouseEnter);
     container.addEventListener('mouseleave', handleMouseLeave);
-    container.addEventListener('touchstart', handleTouchStart);
-    container.addEventListener('touchmove', handleTouchMove, { passive: false });
-    container.addEventListener('touchend', handleTouchEnd);
 
     return () => {
-      container.removeEventListener('wheel', handleWheel);
       container.removeEventListener('mouseenter', handleMouseEnter);
       container.removeEventListener('mouseleave', handleMouseLeave);
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchmove', handleTouchMove);
-      container.removeEventListener('touchend', handleTouchEnd);
     };
-  }, [isHovering, scrollSensitivity]);
+  }, []);
 
   const currentProperty = properties[currentIndex];
 
@@ -248,7 +119,7 @@ export default function PropertyResultsDisplay({
           Here are the most suitable comps I found for your search
         </p>
         <p className="text-xs text-slate-500 mt-2">
-          💡 Hover over the property card and scroll or swipe left/right to navigate
+          💡 Use the dots or arrow buttons to navigate between properties
         </p>
       </div>
 
@@ -274,40 +145,8 @@ export default function PropertyResultsDisplay({
             </div>
           </div>
 
-          {/* Scroll Indicator & Settings - Top Right */}
-          <div className="absolute top-4 right-4 flex items-center space-x-2">
-            {/* Settings Icon (hidden) */}
-            <div className="relative">
-              <button
-                onClick={() => setShowSettings(!showSettings)}
-                className="w-8 h-8 rounded-lg bg-white/95 backdrop-blur-sm shadow-sm flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200"
-                title="Scroll sensitivity settings"
-              >
-                <Settings className="w-3.5 h-3.5 text-slate-600" />
-              </button>
-              
-              {/* Settings Dropdown */}
-              {showSettings && (
-                <div className="absolute top-full mt-1 right-0 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-white/20 p-2 min-w-24 z-10">
-                  <div className="text-xs text-slate-600 mb-1 font-medium">Sensitivity</div>
-                  {(['low', 'medium', 'high'] as const).map((level) => (
-                    <button
-                      key={level}
-                      onClick={() => {
-                        setScrollSensitivity(level);
-                        setShowSettings(false);
-                      }}
-                      className={`block w-full text-left px-2 py-1 text-xs rounded hover:bg-slate-100 transition-colors capitalize ${
-                        scrollSensitivity === level ? 'bg-slate-100 font-medium' : ''
-                      }`}
-                    >
-                      {level}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-            
+          {/* Property Indicator - Top Right */}
+          <div className="absolute top-4 right-4">            
             <div className="flex items-center bg-white/95 backdrop-blur-sm rounded-lg p-2 shadow-sm">              
               <div className="flex items-center space-x-1">
                 {properties.map((_, index) => (
@@ -370,10 +209,28 @@ export default function PropertyResultsDisplay({
             </div>
           </div>
 
-          {/* Property Counter */}
+          {/* Property Counter & Navigation */}
           <div className="mt-4 pt-4 border-t border-slate-100">
-            <div className="text-center text-sm text-slate-500">
-              Property {currentIndex + 1} of {properties.length} • Scroll to navigate
+            <div className="flex items-center justify-between">
+              <button
+                onClick={prevProperty}
+                className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+                disabled={currentIndex === 0}
+              >
+                <ChevronLeft className="w-4 h-4 text-slate-600" />
+              </button>
+              
+              <div className="text-center text-sm text-slate-500">
+                Property {currentIndex + 1} of {properties.length}
+              </div>
+              
+              <button
+                onClick={nextProperty}
+                className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+                disabled={currentIndex === properties.length - 1}
+              >
+                <ChevronRight className="w-4 h-4 text-slate-600" />
+              </button>
             </div>
           </div>
         </div>
