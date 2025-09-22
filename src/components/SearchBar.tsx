@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Mic, Play, Upload } from "lucide-react";
+import { Sparkles, Mic, ArrowRight, Upload } from "lucide-react";
 export interface SearchBarProps {
   className?: string;
   onSearch?: (query: string) => void;
@@ -86,9 +86,7 @@ export const SearchBar = ({
                   ? 'text-white hover:scale-110 active:scale-95' 
                   : 'text-white/50 cursor-not-allowed'
               }`} disabled={isSubmitted || !searchValue.trim()}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M6 6v12l12-6z"/>
-                  </svg>
+                  <ArrowRight className="w-5 h-5" strokeWidth={2} />
                 </button>
               </div>
             </div>
