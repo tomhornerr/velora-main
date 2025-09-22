@@ -192,7 +192,7 @@ export const ChatPanel = ({
               duration: 0.2,
               delay: isPendingDeletion ? 0 : index * 0.02,
               ease: [0.23, 1, 0.32, 1]
-            }} onClick={() => handleChatClick(chat.id)} className={`group relative px-3 py-3 rounded-lg transition-all duration-200 cursor-pointer mb-1 ${isPendingDeletion ? 'bg-red-50' : 'hover:bg-slate-50'}`}>
+            }} onClick={() => handleChatClick(chat.id)} className={`group relative px-3 py-3 rounded-lg transition-all duration-75 cursor-pointer mb-1 ${isPendingDeletion ? 'bg-red-50' : 'hover:bg-slate-100/80 hover:scale-[1.02] hover:shadow-sm'}`}>
                       
                       {isEditing ? (
                         <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
@@ -211,7 +211,7 @@ export const ChatPanel = ({
                         </div>
                       ) : (
                         <div className="flex items-center justify-between">
-                          <span className={`text-sm font-medium truncate pr-2 ${isPendingDeletion ? 'text-red-600' : 'text-slate-800'}`}>
+                          <span className={`text-sm font-medium truncate pr-2 transition-all duration-75 ${isPendingDeletion ? 'text-red-600' : 'text-slate-800 group-hover:text-slate-900 group-hover:font-semibold'}`}>
                             {chat.title}
                           </span>
                           
@@ -219,9 +219,9 @@ export const ChatPanel = ({
                             <div className="relative">
                               <button
                                 onClick={(e) => handleMenuToggle(e, chat.id)}
-                                className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-slate-200 transition-all duration-200"
+                                className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-slate-200/80 transition-all duration-100 transform hover:scale-110"
                               >
-                                <MoreVertical className="w-4 h-4 text-slate-500" />
+                                <MoreVertical className="w-4 h-4 text-slate-500 hover:text-slate-700 transition-colors duration-75" />
                               </button>
                               
                               {openMenuId === chat.id && (
@@ -279,11 +279,12 @@ export const ChatPanel = ({
                         <motion.div
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.1, ease: [0.16, 1, 0.3, 1] }}
                           className="absolute inset-0 flex items-center justify-center bg-red-50/90 backdrop-blur-sm rounded-lg"
                         >
                           <button
                             onClick={handleUndoDelete}
-                            className="flex items-center space-x-2 px-3 py-1 bg-white rounded-md shadow-sm border"
+                            className="flex items-center space-x-2 px-3 py-1 bg-white rounded-md shadow-sm border hover:scale-105 transition-transform duration-75"
                           >
                             <Undo2 className="w-4 h-4 text-red-600" />
                             <span className="text-sm text-red-600 font-medium">Undo</span>
