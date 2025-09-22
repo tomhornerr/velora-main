@@ -71,7 +71,7 @@ export const Sidebar = ({
       duration: 0.1,
       ease: [0.4, 0, 0.2, 1]
     }
-  }} className={`w-10 lg:w-14 bg-sidebar backdrop-blur-xl border-r border-sidebar-border flex flex-col items-center py-6 shadow-[0_0_50px_rgba(0,0,0,0.15)] ${className || ''}`}>
+  }} className={`w-10 lg:w-14 bg-sidebar flex flex-col items-center py-6 ${className || ''}`}>
       {/* Chat Toggle Button */}
       <motion.button initial={{
       opacity: 0,
@@ -95,9 +95,8 @@ export const Sidebar = ({
         duration: 0.05
       }
         }} onClick={onChatToggle} className={`
-          relative w-11 h-11 lg:w-13 lg:h-13 rounded-xl flex items-center justify-center mb-6
-          transition-all duration-100 group overflow-hidden cursor-pointer
-          ${isChatPanelOpen ? 'bg-sidebar-accent shadow-[0_8px_32px_rgba(0,0,0,0.2)]' : 'bg-sidebar-accent/50 hover:bg-sidebar-accent shadow-[0_4px_20px_rgba(0,0,0,0.1)]'}
+          w-11 h-11 lg:w-13 lg:h-13 rounded-none flex items-center justify-center mb-6
+          transition-all duration-100 group cursor-pointer
         `} aria-label="Toggle Chat History">
         <AnimatePresence>
           {isChatPanelOpen && <motion.div initial={{
@@ -115,7 +114,7 @@ export const Sidebar = ({
         }} className="absolute -left-[2px] top-1/2 -translate-y-1/2 w-1 h-6 bg-sidebar-primary rounded-full" />}
         </AnimatePresence>
         
-        <MessageSquare className={`w-4 h-4 lg:w-5 lg:h-5 transition-all duration-150 ${isChatPanelOpen ? 'text-sidebar-primary' : 'text-sidebar-primary/70 group-hover:text-sidebar-primary'}`} strokeWidth={1.5} />
+        <MessageSquare className="w-4 h-4 lg:w-5 lg:h-5 text-white" strokeWidth={1.5} />
       </motion.button>
 
       {/* Navigation Items */}
@@ -149,44 +148,9 @@ export const Sidebar = ({
         }} onClick={() => {
           // Always navigate to the selected page, regardless of current state
           handleItemClick(item.id);
-        }} className={`
-                relative w-11 h-11 lg:w-13 lg:h-13 rounded-xl flex items-center justify-center
-                transition-all duration-100 group overflow-hidden
-                ${isActive ? 'bg-sidebar-accent shadow-[0_8px_32px_rgba(0,0,0,0.2)]' : 'bg-sidebar-accent/50 hover:bg-sidebar-accent shadow-[0_4px_20px_rgba(0,0,0,0.1)]'}
-              `} aria-label={item.label}>
-              {/* Active indicator */}
-              {isActive && <motion.div initial={{
-            opacity: 0,
-            scaleY: 0.8
-          }} animate={{
-            opacity: 1,
-            scaleY: 1
-          }} transition={{
-            duration: 0.1,
-            ease: [0.4, 0, 0.2, 1]
-          }} className="absolute -left-[2px] top-1/2 -translate-y-1/2 w-1 h-6 bg-sidebar-primary rounded-full" />}
-              
+        }} className="w-11 h-11 lg:w-13 lg:h-13 rounded-none flex items-center justify-center transition-all duration-100 group" aria-label={item.label}>
               {/* Icon */}
-              <Icon className={`w-4 h-4 lg:w-5 lg:h-5 transition-all duration-150 ${isActive ? 'text-sidebar-primary' : 'text-sidebar-primary/70 group-hover:text-sidebar-primary'}`} strokeWidth={1.5} />
-              
-              {/* Tooltip on hover */}
-              <motion.div initial={{
-            opacity: 0,
-            x: -6,
-            scale: 0.95
-          }} whileHover={{
-            opacity: 1,
-            x: 0,
-            scale: 1
-          }} transition={{
-            duration: 0.1,
-            ease: [0.4, 0, 0.2, 1]
-          }} className="absolute left-full ml-3 px-2 py-1.5 bg-slate-900/90 text-white text-xs rounded-lg backdrop-blur-sm pointer-events-none whitespace-nowrap z-50 hidden lg:block border border-slate-700/30">
-                <span>
-                  {item.label}
-                </span>
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 w-1.5 h-1.5 bg-slate-900/90 rotate-45" />
-              </motion.div>
+              <Icon className="w-4 h-4 lg:w-5 lg:h-5 text-white" strokeWidth={1.5} />
             </motion.button>;
       })}
       </div>
