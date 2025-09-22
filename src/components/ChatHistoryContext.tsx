@@ -12,6 +12,7 @@ interface ChatHistoryContextType {
   chatHistory: ChatHistoryEntry[];
   addChatToHistory: (chat: Omit<ChatHistoryEntry, 'id'>) => void;
   removeChatFromHistory: (chatId: string) => void;
+  updateChatTitle: (chatId: string, newTitle: string) => void;
   getChatById: (chatId: string) => ChatHistoryEntry | undefined;
   formatTimestamp: (date: Date) => string;
 }
@@ -77,6 +78,15 @@ export function ChatHistoryProvider({
   const removeChatFromHistory = React.useCallback((chatId: string) => {
     setChatHistory(prev => prev.filter(chat => chat.id !== chatId));
   }, []);
+
+  const updateChatTitle = React.useCallback((chatId: string, newTitle: string) => {
+    setChatHistory(prev => prev.map(chat => 
+      chat.id === chatId 
+        ? { ...chat, title: newTitle.trim() || chat.title }
+        : chat
+    ));
+  }, []);
+
   const getChatById = React.useCallback((chatId: string) => {
     return chatHistory.find(chat => chat.id === chatId);
   }, [chatHistory]);
@@ -84,9 +94,10 @@ export function ChatHistoryProvider({
     chatHistory,
     addChatToHistory,
     removeChatFromHistory,
+    updateChatTitle,
     getChatById,
     formatTimestamp
-  }), [chatHistory, addChatToHistory, removeChatFromHistory, getChatById]);
+  }), [chatHistory, addChatToHistory, removeChatFromHistory, updateChatTitle, getChatById]);
   return <ChatHistoryContext.Provider value={value}>
       {children}
     </ChatHistoryContext.Provider>;

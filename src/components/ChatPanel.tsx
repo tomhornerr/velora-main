@@ -22,7 +22,8 @@ export const ChatPanel = ({
   
   const {
     chatHistory,
-    removeChatFromHistory
+    removeChatFromHistory,
+    updateChatTitle
   } = useChatHistory();
   const [hoveredChat, setHoveredChat] = React.useState<string | null>(null);
   const [openMenuId, setOpenMenuId] = React.useState<string | null>(null);
@@ -51,8 +52,9 @@ export const ChatPanel = ({
   };
 
   const handleSaveRename = (chatId: string) => {
-    // Here you would update the chat title in your state/context
-    // For now, we'll just exit edit mode
+    if (editingTitle.trim()) {
+      updateChatTitle(chatId, editingTitle.trim());
+    }
     setEditingChatId(null);
     setEditingTitle('');
   };
