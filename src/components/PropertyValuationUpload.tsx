@@ -177,9 +177,9 @@ export default function PropertyValuationUpload({
                   <motion.div
                     className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
                       step.completed 
-                        ? 'bg-emerald-500 text-white' 
+                        ? 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-200' 
                         : step.active
-                        ? 'bg-blue-500 text-white'
+                        ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200'
                         : 'bg-slate-200 text-slate-400'
                     }`}
                     whileHover={{ scale: 1.05 }}
@@ -203,7 +203,7 @@ export default function PropertyValuationUpload({
                 {index < steps.length - 1 && (
                   <div className={`w-12 h-0.5 transition-colors duration-300 ${
                     steps[index + 1].completed || steps[index + 1].active 
-                      ? 'bg-emerald-500' 
+                      ? 'bg-gradient-to-r from-teal-500 to-cyan-500' 
                       : 'bg-slate-200'
                   }`} />
                 )}
@@ -221,8 +221,8 @@ export default function PropertyValuationUpload({
           {/* Card Header */}
           <div className="flex-shrink-0 p-4 border-b border-slate-100">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Upload className="w-4 h-4 text-blue-600" />
+              <div className="w-8 h-8 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-lg flex items-center justify-center">
+                <Upload className="w-4 h-4 text-indigo-600" />
               </div>
               <div>
                 <h2 className="text-base font-semibold text-slate-900">Property Document Upload</h2>
@@ -241,8 +241,8 @@ export default function PropertyValuationUpload({
                 onDrop={handleDrop}
                 className={`relative border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-200 ${
                   isDragOver
-                    ? 'border-blue-400 bg-blue-50'
-                    : 'border-slate-300 hover:border-blue-400 hover:bg-blue-50/50'
+                    ? 'border-indigo-400 bg-gradient-to-br from-indigo-50 to-purple-50'
+                    : 'border-slate-300 hover:border-indigo-400 hover:bg-gradient-to-br hover:from-indigo-50 hover:to-purple-50/50'
                 }`}
                 whileHover={{ scale: 1.01 }}
                 whileTap={{ scale: 0.99 }}
@@ -258,13 +258,13 @@ export default function PropertyValuationUpload({
 
                 <div className="flex flex-col items-center space-y-3">
                   <motion.div
-                    className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center"
+                    className="w-12 h-12 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-xl flex items-center justify-center"
                     animate={{ 
                       scale: isDragOver ? 1.1 : 1,
                       rotate: isDragOver ? 5 : 0 
                     }}
                   >
-                    <Plus className="w-6 h-6 text-blue-600" />
+                    <Plus className="w-6 h-6 text-indigo-600" />
                   </motion.div>
                   
                   <div>
@@ -278,11 +278,11 @@ export default function PropertyValuationUpload({
 
                   <div className="flex items-center space-x-4 text-xs text-slate-500">
                     <div className="flex items-center space-x-1">
-                      <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                      <div className="w-1.5 h-1.5 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full"></div>
                       <span>Secure Upload</span>
                     </div>
                     <div className="flex items-center space-x-1">
-                      <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                      <div className="w-1.5 h-1.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full"></div>
                       <span>AI Analysis</span>
                     </div>
                   </div>
@@ -314,65 +314,65 @@ export default function PropertyValuationUpload({
                           >
                             <div className="flex items-center space-x-3 flex-1 min-w-0">
                               <div className="relative flex-shrink-0">
-                                {file.preview ? (
-                                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100">
-                                    <img 
-                                      src={file.preview} 
-                                      alt={file.name}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                                    file.type === 'PDF' ? 'bg-red-100' : 'bg-blue-100'
-                                  }`}>
-                                    {file.type === 'PDF' ? (
-                                      <FileText className={`w-5 h-5 ${
-                                        file.type === 'PDF' ? 'text-red-600' : 'text-blue-600'
-                                      }`} />
-                                    ) : (
-                                      <Image className="w-5 h-5 text-blue-600" />
-                                    )}
-                                  </div>
-                                )}
+                                 {file.type === 'PDF' ? (
+                                   <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100">
+                                     <img 
+                                       src={file.preview} 
+                                       alt={file.name}
+                                       className="w-full h-full object-cover"
+                                     />
+                                   </div>
+                                 ) : (
+                                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                                     file.type === 'PDF' ? 'bg-gradient-to-br from-rose-100 to-orange-100' : 'bg-gradient-to-br from-indigo-100 to-purple-100'
+                                   }`}>
+                                     {file.type === 'PDF' ? (
+                                       <FileText className={`w-5 h-5 ${
+                                         file.type === 'PDF' ? 'text-rose-600' : 'text-indigo-600'
+                                       }`} />
+                                     ) : (
+                                       <Image className="w-5 h-5 text-indigo-600" />
+                                     )}
+                                   </div>
+                                 )}
                                 
                                 {/* Status Indicator */}
-                                <div className="absolute -top-1 -right-1">
-                                  {file.status === 'completed' ? (
-                                    <div className="w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
-                                      <Check className="w-2.5 h-2.5 text-white" />
-                                    </div>
-                                  ) : file.status === 'uploading' ? (
-                                    <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                                      <motion.div
-                                        animate={{ rotate: 360 }}
-                                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                        className="w-2.5 h-2.5 border border-white border-t-transparent rounded-full"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
-                                      <AlertCircle className="w-2.5 h-2.5 text-white" />
-                                    </div>
-                                  )}
-                                </div>
+                                 <div className="absolute -top-1 -right-1">
+                                   {file.status === 'completed' ? (
+                                     <div className="w-4 h-4 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full flex items-center justify-center shadow-sm">
+                                       <Check className="w-2.5 h-2.5 text-white" />
+                                     </div>
+                                   ) : file.status === 'uploading' ? (
+                                     <div className="w-4 h-4 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
+                                       <motion.div
+                                         animate={{ rotate: 360 }}
+                                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                         className="w-2.5 h-2.5 border border-white border-t-transparent rounded-full"
+                                       />
+                                     </div>
+                                   ) : (
+                                     <div className="w-4 h-4 bg-gradient-to-br from-rose-500 to-red-500 rounded-full flex items-center justify-center">
+                                       <AlertCircle className="w-2.5 h-2.5 text-white" />
+                                     </div>
+                                   )}
+                                 </div>
                               </div>
                               
                               <div className="flex-1 min-w-0">
                                 <p className="font-medium text-slate-900 truncate text-sm">{file.name}</p>
-                                <div className="flex items-center space-x-2 mt-0.5">
-                                  <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
-                                    file.type === 'PDF' 
-                                      ? 'bg-red-100 text-red-700' 
-                                      : 'bg-blue-100 text-blue-700'
-                                  }`}>
-                                    {file.type}
-                                  </span>
-                                  <span className="text-xs text-slate-500">{file.size}</span>
-                                  {file.status === 'uploading' && (
-                                    <span className="text-xs text-blue-600 font-medium">Uploading...</span>
-                                  )}
-                                </div>
+                                 <div className="flex items-center space-x-2 mt-0.5">
+                                   <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
+                                     file.type === 'PDF' 
+                                       ? 'bg-gradient-to-r from-rose-100 to-orange-100 text-rose-700' 
+                                       : 'bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700'
+                                   }`}>
+                                     {file.type}
+                                   </span>
+                                   <span className="text-xs text-slate-500">{file.size}</span>
+                                   {file.status === 'uploading' && (
+                                     <span className="text-xs text-indigo-600 font-medium">Uploading...</span>
+                                   )}
+                                 </div>
                               </div>
                             </div>
                             
@@ -398,7 +398,7 @@ export default function PropertyValuationUpload({
               <motion.div
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="w-16 h-16 border-4 border-blue-200 border-t-blue-500 rounded-full mx-auto mb-4"
+                className="w-16 h-16 border-4 border-slate-200 border-t-indigo-500 rounded-full mx-auto mb-4"
               />
               <h3 className="text-lg font-semibold text-slate-900 mb-2">
                 {currentStep === 2 ? 'Processing Documents...' : 'Analyzing Properties...'}
@@ -433,7 +433,7 @@ export default function PropertyValuationUpload({
                   disabled={!canContinue}
                   className={`px-4 py-2 rounded-lg font-semibold text-white transition-all duration-200 text-sm ${
                     canContinue
-                      ? 'bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl'
+                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl'
                       : 'bg-slate-300 cursor-not-allowed'
                   }`}
                   whileHover={canContinue ? { scale: 1.02 } : {}}
