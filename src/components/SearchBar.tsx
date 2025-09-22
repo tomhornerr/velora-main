@@ -75,7 +75,7 @@ export const SearchBar = ({
       <div className="w-full max-w-2xl mx-auto">
         {/* Main Search Interface */}
         <motion.div initial={{
-        opacity: 0,
+        opacity: 1,
         y: 20
       }} animate={{
         opacity: 1,
