@@ -135,8 +135,8 @@ export default function PropertyValuationUpload({
       ));
       
       toast({
-        title: "Analysis Complete! ✅",
-        description: "Your property documents have been successfully analyzed. Ready to view results.",
+        title: "Document Analysis Complete",
+        description: "Property valuation report is ready for review.",
         duration: 5000,
       });
       
