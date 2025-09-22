@@ -294,31 +294,31 @@ export const ChatPanel = ({
                                   >
                                      <button
                                        onClick={(e) => handleRename(e, chat.id, chat.title)}
-                                       className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
+                                       className="w-full flex items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors duration-150 group/item"
                                      >
-                                       <Edit className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:rotate-12 group-hover/item:text-indigo-600" />
-                                       <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">Rename</span>
+                                       <Edit className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-150" />
+                                       <span className="font-medium">Rename</span>
                                      </button>
                                      <button
                                        onClick={(e) => chat.archived ? handleUnarchiveChat(e, chat.id) : handleArchiveChat(e, chat.id)}
-                                       className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
+                                       className="w-full flex items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors duration-150 group/item"
                                      >
                                        {chat.archived ? (
-                                         <ArchiveRestore className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:text-green-600" />
+                                         <ArchiveRestore className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-150" />
                                        ) : (
-                                         <Archive className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:text-amber-600" />
+                                         <Archive className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-150" />
                                        )}
-                                       <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">
+                                       <span className="font-medium">
                                          {chat.archived ? 'Unarchive' : 'Archive'}
                                        </span>
                                      </button>
-                                     <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent mx-2 my-1" />
+                                     <div className="h-px bg-slate-200 mx-2 my-1" />
                                      <button
                                        onClick={(e) => handleDeleteChat(e, chat.id)}
-                                       className="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
+                                       className="w-full flex items-center px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 transition-colors duration-150 group/item"
                                      >
-                                       <Trash2 className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:rotate-12 group-hover/item:text-red-700" />
-                                       <span className="group-hover/item:font-semibold group-hover/item:text-red-700 transition-all duration-50">Delete</span>
+                                       <Trash2 className="w-3.5 h-3.5 mr-2.5 text-red-500 group-hover/item:text-red-600 transition-colors duration-150" />
+                                       <span className="font-medium">Delete</span>
                                      </button>
                                    </motion.div>
                                 )}
