@@ -102,9 +102,9 @@ export default function PropertyResultsDisplay({
       
       // Sensitivity thresholds
       const sensitivityMap = {
-        low: 80,
-        medium: 50,
-        high: 20
+        low: 30,
+        medium: 15,
+        high: 5
       };
       
       const threshold = sensitivityMap[scrollSensitivity];
@@ -126,9 +126,9 @@ export default function PropertyResultsDisplay({
 
       // Reset scroll lock after a delay (longer for lower sensitivity)
       const delayMap = {
-        low: 600,
-        medium: 400,
-        high: 200
+        low: 400,
+        medium: 250,
+        high: 150
       };
       
       setTimeout(() => {
