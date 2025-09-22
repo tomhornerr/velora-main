@@ -19,24 +19,48 @@ export const SearchBar = ({
   
   // Auto-focus on any keypress for search bar
   useEffect(() => {
+    console.log('SearchBar: Setting up global keydown listener');
+    
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      console.log('SearchBar: Global keydown triggered', {
+        key: e.key,
+        target: e.target?.constructor.name,
+        inputRef: inputRef.current ? 'exists' : 'null'
+      });
+      
       // Don't interfere with form inputs, buttons, or modifier keys
       if (e.target instanceof HTMLInputElement || 
           e.target instanceof HTMLTextAreaElement || 
           e.target instanceof HTMLButtonElement ||
           e.ctrlKey || e.metaKey || e.altKey || 
           e.key === 'Tab' || e.key === 'Escape') {
+        console.log('SearchBar: Ignoring keydown - excluded target/key');
         return;
       }
       
       // Focus input and let the character through for normal typing
       if (e.key.length === 1 && inputRef.current) {
+        console.log('SearchBar: Focusing input for typing');
+        e.preventDefault(); // Prevent default to avoid duplicate input
         inputRef.current.focus();
+        // Set the value directly
+        setSearchValue(prev => prev + e.key);
       }
     };
 
     window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    return () => {
+      console.log('SearchBar: Cleaning up global keydown listener');
+      window.removeEventListener('keydown', handleGlobalKeyDown);
+    };
+  }, []);
+
+  // Auto-focus on mount
+  useEffect(() => {
+    console.log('SearchBar: Auto-focusing on mount');
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
   }, []);
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
