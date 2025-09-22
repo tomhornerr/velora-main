@@ -152,16 +152,16 @@ export default function PropertyValuationUpload({
   const canContinue = completedFiles.length > 0;
 
   return (
-    <div className={`w-full h-full flex items-center justify-center p-8 ${className || ''}`}>
-      <div className="w-full max-w-2xl">
+    <div className={`w-full h-full flex items-center justify-center p-4 overflow-hidden ${className || ''}`}>
+      <div className="w-full max-w-2xl h-full flex flex-col">
         {/* Step Indicator */}
-        <div className="flex items-center justify-center mb-8">
+        <div className="flex-shrink-0 flex items-center justify-center mb-6">
           <div className="flex items-center space-x-4">
             {steps.map((step, index) => (
               <React.Fragment key={step.id}>
                 <div className="flex flex-col items-center">
                   <motion.div
-                    className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 ${
+                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
                       step.completed 
                         ? 'bg-emerald-500 text-white' 
                         : step.active
@@ -171,23 +171,23 @@ export default function PropertyValuationUpload({
                     whileHover={{ scale: 1.05 }}
                   >
                     {step.completed ? (
-                      <CheckCircle className="w-6 h-6" />
+                      <CheckCircle className="w-5 h-5" />
                     ) : step.id === 1 ? (
-                      <Upload className="w-6 h-6" />
+                      <Upload className="w-5 h-5" />
                     ) : step.id === 2 ? (
-                      <FileText className="w-6 h-6" />
+                      <FileText className="w-5 h-5" />
                     ) : (
-                      <Camera className="w-6 h-6" />
+                      <Camera className="w-5 h-5" />
                     )}
                   </motion.div>
-                  <span className={`text-sm mt-2 font-medium ${
+                  <span className={`text-xs mt-1 font-medium ${
                     step.active ? 'text-slate-900' : 'text-slate-500'
                   }`}>
                     {step.title}
                   </span>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`w-16 h-0.5 transition-colors duration-300 ${
+                  <div className={`w-12 h-0.5 transition-colors duration-300 ${
                     steps[index + 1].completed || steps[index + 1].active 
                       ? 'bg-emerald-500' 
                       : 'bg-slate-200'
@@ -202,198 +202,201 @@ export default function PropertyValuationUpload({
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden"
+          className="flex-1 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col min-h-0"
         >
           {/* Card Header */}
-          <div className="p-6 border-b border-slate-100">
+          <div className="flex-shrink-0 p-4 border-b border-slate-100">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center">
-                <Upload className="w-5 h-5 text-blue-600" />
+              <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Upload className="w-4 h-4 text-blue-600" />
               </div>
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">Property Document Upload</h2>
-                <p className="text-sm text-slate-500">Upload your property documents for analysis</p>
+                <h2 className="text-base font-semibold text-slate-900">Property Document Upload</h2>
+                <p className="text-xs text-slate-500">Upload your property documents for analysis</p>
               </div>
             </div>
           </div>
 
-          {/* Upload Section */}
-          {currentStep === 1 && (
-            <div className="p-6">
-              <motion.div
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                className={`relative border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-all duration-200 ${
-                  isDragOver
-                    ? 'border-blue-400 bg-blue-50'
-                    : 'border-slate-300 hover:border-blue-400 hover:bg-blue-50/50'
-                }`}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.99 }}
-              >
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  multiple
-                  accept=".pdf,.jpg,.jpeg,.png"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
+          {/* Scrollable Content Area */}
+          <div className="flex-1 overflow-y-auto min-h-0">
+            {/* Upload Section */}
+            {currentStep === 1 && (
+              <div className="p-4">
+                <motion.div
+                  onClick={() => fileInputRef.current?.click()}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  className={`relative border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-200 ${
+                    isDragOver
+                      ? 'border-blue-400 bg-blue-50'
+                      : 'border-slate-300 hover:border-blue-400 hover:bg-blue-50/50'
+                  }`}
+                  whileHover={{ scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
 
-                <div className="flex flex-col items-center space-y-4">
-                  <motion.div
-                    className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center"
-                    animate={{ 
-                      scale: isDragOver ? 1.1 : 1,
-                      rotate: isDragOver ? 5 : 0 
-                    }}
-                  >
-                    <Plus className="w-8 h-8 text-blue-600" />
-                  </motion.div>
-                  
-                  <div>
-                    <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                      {isDragOver ? 'Drop your files here' : 'Choose files or drag and drop'}
+                  <div className="flex flex-col items-center space-y-3">
+                    <motion.div
+                      className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center"
+                      animate={{ 
+                        scale: isDragOver ? 1.1 : 1,
+                        rotate: isDragOver ? 5 : 0 
+                      }}
+                    >
+                      <Plus className="w-6 h-6 text-blue-600" />
+                    </motion.div>
+                    
+                    <div>
+                      <h3 className="text-base font-semibold text-slate-900 mb-1">
+                        {isDragOver ? 'Drop your files here' : 'Choose files or drag and drop'}
+                      </h3>
+                      <p className="text-sm text-slate-500">
+                        PDF, JPG, PNG files up to 10MB each
+                      </p>
+                    </div>
+
+                    <div className="flex items-center space-x-4 text-xs text-slate-500">
+                      <div className="flex items-center space-x-1">
+                        <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full"></div>
+                        <span>Secure Upload</span>
+                      </div>
+                      <div className="flex items-center space-x-1">
+                        <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                        <span>AI Analysis</span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+
+                {/* Uploaded Files Grid */}
+                {uploadedFiles.length > 0 && (
+                  <div className="mt-4">
+                    <h3 className="text-sm font-semibold text-slate-900 mb-3">
+                      Uploaded Files ({uploadedFiles.length})
                     </h3>
-                    <p className="text-slate-500">
-                      PDF, JPG, PNG files up to 10MB each
-                    </p>
-                  </div>
-
-                  <div className="flex items-center space-x-6 text-sm text-slate-500">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-emerald-500 rounded-full"></div>
-                      <span>Secure Upload</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                      <span>AI Analysis</span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Uploaded Files Grid */}
-              {uploadedFiles.length > 0 && (
-                <div className="mt-6">
-                  <h3 className="text-sm font-semibold text-slate-900 mb-4">
-                    Uploaded Files ({uploadedFiles.length})
-                  </h3>
-                  <div className="grid grid-cols-1 gap-3">
-                    <AnimatePresence>
-                      {uploadedFiles.map((file) => (
-                        <motion.div
-                          key={file.id}
-                          initial={{ opacity: 0, scale: 0.95 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          className="flex items-center p-4 bg-slate-50 rounded-xl border border-slate-200 group hover:shadow-md transition-all duration-200"
-                        >
-                          <div className="flex items-center space-x-3 flex-1">
-                            <div className="relative">
-                              {file.preview ? (
-                                <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-100">
-                                  <img 
-                                    src={file.preview} 
-                                    alt={file.name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                              ) : (
-                                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                                  file.type === 'PDF' ? 'bg-red-100' : 'bg-blue-100'
-                                }`}>
-                                  {file.type === 'PDF' ? (
-                                    <FileText className={`w-6 h-6 ${
-                                      file.type === 'PDF' ? 'text-red-600' : 'text-blue-600'
-                                    }`} />
-                                  ) : (
-                                    <Image className="w-6 h-6 text-blue-600" />
-                                  )}
-                                </div>
-                              )}
-                              
-                              {/* Status Indicator */}
-                              <div className="absolute -top-1 -right-1">
-                                {file.status === 'completed' ? (
-                                  <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
-                                    <Check className="w-3 h-3 text-white" />
-                                  </div>
-                                ) : file.status === 'uploading' ? (
-                                  <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
-                                    <motion.div
-                                      animate={{ rotate: 360 }}
-                                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                                      className="w-3 h-3 border border-white border-t-transparent rounded-full"
+                    <div className="space-y-2 max-h-64 overflow-y-auto pr-2">
+                      <AnimatePresence>
+                        {uploadedFiles.map((file) => (
+                          <motion.div
+                            key={file.id}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            className="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-200 group hover:shadow-md transition-all duration-200"
+                          >
+                            <div className="flex items-center space-x-3 flex-1 min-w-0">
+                              <div className="relative flex-shrink-0">
+                                {file.preview ? (
+                                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100">
+                                    <img 
+                                      src={file.preview} 
+                                      alt={file.name}
+                                      className="w-full h-full object-cover"
                                     />
                                   </div>
                                 ) : (
-                                  <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                                    <AlertCircle className="w-3 h-3 text-white" />
+                                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                                    file.type === 'PDF' ? 'bg-red-100' : 'bg-blue-100'
+                                  }`}>
+                                    {file.type === 'PDF' ? (
+                                      <FileText className={`w-5 h-5 ${
+                                        file.type === 'PDF' ? 'text-red-600' : 'text-blue-600'
+                                      }`} />
+                                    ) : (
+                                      <Image className="w-5 h-5 text-blue-600" />
+                                    )}
                                   </div>
                                 )}
+                                
+                                {/* Status Indicator */}
+                                <div className="absolute -top-1 -right-1">
+                                  {file.status === 'completed' ? (
+                                    <div className="w-4 h-4 bg-emerald-500 rounded-full flex items-center justify-center">
+                                      <Check className="w-2.5 h-2.5 text-white" />
+                                    </div>
+                                  ) : file.status === 'uploading' ? (
+                                    <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                                      <motion.div
+                                        animate={{ rotate: 360 }}
+                                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                        className="w-2.5 h-2.5 border border-white border-t-transparent rounded-full"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="w-4 h-4 bg-red-500 rounded-full flex items-center justify-center">
+                                      <AlertCircle className="w-2.5 h-2.5 text-white" />
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                              
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-slate-900 truncate text-sm">{file.name}</p>
+                                <div className="flex items-center space-x-2 mt-0.5">
+                                  <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${
+                                    file.type === 'PDF' 
+                                      ? 'bg-red-100 text-red-700' 
+                                      : 'bg-blue-100 text-blue-700'
+                                  }`}>
+                                    {file.type}
+                                  </span>
+                                  <span className="text-xs text-slate-500">{file.size}</span>
+                                  {file.status === 'uploading' && (
+                                    <span className="text-xs text-blue-600 font-medium">Uploading...</span>
+                                  )}
+                                </div>
                               </div>
                             </div>
                             
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium text-slate-900 truncate">{file.name}</p>
-                              <div className="flex items-center space-x-2 mt-1">
-                                <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${
-                                  file.type === 'PDF' 
-                                    ? 'bg-red-100 text-red-700' 
-                                    : 'bg-blue-100 text-blue-700'
-                                }`}>
-                                  {file.type}
-                                </span>
-                                <span className="text-xs text-slate-500">{file.size}</span>
-                                {file.status === 'uploading' && (
-                                  <span className="text-xs text-blue-600 font-medium">Uploading...</span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <button
-                            onClick={() => handleDelete(file.id)}
-                            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
+                            <button
+                              onClick={() => handleDelete(file.id)}
+                              className="w-7 h-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </motion.div>
+                        ))}
+                      </AnimatePresence>
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
-          )}
+                )}
+              </div>
+            )}
 
-          {/* Processing State */}
-          {(currentStep === 2 || currentStep === 3) && (
-            <div className="p-8 text-center">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="w-16 h-16 border-4 border-blue-200 border-t-blue-500 rounded-full mx-auto mb-4"
-              />
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">
-                {currentStep === 2 ? 'Processing Documents...' : 'Analyzing Properties...'}
-              </h3>
-              <p className="text-slate-500">
-                {currentStep === 2 
-                  ? 'We\'re extracting information from your documents' 
-                  : 'AI is analyzing your property details'
-                }
-              </p>
-            </div>
-          )}
+            {/* Processing State */}
+            {(currentStep === 2 || currentStep === 3) && (
+              <div className="p-8 text-center">
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  className="w-16 h-16 border-4 border-blue-200 border-t-blue-500 rounded-full mx-auto mb-4"
+                />
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">
+                  {currentStep === 2 ? 'Processing Documents...' : 'Analyzing Properties...'}
+                </h3>
+                <p className="text-slate-500">
+                  {currentStep === 2 
+                    ? 'We\'re extracting information from your documents' 
+                    : 'AI is analyzing your property details'
+                  }
+                </p>
+              </div>
+            )}
+          </div>
 
           {/* Action Buttons */}
-          <div className="p-6 border-t border-slate-100 bg-slate-50">
+          <div className="flex-shrink-0 p-4 border-t border-slate-100 bg-slate-50">
             <div className="flex items-center justify-between">
-              <div className="text-sm text-slate-500">
+              <div className="text-xs text-slate-500">
                 {uploadedFiles.length > 0 && (
                   <span>{completedFiles.length} of {uploadedFiles.length} files ready</span>
                 )}
@@ -403,7 +406,7 @@ export default function PropertyValuationUpload({
                 <motion.button
                   onClick={handleContinue}
                   disabled={!canContinue}
-                  className={`px-6 py-3 rounded-xl font-semibold text-white transition-all duration-200 ${
+                  className={`px-4 py-2 rounded-lg font-semibold text-white transition-all duration-200 text-sm ${
                     canContinue
                       ? 'bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl'
                       : 'bg-slate-300 cursor-not-allowed'
@@ -417,26 +420,6 @@ export default function PropertyValuationUpload({
             </div>
           </div>
         </motion.div>
-
-        {/* Progress Indicator */}
-        {uploadedFiles.some(f => f.status === 'uploading') && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="mt-4 text-center"
-          >
-            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-50 rounded-full">
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                className="w-4 h-4 border-2 border-blue-200 border-t-blue-500 rounded-full"
-              />
-              <span className="text-sm text-blue-700 font-medium">
-                Processing uploads...
-              </span>
-            </div>
-          </motion.div>
-        )}
       </div>
     </div>
   );
