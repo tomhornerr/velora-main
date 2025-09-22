@@ -46,8 +46,8 @@ const saveChatHistory = (chatHistory: ChatHistoryEntry[]) => {
 const generateChatTitle = (messages: any[]): string => {
   if (!messages || messages.length === 0) return 'New conversation';
   
-  // Find the first user message
-  const firstUserMessage = messages.find(msg => msg.type === 'user' || msg.role === 'user');
+  // Find the first user message - check for both 'role' and 'type' properties
+  const firstUserMessage = messages.find(msg => msg.role === 'user' || msg.type === 'user');
   if (firstUserMessage) {
     const content = firstUserMessage.content || firstUserMessage.text || '';
     if (content.length > 40) {
