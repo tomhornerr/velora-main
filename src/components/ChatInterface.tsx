@@ -263,7 +263,7 @@ export default function ChatInterface({
   }} className={`flex flex-col h-full w-full relative ${className || ''}`}>
       {/* Fullscreen Chat Container - Animated Background */}
       <div className="w-full h-full relative overflow-hidden">
-        {/* Exact flowing gradient background matching the uploaded image */}
+        {/* Exact flowing gradient background matching the uploaded image - OUTER background */}
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-cyan-600 to-teal-300">
           {/* Main flowing curve overlay */}
           <div className="absolute inset-0 overflow-hidden">
@@ -297,9 +297,12 @@ export default function ChatInterface({
             </div>
           </div>
         </div>
+
+        {/* White chat interface area on top */}
+        <div className="absolute inset-x-0 top-16 bottom-0 bg-white mx-8 rounded-t-3xl shadow-2xl z-10"></div>
         
         {/* Content Layer */}
-        <div className="relative z-10 flex flex-col h-full">
+        <div className="relative z-20 flex flex-col h-full">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-3 mx-4 mt-4 border-b border-slate-100/20">
           <div className="flex items-center space-x-2">
