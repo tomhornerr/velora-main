@@ -455,10 +455,10 @@ export default function ChatInterface({
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Area - Fixed to bottom with high z-index */}
-        <div className="absolute bottom-0 left-0 right-0 z-50 px-6 pt-12 pb-6 bg-white">
+        {/* Floating Chat Input Island */}
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
           <form onSubmit={handleSendMessage} className="relative">
-            <div className="relative flex items-center bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200/50 rounded-full px-5 py-2.5 max-w-2xl mx-auto shadow-sm hover:shadow-md focus-within:shadow-md focus-within:border-blue-300/70 transition-all duration-300 mt-3">
+            <div className="relative flex items-center bg-white/95 backdrop-blur-sm border border-slate-200/60 rounded-full px-5 py-3 shadow-lg hover:shadow-xl focus-within:shadow-xl focus-within:border-blue-300/70 transition-all duration-300">
               <input ref={inputRef} type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={e => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -466,21 +466,18 @@ export default function ChatInterface({
                   handleSendMessage(e as any);
                 }
               }
-            }} placeholder="Ask anything..." className="flex-1 bg-transparent text-slate-700 placeholder:text-slate-400 focus:outline-none text-sm font-normal" disabled={isTyping} />
+            }} placeholder="Ask anything..." className="flex-1 bg-transparent text-slate-700 placeholder:text-slate-400 focus:outline-none text-sm font-normal min-w-[300px]" disabled={isTyping} />
               
-              <button type="submit" disabled={!inputValue.trim() || isTyping} className={`ml-3 w-7 h-7 flex items-center justify-center rounded-full transition-all duration-200 ${
+              <button type="submit" disabled={!inputValue.trim() || isTyping} className={`ml-3 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 ${
                 inputValue.trim() && !isTyping 
                   ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm hover:scale-105' 
                   : 'bg-slate-300/70 text-slate-400 cursor-not-allowed'
               }`}>
-                <ArrowUp className="w-3.5 h-3.5" strokeWidth={2.5} />
+                <ArrowUp className="w-4 h-4" strokeWidth={2.5} />
               </button>
             </div>
           </form>
         </div>
-        
-        {/* Extended white space below chat bar */}
-        <div className="bg-white h-16"></div>
         </div>
       </div>
     </motion.div>;
