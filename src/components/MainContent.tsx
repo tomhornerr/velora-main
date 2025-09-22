@@ -10,6 +10,7 @@ import FlowBackground from './FlowBackground';
 import DotGrid from './DotGrid';
 import { PropertyOutlineBackground } from './PropertyOutlineBackground';
 import { Property3DBackground } from './Property3DBackground';
+import { PropertyCyclingBackground } from './PropertyCyclingBackground';
 export interface MainContentProps {
   className?: string;
   currentView?: string;
@@ -238,7 +239,7 @@ export const MainContent = ({
   return <div className={`flex-1 relative ${className || ''}`}>
       {/* Background based on current view */}
       {(currentView === 'search' || currentView === 'home') && !isInChatMode ? (
-        <Property3DBackground />
+        <PropertyCyclingBackground />
       ) : currentView !== 'upload' ? (
         <FlowBackground />
       ) : null}
