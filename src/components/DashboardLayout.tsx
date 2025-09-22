@@ -42,6 +42,9 @@ const DashboardLayoutContent = ({
       console.log('Saved chat to history:', chatHistoryEntry);
     }
 
+    // Always close chat panel when navigating to a different view
+    setIsChatPanelOpen(false);
+    
     // Always exit chat mode when navigating to a different view
     setCurrentView(viewId);
     setIsInChatMode(false);
