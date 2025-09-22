@@ -481,7 +481,7 @@ export default function ChatInterface({
         {/* Input Area */}
         <div className="p-6">
           <form onSubmit={handleSendMessage} className="relative">
-            <div className="relative flex items-center bg-white/90 border border-slate-300 rounded-xl px-4 py-3 max-w-2xl mx-auto shadow-sm hover:shadow-md transition-all duration-200 focus-within:border-slate-400 backdrop-blur-sm">
+            <div className="relative flex items-center bg-black/20 backdrop-blur-xl border border-white/20 rounded-full px-6 py-3 max-w-2xl mx-auto shadow-2xl hover:bg-black/25 hover:border-white/30 focus-within:bg-black/30 focus-within:border-white/40 transition-all duration-300">
               <input ref={inputRef} type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={e => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -489,12 +489,12 @@ export default function ChatInterface({
                   handleSendMessage(e as any);
                 }
               }
-            }} placeholder="Ask anything" className="flex-1 bg-transparent text-slate-800 placeholder:text-slate-500 focus:outline-none text-base" disabled={isTyping} />
+            }} placeholder="Ask anything..." className="flex-1 bg-transparent text-white placeholder:text-white/60 focus:outline-none text-sm font-medium" disabled={isTyping} />
               
-              <button type="submit" disabled={!inputValue.trim() || isTyping} className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200 ${
+              <button type="submit" disabled={!inputValue.trim() || isTyping} className={`ml-3 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 backdrop-blur-sm ${
                 inputValue.trim() && !isTyping 
-                  ? 'bg-slate-800 text-white hover:bg-slate-700 shadow-sm' 
-                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  ? 'bg-white/20 text-white hover:bg-white/30 shadow-lg hover:scale-105' 
+                  : 'bg-white/10 text-white/50 cursor-not-allowed'
               }`}>
                 <ArrowUp className="w-4 h-4" strokeWidth={2} />
               </button>
