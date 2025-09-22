@@ -97,6 +97,7 @@ export const MainContent = ({
                  {/* Chat Interface with elevated z-index */}
                 <div className="relative z-10 w-full h-full">
                   <ChatInterface 
+                    key={`chat-${currentChatData?.query || 'new'}`}
                     initialQuery={currentChatData?.query || ""} 
                     onBack={handleBackToSearch} 
                     onMessagesUpdate={handleChatMessagesUpdate}

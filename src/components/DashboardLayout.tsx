@@ -83,14 +83,17 @@ const DashboardLayoutContent = ({
   }, [getChatById]);
 
   const handleNewChat = React.useCallback(() => {
-    console.log('Starting new chat');
+    console.log('Starting new chat - clearing all state');
     setCurrentChatId(null);
     setCurrentChatData(null);
     setHasPerformedSearch(false); // Reset search state
     setIsInChatMode(true); // Show blank chat interface
     setCurrentView('search');
     setIsChatPanelOpen(false);
-  }, []);
+    
+    // Also clear any residual chat state in MainContent
+    handleChatModeChange(true, null);
+  }, [handleChatModeChange]);
 
   return (
     <motion.div 
