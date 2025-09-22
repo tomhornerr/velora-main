@@ -8,6 +8,7 @@ import PropertyValuationUpload from './PropertyValuationUpload';
 import { CloudBackground } from './CloudBackground';
 import FlowBackground from './FlowBackground';
 import DotGrid from './DotGrid';
+import searchBg from '../assets/search-background.png';
 export interface MainContentProps {
   className?: string;
   currentView?: string;
@@ -217,10 +218,15 @@ export const MainContent = ({
     }
   };
   return <div className={`flex-1 relative ${className || ''}`}>
-      {/* Background for non-upload views */}
-      {currentView !== 'upload' && currentView !== 'search' && currentView !== 'home' && (
+      {/* Background based on current view */}
+      {currentView === 'search' || currentView === 'home' ? (
+        <div 
+          className="fixed inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${searchBg})` }}
+        />
+      ) : currentView !== 'upload' ? (
         <FlowBackground />
-      )}
+      ) : null}
       
       {/* Content container with glass effect */}
       <div className={`relative z-10 h-full flex flex-col ${
