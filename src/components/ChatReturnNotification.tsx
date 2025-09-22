@@ -46,30 +46,26 @@ export const ChatReturnNotification = ({
           transition={{ duration: 0.2, ease: "easeOut" }}
           className="fixed top-16 left-20 z-50 sm:top-4 sm:left-20"
         >
-          <div className="bg-white border border-slate-200 rounded-lg shadow-lg p-3 w-64 sm:max-w-64 sm:min-w-48">
-            <div className="flex items-start justify-between mb-2">
-              <div className="flex items-center space-x-2 flex-1">
-                <MessageCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
-                <span className="text-xs text-slate-500 font-medium">Return to chat</span>
-              </div>
-              <button
-                onClick={onDismiss}
-                className="text-slate-400 hover:text-slate-600 transition-colors ml-2"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
+          <div className="bg-white/95 backdrop-blur-sm border border-slate-200/60 rounded-full shadow-lg px-4 py-2 flex items-center space-x-3 min-w-72 max-w-96">
+            <MessageCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
             
             <button
               onClick={onReturnToChat}
-              className="w-full text-left hover:bg-slate-50 rounded p-2 transition-colors"
+              className="flex-1 text-left hover:bg-slate-50/50 rounded-full px-2 py-1 transition-colors flex items-center space-x-2"
             >
-              <div className="text-sm text-slate-800 font-medium mb-1">
-                {truncateText(getPreviewText())}
+              <div>
+                <span className="text-xs text-slate-500 font-medium">Return to chat</span>
+                <div className="text-sm text-slate-800 font-medium">
+                  {truncateText(getPreviewText(), 25)}
+                </div>
               </div>
-              <div className="text-xs text-slate-500">
-                {chatData.messages.length} message{chatData.messages.length !== 1 ? 's' : ''}
-              </div>
+            </button>
+            
+            <button
+              onClick={onDismiss}
+              className="text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100/50"
+            >
+              <X className="w-3.5 h-3.5" />
             </button>
           </div>
         </motion.div>
