@@ -177,7 +177,7 @@ export default function PropertyValuationUpload({
                   <motion.div
                     className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
                       step.completed 
-                        ? 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-200' 
+                        ? 'bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-300' 
                         : step.active
                         ? 'bg-gradient-to-br from-slate-600 to-slate-700 text-white shadow-lg shadow-slate-300'
                         : 'bg-slate-200 text-slate-400'
@@ -203,7 +203,7 @@ export default function PropertyValuationUpload({
                 {index < steps.length - 1 && (
                   <div className={`w-12 h-0.5 transition-colors duration-300 ${
                     steps[index + 1].completed || steps[index + 1].active 
-                      ? 'bg-gradient-to-r from-teal-500 to-cyan-500' 
+                      ? 'bg-gradient-to-r from-emerald-500 to-green-500' 
                       : 'bg-slate-200'
                   }`} />
                 )}
@@ -278,7 +278,7 @@ export default function PropertyValuationUpload({
 
                   <div className="flex items-center space-x-4 text-xs text-slate-500">
                     <div className="flex items-center space-x-1">
-                      <div className="w-1.5 h-1.5 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-full"></div>
+                      <div className="w-1.5 h-1.5 bg-gradient-to-r from-emerald-500 to-green-500 rounded-full"></div>
                       <span>Secure Upload</span>
                     </div>
                     <div className="flex items-center space-x-1">
@@ -339,7 +339,7 @@ export default function PropertyValuationUpload({
                                 {/* Status Indicator */}
                                  <div className="absolute -top-1 -right-1">
                                    {file.status === 'completed' ? (
-                                     <div className="w-4 h-4 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-full flex items-center justify-center shadow-sm">
+                                     <div className="w-4 h-4 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center shadow-sm">
                                        <Check className="w-2.5 h-2.5 text-white" />
                                      </div>
                                    ) : file.status === 'uploading' ? (
