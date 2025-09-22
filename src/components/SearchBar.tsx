@@ -81,12 +81,14 @@ export const SearchBar = ({
                     onSearch?.(searchValue.trim());
                   }, 600);
                 }
-              }} className={`w-10 h-8 flex items-center justify-center rounded-sm transition-all duration-100 ${
+              }} className={`w-8 h-8 flex items-center justify-center transition-all duration-100 ${
                 searchValue.trim() && !isSubmitted 
-                  ? 'bg-white text-black hover:bg-white/90 hover:scale-110 shadow-lg backdrop-blur-lg border-none active:scale-95' 
-                  : 'bg-white/20 text-white/50 cursor-not-allowed border border-white/10'
+                  ? 'text-white hover:scale-110 active:scale-95' 
+                  : 'text-white/50 cursor-not-allowed'
               }`} disabled={isSubmitted || !searchValue.trim()}>
-                  <Play className="w-3.5 h-3.5" strokeWidth={0} fill="currentColor" />
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" className="ml-0.5">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
                 </button>
               </div>
             </div>
