@@ -141,10 +141,17 @@ export default function PropertyValuationUpload({
         className: "border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50 shadow-lg shadow-emerald-100/50",
       });
       
-      // Continue with report after notification
+      // Reset to initial state after notification
       setTimeout(() => {
-        onContinueWithReport?.();
-      }, 1000);
+        setUploadedFiles([]);
+        setCurrentStep(1);
+        setSteps(uploadSteps);
+        
+        // Continue with report after reset
+        setTimeout(() => {
+          onContinueWithReport?.();
+        }, 500);
+      }, 1500);
     }, 10000);
   };
 
