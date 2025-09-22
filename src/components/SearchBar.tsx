@@ -67,9 +67,8 @@ export const SearchBar = ({
     if (searchValue.trim() && !isSubmitted) {
       console.log('SearchBar: Submitting search with value:', searchValue.trim());
       setIsSubmitted(true);
-      setTimeout(() => {
-        onSearch?.(searchValue.trim());
-      }, 600);
+      // Instantly trigger search and chat history creation
+      onSearch?.(searchValue.trim());
     }
   };
   return <div className={`w-full h-full flex items-center justify-center px-6 ${className || ''}`}>
@@ -136,9 +135,8 @@ export const SearchBar = ({
                 if (searchValue.trim() && !isSubmitted) {
                   console.log('SearchBar: Button clicked, submitting search with value:', searchValue.trim());
                   setIsSubmitted(true);
-                  setTimeout(() => {
-                    onSearch?.(searchValue.trim());
-                  }, 600);
+                  // Instantly trigger search and chat history creation
+                  onSearch?.(searchValue.trim());
                 }
               }} className={`w-8 h-8 flex items-center justify-center transition-all duration-100 ${
                 searchValue.trim() && !isSubmitted 
