@@ -52,11 +52,28 @@ const DashboardLayoutContent = ({
   };
   const handleChatModeChange = (inChatMode: boolean, chatData?: any) => {
     console.log('DashboardLayout: Chat mode changed to:', inChatMode);
+    
+    // If exiting chat mode, save current chat to history first
+    if (!inChatMode && isInChatMode && currentChatData && currentChatData.messages.length > 0) {
+      const chatHistoryEntry = {
+        title: currentChatData.query.length > 50 ? currentChatData.query.substring(0, 50) + "..." : currentChatData.query,
+        timestamp: "Just now", 
+        preview: currentChatData.query,
+        messages: currentChatData.messages
+      };
+      
+      addChatToHistory(chatHistoryEntry);
+      console.log('Saved chat to history on exit:', chatHistoryEntry);
+    }
+    
     setIsInChatMode(inChatMode);
     if (chatData) {
       setCurrentChatData(chatData);
       // Mark that a search has been performed
       setHasPerformedSearch(true);
+    } else if (!inChatMode) {
+      // Clear chat data when exiting chat mode
+      setCurrentChatData(null);
     }
   };
   const handleChatPanelToggle = React.useCallback(() => {
