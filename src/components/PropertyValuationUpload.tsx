@@ -175,7 +175,7 @@ export default function PropertyValuationUpload({
   };
   const completedFiles = uploadedFiles.filter(f => f.status === 'completed');
   const canContinue = completedFiles.length > 0;
-  return <div className={`w-full h-full flex items-center justify-center overflow-hidden relative ${className || ''}`} style={{
+  return <div className={`min-h-screen w-screen flex items-center justify-center overflow-hidden relative ${className || ''}`} style={{
     background: `
              radial-gradient(ellipse at 20% 80%, rgba(16, 185, 129, 0.3) 0%, transparent 50%),
              radial-gradient(ellipse at 80% 20%, rgba(5, 150, 105, 0.2) 0%, transparent 50%),
