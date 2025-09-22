@@ -94,10 +94,10 @@ export const MainContent = ({
                 {/* No background needed here as it's handled globally */}
                 
                 
-                {/* Chat Interface with elevated z-index */}
+                 {/* Chat Interface with elevated z-index */}
                 <div className="relative z-10 w-full h-full">
                   <ChatInterface 
-                    initialQuery={currentChatData?.query || chatQuery} 
+                    initialQuery={currentChatData?.query || ""} 
                     onBack={handleBackToSearch} 
                     onMessagesUpdate={handleChatMessagesUpdate}
                     loadedMessages={currentChatData?.messages}
