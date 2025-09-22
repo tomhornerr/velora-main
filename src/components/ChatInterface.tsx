@@ -460,17 +460,37 @@ export default function ChatInterface({
             ease: smoothEasing
           }} className="flex justify-start">
                 <div className="flex items-start space-x-4">
-                  <div className="bg-slate-50 border border-slate-200/60 rounded-2xl px-4 py-3 shadow-sm">
-                    <div className="flex space-x-1.5">
-                      {[0, 1, 2].map(i => <motion.div key={i} className="w-1.5 h-1.5 bg-slate-600 rounded-full" animate={{
-                    scale: [1, 1.2, 1],
-                    opacity: [0.5, 0.9, 0.5]
-                  }} transition={{
-                    duration: 0.6,
-                    repeat: Infinity,
-                    delay: i * 0.1,
-                    ease: preciseEasing
-                  }} />)}
+                  <div className="bg-white border border-slate-100 rounded-2xl px-6 py-4 shadow-lg">
+                    <div className="flex items-center space-x-2">
+                      {[0, 1, 2].map(i => (
+                        <motion.div 
+                          key={i} 
+                          className="w-2.5 h-2.5 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full" 
+                          animate={{
+                            scale: [1, 1.3, 1],
+                            opacity: [0.3, 1, 0.3]
+                          }} 
+                          transition={{
+                            duration: 1.2,
+                            repeat: Infinity,
+                            delay: i * 0.15,
+                            ease: [0.4, 0, 0.6, 1]
+                          }} 
+                        />
+                      ))}
+                      <motion.div 
+                        className="ml-3 text-slate-400 text-xs font-medium"
+                        animate={{
+                          opacity: [0.4, 0.8, 0.4]
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }}
+                      >
+                        Thinking
+                      </motion.div>
                     </div>
                   </div>
                 </div>
