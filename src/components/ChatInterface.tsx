@@ -48,9 +48,14 @@ export default function ChatInterface({
 
   // Load messages when loadedMessages prop changes
   React.useEffect(() => {
+    console.log('ChatInterface - loadedMessages changed:', loadedMessages);
     if (loadedMessages && loadedMessages.length > 0) {
       console.log('Loading messages from history:', loadedMessages);
       setMessages(loadedMessages);
+      setIsInitialized(true);
+    } else if (loadedMessages && loadedMessages.length === 0) {
+      console.log('No messages to load, starting fresh chat');
+      setMessages([]);
       setIsInitialized(true);
     }
   }, [loadedMessages]);

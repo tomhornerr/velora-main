@@ -64,16 +64,23 @@ const DashboardLayoutContent = ({
     
     // Get the chat data from history
     const selectedChat = getChatById(chatId);
+    console.log('Found chat data:', selectedChat);
+    
     if (selectedChat) {
       // Set the chat mode and load the chat data
-      setCurrentChatData({
+      const chatData = {
         query: selectedChat.title,
         messages: selectedChat.messages || [],
         timestamp: new Date(selectedChat.timestamp)
-      });
+      };
+      console.log('Setting chat data:', chatData);
+      
+      setCurrentChatData(chatData);
       setIsInChatMode(true);
       setIsChatPanelOpen(false); // Close the chat panel when selecting a chat
-      console.log('Loaded chat data:', selectedChat);
+      console.log('Chat mode set to true, panel closed');
+    } else {
+      console.error('Chat not found:', chatId);
     }
   };
   return <motion.div initial={{
