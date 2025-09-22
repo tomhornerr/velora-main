@@ -459,21 +459,19 @@ export default function ChatInterface({
             duration: 0.15,
             ease: smoothEasing
           }} className="flex justify-start">
-                <div className="flex items-start space-x-4">
-                  <div className="bg-white border border-slate-100 rounded-2xl px-4 py-3 shadow-sm">
-                    <motion.div 
-                      className="w-2 h-2 bg-green-500 rounded-full"
-                      animate={{
-                        scale: [1, 1.2, 1],
-                        opacity: [0.6, 1, 0.6]
-                      }}
-                      transition={{
-                        duration: 1.5,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                  </div>
+                <div className="flex justify-start">
+                  <motion.div 
+                    className="w-2 h-2 bg-green-500 rounded-full ml-4"
+                    animate={{
+                      scale: [1, 1.2, 1],
+                      opacity: [0.6, 1, 0.6]
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  />
                 </div>
               </motion.div>}
           </AnimatePresence>
