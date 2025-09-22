@@ -148,7 +148,10 @@ export const Sidebar = ({
             duration: 0.05
           }
         }} onClick={() => {
-          // Always navigate to the selected page, regardless of current state
+          // Navigate to search page when search icon is clicked
+          if (item.id === 'search') {
+            console.log('Navigating to search page');
+          }
           handleItemClick(item.id);
         }} className="w-11 h-11 lg:w-13 lg:h-13 flex items-center justify-center transition-all duration-300 ease-out group" aria-label={item.label}>
               {/* Icon */}
