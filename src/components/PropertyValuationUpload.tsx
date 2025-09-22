@@ -3,6 +3,7 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, FileText, X, Check, AlertCircle, Plus, Image, FileIcon, Camera, CheckCircle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export interface PropertyValuationUploadProps {
   className?: string;
@@ -36,6 +37,7 @@ export default function PropertyValuationUpload({
   const [currentStep, setCurrentStep] = React.useState(1);
   const [steps, setSteps] = React.useState(uploadSteps);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -126,12 +128,23 @@ export default function PropertyValuationUpload({
       ));
     }, 2000);
     
+    // Show completion notification after 10 seconds
     setTimeout(() => {
       setSteps(prev => prev.map(step => 
         step.id === 3 ? { ...step, completed: true, active: false } : step
       ));
-      onContinueWithReport?.();
-    }, 4000);
+      
+      toast({
+        title: "Analysis Complete! ✅",
+        description: "Your property documents have been successfully analyzed. Ready to view results.",
+        duration: 5000,
+      });
+      
+      // Continue with report after notification
+      setTimeout(() => {
+        onContinueWithReport?.();
+      }, 1000);
+    }, 10000);
   };
 
   const formatFileSize = (bytes: number): string => {
@@ -389,12 +402,20 @@ export default function PropertyValuationUpload({
               <h3 className="text-lg font-semibold text-slate-900 mb-2">
                 {currentStep === 2 ? 'Processing Documents...' : 'Analyzing Properties...'}
               </h3>
-              <p className="text-slate-500">
+              <p className="text-slate-500 mb-3">
                 {currentStep === 2 
                   ? 'We\'re extracting information from your documents' 
                   : 'AI is analyzing your property details'
                 }
               </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mx-auto max-w-md">
+                <p className="text-sm text-blue-800 font-medium">
+                  💡 You can leave this screen and continue working
+                </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  We'll notify you when the analysis is complete
+                </p>
+              </div>
             </div>
           )}
 
