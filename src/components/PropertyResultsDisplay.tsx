@@ -70,6 +70,7 @@ export default function PropertyResultsDisplay({
   const [isMapOpen, setIsMapOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
+  const lastScrollTime = useRef(0);
 
   const nextProperty = () => {
     setCurrentIndex(prev => (prev + 1) % properties.length);
@@ -83,7 +84,7 @@ export default function PropertyResultsDisplay({
     setCurrentIndex(index);
   };
 
-  // Navigation button controls only
+  // Navigation button controls and scroll
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -96,15 +97,34 @@ export default function PropertyResultsDisplay({
       setIsHovering(false);
     };
 
-    // Add event listeners for hover effects only
+    const handleWheel = (e: WheelEvent) => {
+      const now = Date.now();
+      // Throttle scroll events to prevent rapid changes
+      if (now - lastScrollTime.current < 300) return;
+      
+      lastScrollTime.current = now;
+      e.preventDefault();
+      
+      if (e.deltaY > 0) {
+        // Scroll down - next property
+        setCurrentIndex(prev => (prev + 1) % properties.length);
+      } else if (e.deltaY < 0) {
+        // Scroll up - previous property  
+        setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
+      }
+    };
+
+    // Add event listeners
     container.addEventListener('mouseenter', handleMouseEnter);
     container.addEventListener('mouseleave', handleMouseLeave);
+    container.addEventListener('wheel', handleWheel, { passive: false });
 
     return () => {
       container.removeEventListener('mouseenter', handleMouseEnter);
       container.removeEventListener('mouseleave', handleMouseLeave);
+      container.removeEventListener('wheel', handleWheel);
     };
-  }, []);
+  }, [properties.length]);
 
   const currentProperty = properties[currentIndex];
 
