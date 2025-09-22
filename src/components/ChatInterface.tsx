@@ -263,31 +263,8 @@ export default function ChatInterface({
   }} className={`flex flex-col h-full w-full relative ${className || ''}`}>
       {/* Fullscreen Chat Container - Animated Background */}
       <div className="w-full h-full relative overflow-hidden">
-        {/* Animated Background Layer */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-blue-100">
-          {/* Flowing Gradient Overlay */}
-          <div className="absolute inset-0 opacity-30">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-100/20 via-blue-100/20 to-indigo-100/20 animate-[gradient-shift_8s_ease-in-out_infinite]" 
-                 style={{
-                   backgroundSize: '400% 400%',
-                   animation: 'gradient-shift 8s ease-in-out infinite'
-                 }} />
-          </div>
-          
-          {/* Floating Elements */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {/* Large floating shapes */}
-            <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-white/5 rounded-full blur-xl animate-[float_6s_ease-in-out_infinite]" />
-            <div className="absolute top-3/4 right-1/4 w-24 h-24 bg-blue-200/10 rounded-full blur-lg animate-[float_8s_ease-in-out_infinite_reverse]" />
-            <div className="absolute top-1/2 left-3/4 w-20 h-20 bg-purple-200/8 rounded-full blur-lg animate-[float_7s_ease-in-out_infinite]" 
-                 style={{ animationDelay: '2s' }} />
-            
-            {/* Smaller floating dots */}
-            <div className="absolute top-1/3 right-1/3 w-8 h-8 bg-indigo-200/15 rounded-full blur-sm animate-[float_5s_ease-in-out_infinite]" 
-                 style={{ animationDelay: '1s' }} />
-            <div className="absolute bottom-1/3 left-1/3 w-6 h-6 bg-blue-300/12 rounded-full blur-sm animate-[float_9s_ease-in-out_infinite]" 
-                 style={{ animationDelay: '3s' }} />
-          </div>
+        {/* White Background */}
+        <div className="absolute inset-0 bg-white">
         </div>
         
         {/* Content Layer */}
@@ -481,7 +458,7 @@ export default function ChatInterface({
         {/* Input Area */}
         <div className="p-6">
           <form onSubmit={handleSendMessage} className="relative">
-            <div className="relative flex items-center bg-black/20 backdrop-blur-xl border border-white/20 rounded-full px-6 py-3 max-w-2xl mx-auto shadow-2xl hover:bg-black/25 hover:border-white/30 focus-within:bg-black/30 focus-within:border-white/40 transition-all duration-300">
+            <div className="relative flex items-center bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200/60 rounded-full px-6 py-3 max-w-2xl mx-auto shadow-lg hover:shadow-xl focus-within:shadow-xl focus-within:border-blue-300/80 transition-all duration-300">
               <input ref={inputRef} type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={e => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -489,12 +466,12 @@ export default function ChatInterface({
                   handleSendMessage(e as any);
                 }
               }
-            }} placeholder="Ask anything..." className="flex-1 bg-transparent text-white placeholder:text-white/60 focus:outline-none text-sm font-medium" disabled={isTyping} />
+            }} placeholder="Ask anything..." className="flex-1 bg-transparent text-slate-700 placeholder:text-slate-500 focus:outline-none text-sm font-medium" disabled={isTyping} />
               
-              <button type="submit" disabled={!inputValue.trim() || isTyping} className={`ml-3 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 backdrop-blur-sm ${
+              <button type="submit" disabled={!inputValue.trim() || isTyping} className={`ml-3 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 ${
                 inputValue.trim() && !isTyping 
-                  ? 'bg-white/20 text-white hover:bg-white/30 shadow-lg hover:scale-105' 
-                  : 'bg-white/10 text-white/50 cursor-not-allowed'
+                  ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-md hover:scale-105' 
+                  : 'bg-slate-300 text-slate-400 cursor-not-allowed'
               }`}>
                 <ArrowUp className="w-4 h-4" strokeWidth={2} />
               </button>
