@@ -123,15 +123,27 @@ export default function ChatInterface({
     });
   };
   
+  const scrollToShowLatestExchange = () => {
+    // More aggressive scroll to ensure only the latest exchange is visible
+    if (messagesEndRef.current) {
+      const container = messagesEndRef.current.parentElement;
+      if (container) {
+        container.scrollTop = container.scrollHeight;
+      }
+    }
+  };
+  
   useEffect(() => {
-    // Auto-scroll to bottom when new messages are added
-    scrollToBottom();
+    // When messages change, scroll to show only the latest exchange
+    if (messages.length > 0) {
+      setTimeout(() => scrollToShowLatestExchange(), 100);
+    }
   }, [messages]);
   
   useEffect(() => {
-    // Auto-scroll to bottom when typing indicator changes
+    // When typing starts/stops, ensure we're showing the latest content
     if (isTyping) {
-      setTimeout(() => scrollToBottom(), 100);
+      setTimeout(() => scrollToShowLatestExchange(), 50);
     }
   }, [isTyping]);
   // Auto-focus behavior for chat input after activation
