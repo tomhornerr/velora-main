@@ -154,11 +154,17 @@ export const ChatPanel = ({
     }} className={`fixed left-10 lg:left-14 top-0 h-full w-80 bg-white/90 backdrop-blur-xl border-r border-slate-200/60 flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.08)] z-40 ${className || ''}`}>
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-slate-200/40">
-            <div className="flex items-center space-x-2">
-              <div className="text-slate-800 font-semibold text-base tracking-tight" style={{ fontFamily: 'serif' }}>
-                Velora
-              </div>
-            </div>
+            <motion.button 
+              onClick={handleNewChat} 
+              whileHover={{ scale: 1.01 }} 
+              whileTap={{ scale: 0.99 }} 
+              className="flex items-center space-x-2.5 px-3 py-2 border border-slate-200/60 hover:border-slate-300/80 bg-white/70 hover:bg-slate-50/80 rounded-lg transition-all duration-200 group"
+            >
+              <Plus className="w-4 h-4 text-slate-600 group-hover:text-slate-700" strokeWidth={1.5} />
+              <span className="text-slate-700 group-hover:text-slate-800 font-medium text-sm">
+                New chat
+              </span>
+            </motion.button>
             
             <div className="flex items-center space-x-1">
               {archivedChats.length > 0 && (
@@ -185,21 +191,6 @@ export const ChatPanel = ({
                 <X className="w-4 h-4" strokeWidth={1.5} />
               </motion.button>
             </div>
-          </div>
-
-          {/* New Chat Button */}
-          <div className="p-4">
-            <motion.button 
-              onClick={handleNewChat} 
-              whileHover={{ scale: 1.01 }} 
-              whileTap={{ scale: 0.99 }} 
-              className="w-full flex items-center space-x-2.5 px-3 py-2.5 border border-slate-200/60 hover:border-slate-300/80 bg-white/70 hover:bg-slate-50/80 rounded-lg transition-all duration-200 group"
-            >
-              <Plus className="w-4 h-4 text-slate-600 group-hover:text-slate-700" strokeWidth={1.5} />
-              <span className="text-slate-700 group-hover:text-slate-800 font-medium text-sm">
-                New chat
-              </span>
-            </motion.button>
           </div>
 
           {/* Chat List */}
