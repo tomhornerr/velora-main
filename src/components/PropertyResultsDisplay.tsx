@@ -257,10 +257,13 @@ export default function PropertyResultsDisplay({
         isHovering ? 'ring-2 ring-blue-200 shadow-md' : ''
       }`}>
         {/* Property Image */}
-        <div className="relative h-48 bg-gradient-to-br from-slate-100 to-slate-200">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
-          </div>
+        <div className="relative h-48 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
+          <img 
+            src={currentProperty.image}
+            alt={currentProperty.address}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
           
           {/* Address Badge */}
           <div className="absolute top-4 left-4">
