@@ -73,12 +73,12 @@
     --shadow-glow: 0 0 40px hsl(238, 75%, 59%, 0.3);
     --shadow-property: 0 8px 32px rgba(99, 102, 241, 0.15);
 
-    /* Sidebar Variables - Light Subtle Gradient */
-    --sidebar-background: linear-gradient(180deg, hsl(30, 20%, 70%) 0%, hsl(250, 25%, 65%) 35%, hsl(240, 30%, 60%) 60%, hsl(230, 35%, 50%) 80%, hsl(220, 40%, 40%) 100%);
+    /* Sidebar Variables - Professional Blue Gradient */
+    --sidebar-background: linear-gradient(180deg, hsl(215, 20%, 65%) 0%, hsl(220, 25%, 55%) 25%, hsl(225, 30%, 45%) 50%, hsl(230, 35%, 35%) 75%, hsl(235, 40%, 25%) 100%);
     --sidebar-foreground: 255 255 255;
     --sidebar-primary: 255 255 255;
     --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: transparent;
+    --sidebar-accent: 255 255 255 / 0.1;
     --sidebar-accent-foreground: 255 255 255;
     --sidebar-border: transparent;
     --sidebar-ring: 255 255 255;
@@ -153,12 +153,12 @@
     --shadow-glow: 0 0 40px hsl(238, 75%, 65%, 0.4);
     --shadow-property: 0 8px 32px rgba(99, 102, 241, 0.25);
 
-    /* Dark Sidebar - Light Subtle Gradient */
-    --sidebar-background: linear-gradient(180deg, hsl(30, 20%, 60%) 0%, hsl(250, 25%, 55%) 35%, hsl(240, 30%, 50%) 60%, hsl(230, 35%, 40%) 80%, hsl(220, 40%, 30%) 100%);
+    /* Dark Sidebar - Professional Blue Gradient */
+    --sidebar-background: linear-gradient(180deg, hsl(215, 20%, 55%) 0%, hsl(220, 25%, 45%) 25%, hsl(225, 30%, 35%) 50%, hsl(230, 35%, 25%) 75%, hsl(235, 40%, 18%) 100%);
     --sidebar-foreground: 255 255 255;
     --sidebar-primary: 255 255 255;
     --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: transparent;
+    --sidebar-accent: 255 255 255 / 0.1;
     --sidebar-accent-foreground: 255 255 255;
     --sidebar-border: transparent;
     --sidebar-ring: 255 255 255;
