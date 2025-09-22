@@ -173,8 +173,28 @@ export default function PropertyValuationUpload({
   const canContinue = completedFiles.length > 0;
 
   return (
-    <div className={`w-full h-full flex items-center justify-center p-4 overflow-hidden ${className || ''}`}>
-      <div className="w-full max-w-2xl">
+    <div className={`w-full h-full flex items-center justify-center p-4 overflow-hidden relative ${className || ''}`} 
+         style={{
+           background: `
+             radial-gradient(ellipse at 20% 80%, rgba(16, 185, 129, 0.3) 0%, transparent 50%),
+             radial-gradient(ellipse at 80% 20%, rgba(5, 150, 105, 0.2) 0%, transparent 50%),
+             radial-gradient(ellipse at 40% 60%, rgba(6, 78, 59, 0.4) 0%, transparent 50%),
+             linear-gradient(135deg, #000000 0%, #1a1a1a 100%)
+           `
+         }}>
+      {/* Flowing wave overlay */}
+      <div 
+        className="absolute inset-0 opacity-60"
+        style={{
+          background: `
+            radial-gradient(ellipse 800px 400px at 30% 70%, rgba(16, 185, 129, 0.4) 0%, transparent 40%),
+            radial-gradient(ellipse 600px 300px at 70% 30%, rgba(5, 150, 105, 0.3) 0%, transparent 40%),
+            radial-gradient(ellipse 400px 200px at 50% 50%, rgba(6, 78, 59, 0.2) 0%, transparent 40%)
+          `,
+          filter: 'blur(1px)'
+        }}
+      />
+      <div className="w-full max-w-2xl relative z-10">
         {/* Step Indicator */}
         <div className="flex-shrink-0 flex items-center justify-center mb-6">
           <div className="flex items-center space-x-4">
