@@ -6,6 +6,7 @@ import { Sidebar } from './Sidebar';
 import { MainContent } from './MainContent';
 import { ChatPanel } from './ChatPanel';
 import { ChatHistoryProvider, useChatHistory } from './ChatHistoryContext';
+import { ChatReturnNotification } from './ChatReturnNotification';
 
 export interface DashboardLayoutProps {
   className?: string;
@@ -20,9 +21,17 @@ const DashboardLayoutContent = ({
   const [currentChatData, setCurrentChatData] = React.useState<any>(null);
   const [currentChatId, setCurrentChatId] = React.useState<string | null>(null);
   const [hasPerformedSearch, setHasPerformedSearch] = React.useState(false);
+  const [showChatNotification, setShowChatNotification] = React.useState(false);
+  const [previousChatData, setPreviousChatData] = React.useState<any>(null);
   const { addChatToHistory, updateChatInHistory, getChatById } = useChatHistory();
 
   const handleViewChange = (viewId: string) => {
+    // Store current chat data if exiting from a chat
+    if (isInChatMode && currentChatData && (viewId !== 'search')) {
+      setPreviousChatData(currentChatData);
+      setShowChatNotification(true);
+    }
+    
     // Always close chat panel when navigating to a different view
     setIsChatPanelOpen(false);
     
@@ -95,6 +104,20 @@ const DashboardLayoutContent = ({
     handleChatModeChange(true, null);
   }, [handleChatModeChange]);
 
+  const handleReturnToChat = React.useCallback(() => {
+    if (previousChatData) {
+      setCurrentChatData(previousChatData);
+      setIsInChatMode(true);
+      setCurrentView('search');
+      setShowChatNotification(false);
+    }
+  }, [previousChatData]);
+
+  const handleDismissNotification = React.useCallback(() => {
+    setShowChatNotification(false);
+    setPreviousChatData(null);
+  }, []);
+
   return (
     <motion.div 
       initial={{ opacity: 0, scale: 0.98 }} 
@@ -102,6 +125,14 @@ const DashboardLayoutContent = ({
       transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }} 
       className={`flex h-screen w-full overflow-hidden relative ${className || ''}`}
     >
+      {/* Chat Return Notification */}
+      <ChatReturnNotification
+        isVisible={showChatNotification}
+        chatData={previousChatData}
+        onReturnToChat={handleReturnToChat}
+        onDismiss={handleDismissNotification}
+      />
+      
       {/* Chat Panel */}
       <ChatPanel 
         isOpen={isChatPanelOpen} 
