@@ -55,8 +55,9 @@ const DashboardLayoutContent = ({
     }
   };
   const handleChatPanelToggle = React.useCallback(() => {
+    console.log('Toggling chat panel. Current state:', { isChatPanelOpen, hasPerformedSearch });
     setIsChatPanelOpen(prev => !prev);
-  }, []);
+  }, [isChatPanelOpen, hasPerformedSearch]);
   const handleChatSelect = (chatId: string) => {
     console.log('Selected chat:', chatId);
     setIsInChatMode(true);
@@ -72,7 +73,12 @@ const DashboardLayoutContent = ({
     ease: [0.23, 1, 0.32, 1]
   }} className={`flex h-screen w-full overflow-hidden relative ${className || ''}`}>
       {/* Chat Panel */}
-      <ChatPanel isOpen={isChatPanelOpen} onToggle={handleChatPanelToggle} onChatSelect={handleChatSelect} showChatHistory={isChatPanelOpen && hasPerformedSearch} />
+      <ChatPanel 
+        isOpen={isChatPanelOpen} 
+        onToggle={handleChatPanelToggle} 
+        onChatSelect={handleChatSelect} 
+        showChatHistory={true}
+      />
       
       {/* Sidebar */}
       <Sidebar onItemClick={handleViewChange} onChatToggle={handleChatPanelToggle} isChatPanelOpen={isChatPanelOpen} activeItem={currentView} />

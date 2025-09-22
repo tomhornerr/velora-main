@@ -18,6 +18,8 @@ export const ChatPanel = ({
   className,
   showChatHistory = false
 }: ChatPanelProps) => {
+  console.log('ChatPanel rendering with isOpen:', isOpen, 'showChatHistory:', showChatHistory);
+  
   const {
     chatHistory,
     removeChatFromHistory
@@ -80,7 +82,7 @@ export const ChatPanel = ({
     }} transition={{
       duration: 0.4,
       ease: [0.23, 1, 0.32, 1]
-    }} className={`w-80 bg-white/90 backdrop-blur-xl border-r border-slate-200/60 flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.08)] ${className || ''}`}>
+    }} className={`fixed left-0 top-0 h-full w-80 bg-white/90 backdrop-blur-xl border-r border-slate-200/60 flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.08)] z-50 ${className || ''}`}>
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-slate-200/60">
             <div className="flex items-center space-x-3">
