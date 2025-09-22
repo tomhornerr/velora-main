@@ -1,91 +1,28 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
-// Different building types with impressive architectural details
+// Property development and estate-focused building types
 const buildingTypes = [
-  // Art Deco Skyscraper (Empire State Building style)
+  // Luxury Estate Mansion
   {
-    id: 'artdeco1',
-    type: 'Art Deco Tower',
+    id: 'luxuryestate1',
+    type: 'Luxury Estate',
     svg: (
       <g className="opacity-80" style={{ filter: "drop-shadow(0 0 4px rgba(255,255,255,0.3))" }}>
-        {/* Main tower with stepped crown */}
+        {/* Main mansion structure */}
         <motion.path
-          d="M850 100 L850 800 L800 800 L800 850 L750 850 L750 900 L700 900 L700 1080 L1000 1080 L1000 900 L950 900 L950 850 L900 850 L900 800 L850 800 L850 100 Z"
+          d="M600 600 L600 1080 L1200 1080 L1200 600 L900 450 Z"
           stroke="white"
-          strokeWidth="2.8"
+          strokeWidth="3"
           fill="none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
           transition={{ duration: 3, ease: "easeInOut" }}
         />
         
-        {/* Stepped crown detail */}
+        {/* Left wing */}
         <motion.path
-          d="M875 100 L875 80 L825 80 L825 100 M860 80 L860 60 L840 60 L840 80"
-          stroke="white"
-          strokeWidth="2"
-          fill="none"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ delay: 2, duration: 1 }}
-        />
-
-        {/* Window grid pattern */}
-        {Array.from({ length: 35 }, (_, i) => {
-          const floor = Math.floor(i / 5);
-          const col = i % 5;
-          return (
-            <motion.rect
-              key={i}
-              x={720 + col * 35}
-              y={120 + floor * 25}
-              width={25}
-              height={20}
-              stroke="white"
-              strokeWidth="0.8"
-              fill="none"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 0.7, scale: 1 }}
-              transition={{ delay: 1.5 + i * 0.02, duration: 0.4 }}
-            />
-          );
-        })}
-
-        {/* Art Deco ornamental details */}
-        <motion.path
-          d="M720 150 L980 150 M720 200 L980 200 M720 300 L980 300 M720 500 L980 500"
-          stroke="white"
-          strokeWidth="1.5"
-          fill="none"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ delay: 2.5, duration: 1.5 }}
-        />
-      </g>
-    )
-  },
-
-  // Modern Glass Office Complex
-  {
-    id: 'modernoffice1',
-    type: 'Corporate Headquarters',
-    svg: (
-      <g className="opacity-85" style={{ filter: "drop-shadow(0 0 5px rgba(255,255,255,0.4))" }}>
-        {/* Main glass tower */}
-        <motion.path
-          d="M400 200 L400 1080 L700 1080 L700 200 Z"
-          stroke="white"
-          strokeWidth="3"
-          fill="none"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 2.5 }}
-        />
-
-        {/* Connected lower wing */}
-        <motion.path
-          d="M700 400 L700 1080 L900 1080 L900 400 Z"
+          d="M400 700 L400 1080 L600 1080 L600 700 L500 650 Z"
           stroke="white"
           strokeWidth="2.5"
           fill="none"
@@ -94,235 +31,172 @@ const buildingTypes = [
           transition={{ delay: 1, duration: 2 }}
         />
 
-        {/* Glass curtain wall grid */}
-        {Array.from({ length: 8 }, (_, i) => (
-          <motion.line
-            key={`vertical-${i}`}
-            x1={420 + i * 35}
-            y1="220"
-            x2={420 + i * 35}
-            y2="1080"
-            stroke="white"
-            strokeWidth="1"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ delay: 2 + i * 0.1, duration: 1 }}
-          />
-        ))}
-
-        {Array.from({ length: 20 }, (_, i) => (
-          <motion.line
-            key={`horizontal-${i}`}
-            x1="420"
-            y1={240 + i * 40}
-            x2="680"
-            y2={240 + i * 40}
-            stroke="white"
-            strokeWidth="0.8"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ delay: 2.5 + i * 0.05, duration: 0.8 }}
-          />
-        ))}
-
-        {/* Entrance canopy */}
+        {/* Right wing */}
         <motion.path
-          d="M350 1050 L420 1050 L420 1030 L350 1030 Z"
-          stroke="white"
-          strokeWidth="2"
-          fill="none"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ delay: 3.5, duration: 1 }}
-        />
-
-        {/* Rooftop details */}
-        <motion.rect
-          x="450"
-          y="180"
-          width="40"
-          height="30"
-          stroke="white"
-          strokeWidth="1.5"
-          fill="none"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 0.8, y: 0 }}
-          transition={{ delay: 4, duration: 0.8 }}
-        />
-      </g>
-    )
-  },
-
-  // Suburban Houses Row
-  {
-    id: 'suburban1',
-    type: 'Residential District',
-    svg: (
-      <g className="opacity-75" style={{ filter: "drop-shadow(0 0 3px rgba(255,255,255,0.25))" }}>
-        {/* House 1 - Victorian Style */}
-        <motion.g>
-          <motion.path
-            d="M150 700 L150 1080 L300 1080 L300 700 L225 620 Z"
-            stroke="white"
-            strokeWidth="2"
-            fill="none"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 1.5 }}
-          />
-          {/* Bay window */}
-          <motion.path
-            d="M180 720 L180 800 L200 810 L220 800 L220 720 Z"
-            stroke="white"
-            strokeWidth="1.2"
-            fill="none"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ delay: 1, duration: 1 }}
-          />
-          {/* Dormer window */}
-          <motion.path
-            d="M200 650 L200 680 L240 680 L240 650 L220 630 Z"
-            stroke="white"
-            strokeWidth="1"
-            fill="none"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ delay: 1.5, duration: 0.8 }}
-          />
-        </motion.g>
-
-        {/* House 2 - Colonial Style */}
-        <motion.g>
-          <motion.path
-            d="M350 720 L350 1080 L520 1080 L520 720 L435 650 Z"
-            stroke="white"
-            strokeWidth="2"
-            fill="none"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ delay: 0.5, duration: 1.5 }}
-          />
-          {/* Columns */}
-          <motion.line x1="380" y1="720" x2="380" y2="1080" stroke="white" strokeWidth="1.5" 
-            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.8, duration: 0.6 }} />
-          <motion.line x1="490" y1="720" x2="490" y2="1080" stroke="white" strokeWidth="1.5" 
-            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.9, duration: 0.6 }} />
-          {/* Windows */}
-          <motion.rect x="390" y="750" width="30" height="40" stroke="white" strokeWidth="1" fill="none"
-            initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} transition={{ delay: 2.2, duration: 0.5 }} />
-          <motion.rect x="450" y="750" width="30" height="40" stroke="white" strokeWidth="1" fill="none"
-            initial={{ opacity: 0 }} animate={{ opacity: 0.6 }} transition={{ delay: 2.3, duration: 0.5 }} />
-        </motion.g>
-
-        {/* House 3 - Modern Minimalist */}
-        <motion.g>
-          <motion.path
-            d="M570 680 L570 1080 L750 1080 L750 680 Z"
-            stroke="white"
-            strokeWidth="2.2"
-            fill="none"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ delay: 1, duration: 1.5 }}
-          />
-          {/* Large window */}
-          <motion.rect x="590" y="720" width="80" height="60" stroke="white" strokeWidth="1.5" fill="none"
-            initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 0.7, scale: 1 }} 
-            transition={{ delay: 2, duration: 0.8 }} />
-          {/* Flat roof detail */}
-          <motion.line x1="560" y1="680" x2="760" y2="680" stroke="white" strokeWidth="2" 
-            initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.5, duration: 1 }} />
-        </motion.g>
-      </g>
-    )
-  },
-
-  // Gothic Cathedral/University Building
-  {
-    id: 'gothic1',
-    type: 'Gothic Academy',
-    svg: (
-      <g className="opacity-70" style={{ filter: "drop-shadow(0 0 6px rgba(255,255,255,0.35))" }}>
-        {/* Main cathedral structure */}
-        <motion.path
-          d="M800 300 L800 1080 L1100 1080 L1100 300 L950 150 Z"
+          d="M1200 700 L1200 1080 L1400 1080 L1400 700 L1300 650 Z"
           stroke="white"
           strokeWidth="2.5"
-          fill="none"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ duration: 3 }}
-        />
-
-        {/* Twin towers */}
-        <motion.path
-          d="M780 200 L780 800 L820 800 L820 200 L800 150 Z"
-          stroke="white"
-          strokeWidth="2"
-          fill="none"
-          initial={{ pathLength: 0 }}
-          animate={{ pathLength: 1 }}
-          transition={{ delay: 1, duration: 2 }}
-        />
-        <motion.path
-          d="M1080 200 L1080 800 L1120 800 L1120 200 L1100 150 Z"
-          stroke="white"
-          strokeWidth="2"
           fill="none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
           transition={{ delay: 1.2, duration: 2 }}
         />
 
-        {/* Rose window */}
-        <motion.circle
-          cx="950"
-          cy="400"
-          r="60"
-          stroke="white"
-          strokeWidth="2"
-          fill="none"
-          initial={{ pathLength: 0, scale: 0 }}
-          animate={{ pathLength: 1, scale: 1 }}
-          transition={{ delay: 2, duration: 1.5 }}
-        />
-
-        {/* Rose window spokes */}
-        {Array.from({ length: 8 }, (_, i) => (
+        {/* Grand entrance with columns */}
+        {Array.from({ length: 4 }, (_, i) => (
           <motion.line
             key={i}
-            x1="950"
-            y1="400"
-            x2={950 + Math.cos((i * Math.PI) / 4) * 50}
-            y2={400 + Math.sin((i * Math.PI) / 4) * 50}
+            x1={720 + i * 80}
+            y1="600"
+            x2={720 + i * 80}
+            y2="1080"
             stroke="white"
-            strokeWidth="1"
+            strokeWidth="2"
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
+            transition={{ delay: 2 + i * 0.2, duration: 1 }}
+          />
+        ))}
+
+        {/* Estate windows */}
+        {Array.from({ length: 12 }, (_, i) => (
+          <motion.rect
+            key={i}
+            x={640 + (i % 6) * 80}
+            y={650 + Math.floor(i / 6) * 80}
+            width={40}
+            height={50}
+            stroke="white"
+            strokeWidth="1.2"
+            fill="none"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 0.7, scale: 1 }}
             transition={{ delay: 2.5 + i * 0.1, duration: 0.6 }}
           />
         ))}
 
-        {/* Gothic arched windows */}
-        {Array.from({ length: 6 }, (_, i) => (
-          <motion.path
-            key={i}
-            d={`M${830 + i * 30} 500 L${830 + i * 30} 600 L${845 + i * 30} 600 L${845 + i * 30} 500 L${837.5 + i * 30} 485 Z`}
-            stroke="white"
-            strokeWidth="1.2"
-            fill="none"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ delay: 3 + i * 0.2, duration: 1 }}
-          />
-        ))}
-
-        {/* Flying buttresses */}
-        <motion.path
-          d="M750 600 L800 550 M750 700 L800 650 M1100 550 L1150 600 M1100 650 L1150 700"
+        {/* Circular driveway */}
+        <motion.ellipse
+          cx="900"
+          cy="1150"
+          rx="200"
+          ry="60"
           stroke="white"
-          strokeWidth="1.8"
+          strokeWidth="1.5"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 3.5, duration: 2 }}
+        />
+
+        {/* Estate gates */}
+        <motion.path
+          d="M300 1080 L300 1000 L320 980 L340 1000 L340 1080 M1460 1080 L1460 1000 L1440 980 L1420 1000 L1420 1080"
+          stroke="white"
+          strokeWidth="2"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 4, duration: 1.5 }}
+        />
+      </g>
+    )
+  },
+
+  // High-Rise Residential Development
+  {
+    id: 'condodevelopment1',
+    type: 'Residential Development',
+    svg: (
+      <g className="opacity-85" style={{ filter: "drop-shadow(0 0 5px rgba(255,255,255,0.4))" }}>
+        {/* Main residential tower */}
+        <motion.path
+          d="M700 150 L700 1080 L1000 1080 L1000 150 Z"
+          stroke="white"
+          strokeWidth="3"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 2.8 }}
+        />
+
+        {/* Connected mid-rise */}
+        <motion.path
+          d="M1000 400 L1000 1080 L1200 1080 L1200 400 Z"
+          stroke="white"
+          strokeWidth="2.5"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 1, duration: 2.2 }}
+        />
+
+        {/* Lower townhouse section */}
+        <motion.path
+          d="M500 700 L500 1080 L700 1080 L700 700 Z"
+          stroke="white"
+          strokeWidth="2.2"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 1.5, duration: 2 }}
+        />
+
+        {/* Apartment balconies */}
+        {Array.from({ length: 25 }, (_, i) => {
+          const floor = Math.floor(i / 5);
+          const unit = i % 5;
+          return (
+            <motion.g key={i}>
+              <motion.rect
+                x={720 + unit * 50}
+                y={180 + floor * 60}
+                width={35}
+                height={40}
+                stroke="white"
+                strokeWidth="0.8"
+                fill="none"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.6 }}
+                transition={{ delay: 2 + i * 0.03, duration: 0.4 }}
+              />
+              <motion.line
+                x1={720 + unit * 50}
+                y1={220 + floor * 60}
+                x2={755 + unit * 50}
+                y2={220 + floor * 60}
+                stroke="white"
+                strokeWidth="1.2"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ delay: 2.2 + i * 0.03, duration: 0.3 }}
+              />
+            </motion.g>
+          );
+        })}
+
+        {/* Building amenities sign */}
+        <motion.rect
+          x="650"
+          y="1050"
+          width="100"
+          height="30"
+          stroke="white"
+          strokeWidth="1.5"
+          fill="none"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.8 }}
+          transition={{ delay: 4, duration: 1 }}
+        />
+
+        {/* Pool/amenity area */}
+        <motion.ellipse
+          cx="600"
+          cy="1150"
+          rx="80"
+          ry="30"
+          stroke="white"
+          strokeWidth="1.5"
           fill="none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
@@ -332,101 +206,321 @@ const buildingTypes = [
     )
   },
 
-  // Industrial Complex with Smokestacks
+  // Commercial Real Estate Complex
   {
-    id: 'industrial1',
-    type: 'Manufacturing Plant',
+    id: 'commercial1',
+    type: 'Commercial Complex',
     svg: (
-      <g className="opacity-65" style={{ filter: "drop-shadow(0 0 4px rgba(255,255,255,0.2))" }}>
-        {/* Main factory buildings */}
+      <g className="opacity-75" style={{ filter: "drop-shadow(0 0 3px rgba(255,255,255,0.25))" }}>
+        {/* Main office tower */}
         <motion.path
-          d="M100 600 L100 1080 L400 1080 L400 700 L600 700 L600 1080 L800 1080 L800 600 Z"
+          d="M800 250 L800 1080 L1100 1080 L1100 250 Z"
           stroke="white"
-          strokeWidth="2.5"
+          strokeWidth="2.8"
           fill="none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
           transition={{ duration: 2.5 }}
         />
 
-        {/* Smokestacks */}
-        {Array.from({ length: 3 }, (_, i) => (
-          <motion.g key={i}>
-            <motion.rect
-              x={200 + i * 200}
-              y="300"
-              width="30"
-              height="300"
-              stroke="white"
-              strokeWidth="2"
-              fill="none"
-              initial={{ pathLength: 0 }}
-              animate={{ pathLength: 1 }}
-              transition={{ delay: 1 + i * 0.3, duration: 1.5 }}
-            />
-            {/* Smoke */}
-            <motion.path
-              d={`M${215 + i * 200} 300 C${215 + i * 200} 280 ${225 + i * 200} 270 ${235 + i * 200} 260 S${255 + i * 200} 240 ${265 + i * 200} 220`}
-              stroke="white"
-              strokeWidth="1.5"
-              fill="none"
-              initial={{ pathLength: 0, opacity: 0 }}
-              animate={{ pathLength: 1, opacity: 0.4 }}
-              transition={{ delay: 2 + i * 0.3, duration: 2 }}
-            />
-          </motion.g>
-        ))}
+        {/* Retail podium */}
+        <motion.path
+          d="M600 800 L600 1080 L1300 1080 L1300 800 Z"
+          stroke="white"
+          strokeWidth="2.5"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 1, duration: 2 }}
+        />
 
-        {/* Industrial windows */}
-        {Array.from({ length: 12 }, (_, i) => (
+        {/* Office windows grid */}
+        {Array.from({ length: 20 }, (_, i) => {
+          const floor = Math.floor(i / 4);
+          const office = i % 4;
+          return (
+            <motion.rect
+              key={i}
+              x={830 + office * 60}
+              y={280 + floor * 50}
+              width={45}
+              height={35}
+              stroke="white"
+              strokeWidth="0.9"
+              fill="none"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.7 }}
+              transition={{ delay: 2 + i * 0.05, duration: 0.5 }}
+            />
+          );
+        })}
+
+        {/* Retail storefronts */}
+        {Array.from({ length: 8 }, (_, i) => (
           <motion.rect
             key={i}
-            x={120 + (i % 6) * 80}
-            y={650 + Math.floor(i / 6) * 80}
-            width="50"
-            height="60"
+            x={620 + i * 85}
+            y={820}
+            width={70}
+            height={60}
             stroke="white"
-            strokeWidth="1.2"
+            strokeWidth="1.5"
             fill="none"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.5 }}
-            transition={{ delay: 2.5 + i * 0.1, duration: 0.6 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 0.6, y: 0 }}
+            transition={{ delay: 2.5 + i * 0.1, duration: 0.8 }}
           />
         ))}
 
-        {/* Conveyor system */}
+        {/* Parking structure */}
         <motion.path
-          d="M800 750 L1000 750 L1000 700 L1200 700"
+          d="M400 900 L400 1080 L580 1080 L580 900 Z"
           stroke="white"
           strokeWidth="2"
           fill="none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
-          transition={{ delay: 3, duration: 1.5 }}
+          transition={{ delay: 1.8, duration: 1.5 }}
         />
 
-        {/* Storage silos */}
-        <motion.circle
-          cx="900"
-          cy="650"
-          r="40"
+        {/* Parking levels */}
+        {Array.from({ length: 4 }, (_, i) => (
+          <motion.line
+            key={i}
+            x1="420"
+            y1={920 + i * 40}
+            x2="560"
+            y2={920 + i * 40}
+            stroke="white"
+            strokeWidth="1"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ delay: 3 + i * 0.2, duration: 0.8 }}
+          />
+        ))}
+      </g>
+    )
+  },
+
+  // Gated Community Development
+  {
+    id: 'gatedcommunity1',
+    type: 'Gated Community',
+    svg: (
+      <g className="opacity-70" style={{ filter: "drop-shadow(0 0 6px rgba(255,255,255,0.35))" }}>
+        {/* Community entrance gate */}
+        <motion.path
+          d="M100 1000 L100 950 L120 930 L180 930 L200 950 L200 1000"
           stroke="white"
-          strokeWidth="2"
+          strokeWidth="2.5"
           fill="none"
-          initial={{ pathLength: 0, scale: 0 }}
-          animate={{ pathLength: 1, scale: 1 }}
-          transition={{ delay: 3.5, duration: 1 }}
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 2 }}
         />
-        <motion.circle
-          cx="1000"
-          cy="650"
-          r="35"
+
+        {/* Gate pillars */}
+        <motion.rect x="80" y="930" width="20" height="70" stroke="white" strokeWidth="2" fill="none"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1, duration: 1 }} />
+        <motion.rect x="200" y="930" width="20" height="70" stroke="white" strokeWidth="2" fill="none"
+          initial={{ pathLength: 0 }} animate={{ pathLength: 1 }} transition={{ delay: 1.1, duration: 1 }} />
+
+        {/* Perimeter fence */}
+        <motion.path
+          d="M50 1000 L80 1000 M220 1000 L1800 1000 M1800 1000 L1800 200 L50 200 L50 1000"
+          stroke="white"
+          strokeWidth="1.5"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 1.5, duration: 3 }}
+        />
+
+        {/* Custom homes */}
+        {Array.from({ length: 6 }, (_, i) => {
+          const x = 300 + (i % 3) * 400;
+          const y = 400 + Math.floor(i / 3) * 300;
+          return (
+            <motion.g key={i}>
+              <motion.path
+                d={`M${x} ${y + 200} L${x} ${y + 400} L${x + 200} ${y + 400} L${x + 200} ${y + 200} L${x + 100} ${y + 150} Z`}
+                stroke="white"
+                strokeWidth="2"
+                fill="none"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ delay: 2 + i * 0.3, duration: 1.5 }}
+              />
+              {/* Garage */}
+              <motion.rect
+                x={x + 120}
+                y={y + 280}
+                width={60}
+                height={80}
+                stroke="white"
+                strokeWidth="1.2"
+                fill="none"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.6 }}
+                transition={{ delay: 2.5 + i * 0.3, duration: 0.8 }}
+              />
+              {/* Driveway */}
+              <motion.path
+                d={`M${x + 150} ${y + 360} L${x + 150} ${y + 450}`}
+                stroke="white"
+                strokeWidth="1.5"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ delay: 3 + i * 0.3, duration: 1 }}
+              />
+            </motion.g>
+          );
+        })}
+
+        {/* Community clubhouse */}
+        <motion.path
+          d="M1400 600 L1400 900 L1700 900 L1700 600 L1550 550 Z"
+          stroke="white"
+          strokeWidth="2.2"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 4, duration: 2 }}
+        />
+
+        {/* Tennis court */}
+        <motion.rect
+          x="1450"
+          y="950"
+          width="100"
+          height="50"
+          stroke="white"
+          strokeWidth="1.5"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 4.5, duration: 1.5 }}
+        />
+      </g>
+    )
+  },
+
+  // Mixed-Use Development
+  {
+    id: 'mixeduse1',
+    type: 'Mixed-Use Development',
+    svg: (
+      <g className="opacity-65" style={{ filter: "drop-shadow(0 0 4px rgba(255,255,255,0.2))" }}>
+        {/* Main mixed-use tower */}
+        <motion.path
+          d="M600 200 L600 1080 L900 1080 L900 200 Z"
+          stroke="white"
+          strokeWidth="2.8"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 2.8 }}
+        />
+
+        {/* Residential section (top) */}
+        <motion.path
+          d="M580 200 L580 600 L920 600 L920 200 Z"
           stroke="white"
           strokeWidth="2"
           fill="none"
-          initial={{ pathLength: 0, scale: 0 }}
-          animate={{ pathLength: 1, scale: 1 }}
-          transition={{ delay: 3.7, duration: 1 }}
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 1, duration: 2 }}
+        />
+
+        {/* Office section (middle) */}
+        <motion.path
+          d="M580 600 L580 850 L920 850 L920 600 Z"
+          stroke="white"
+          strokeWidth="2"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 1.5, duration: 1.8 }}
+        />
+
+        {/* Retail section (ground) */}
+        <motion.path
+          d="M500 850 L500 1080 L1000 1080 L1000 850 Z"
+          stroke="white"
+          strokeWidth="2.5"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 2, duration: 2 }}
+        />
+
+        {/* Residential balconies */}
+        {Array.from({ length: 16 }, (_, i) => {
+          const floor = Math.floor(i / 4);
+          const unit = i % 4;
+          return (
+            <motion.line
+              key={i}
+              x1={600 + unit * 70}
+              y1={220 + floor * 40}
+              x2={650 + unit * 70}
+              y2={220 + floor * 40}
+              stroke="white"
+              strokeWidth="1.5"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ delay: 2.5 + i * 0.05, duration: 0.6 }}
+            />
+          );
+        })}
+
+        {/* Office windows */}
+        {Array.from({ length: 12 }, (_, i) => (
+          <motion.rect
+            key={i}
+            x={620 + (i % 4) * 65}
+            y={620 + Math.floor(i / 4) * 60}
+            width={50}
+            height={40}
+            stroke="white"
+            strokeWidth="0.8"
+            fill="none"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.6 }}
+            transition={{ delay: 3 + i * 0.08, duration: 0.5 }}
+          />
+        ))}
+
+        {/* Retail storefronts */}
+        {Array.from({ length: 6 }, (_, i) => (
+          <motion.rect
+            key={i}
+            x={520 + i * 80}
+            y={870}
+            width={70}
+            height={80}
+            stroke="white"
+            strokeWidth="1.3"
+            fill="none"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 0.7, scale: 1 }}
+            transition={{ delay: 3.5 + i * 0.1, duration: 0.8 }}
+          />
+        ))}
+
+        {/* Public plaza */}
+        <motion.ellipse
+          cx="750"
+          cy="1150"
+          rx="150"
+          ry="40"
+          stroke="white"
+          strokeWidth="1.5"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 4, duration: 2 }}
         />
       </g>
     )
@@ -439,7 +533,7 @@ export const PropertyCyclingBackground = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentBuilding((prev) => (prev + 1) % buildingTypes.length);
-    }, 6000); // Change building every 6 seconds for more viewing time
+    }, 7000); // Change building every 7 seconds for more viewing time
 
     return () => clearInterval(interval);
   }, []);
@@ -481,30 +575,30 @@ export const PropertyCyclingBackground = () => {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
-            transition={{ duration: 1, ease: "easeInOut" }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
           >
             {buildingTypes[currentBuilding].svg}
           </motion.g>
         </AnimatePresence>
 
         {/* Static background elements that always stay */}
-        <g className="opacity-30">
+        <g className="opacity-25">
           <motion.path
-            d="M50 700 L50 1080 L80 1080 L80 700 Z M90 750 L90 1080 L110 1080 L110 750 Z"
+            d="M50 800 L50 1080 L80 1080 L80 800 Z M90 850 L90 1080 L110 1080 L110 850 Z"
             stroke="white"
             strokeWidth="1.2"
             fill="none"
-            animate={{ opacity: [0.2, 0.4, 0.2] }}
-            transition={{ duration: 6, repeat: Infinity }}
+            animate={{ opacity: [0.2, 0.3, 0.2] }}
+            transition={{ duration: 8, repeat: Infinity }}
           />
           
           <motion.path
-            d="M1800 650 L1800 1080 L1850 1080 L1850 650 Z M1860 700 L1860 1080 L1890 1080 L1890 700 Z"
+            d="M1800 750 L1800 1080 L1850 1080 L1850 750 Z M1860 800 L1860 1080 L1890 1080 L1890 800 Z"
             stroke="white"
             strokeWidth="1.2"
             fill="none"
-            animate={{ opacity: [0.3, 0.5, 0.3] }}
-            transition={{ duration: 8, repeat: Infinity, delay: 2 }}
+            animate={{ opacity: [0.25, 0.35, 0.25] }}
+            transition={{ duration: 10, repeat: Infinity, delay: 3 }}
           />
         </g>
 
@@ -512,9 +606,9 @@ export const PropertyCyclingBackground = () => {
         <motion.g
           key={`text-${buildingTypes[currentBuilding].type}`}
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 0.5, y: 0 }}
+          animate={{ opacity: 0.6, y: 0 }}
           exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 1 }}
+          transition={{ duration: 1.2 }}
         >
           <motion.rect
             x="80"
@@ -524,7 +618,7 @@ export const PropertyCyclingBackground = () => {
             stroke="white"
             strokeWidth="1"
             fill="none"
-            className="opacity-30"
+            className="opacity-40"
             initial={{ scale: 0.8 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.5, duration: 0.8 }}
@@ -535,9 +629,9 @@ export const PropertyCyclingBackground = () => {
             fill="white"
             fontSize="18"
             fontFamily="Georgia, serif"
-            className="opacity-60"
+            className="opacity-70"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.6 }}
+            animate={{ opacity: 0.7 }}
             transition={{ delay: 0.8, duration: 0.8 }}
           >
             {buildingTypes[currentBuilding].type}
