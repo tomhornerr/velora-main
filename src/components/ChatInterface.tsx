@@ -336,7 +336,7 @@ export default function ChatInterface({
             </motion.button>
             <div>
               <h2 className="text-xs font-medium text-slate-700">
-                <span>Property Search Results</span>
+                <span>Back</span>
               </h2>
             </div>
           </div>
