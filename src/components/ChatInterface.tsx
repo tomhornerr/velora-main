@@ -292,7 +292,7 @@ export default function ChatInterface({
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto px-8 pt-6 pb-4 space-y-6 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+        <div className="flex-1 overflow-y-auto px-8 pt-6 pb-20 space-y-6 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
           <AnimatePresence initial={false}>
             {messages.map((message, index) => {
               // Check if this is a property-related assistant message
@@ -455,8 +455,8 @@ export default function ChatInterface({
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Floating Chat Input Island */}
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
+        {/* Chat Input at Bottom of White Container */}
+        <div className="absolute bottom-6 left-6 right-6 z-50">
           <form onSubmit={handleSendMessage} className="relative">
             <div className="relative flex items-center bg-white/95 backdrop-blur-sm border border-slate-200/60 rounded-full px-5 py-3 shadow-lg hover:shadow-xl focus-within:shadow-xl focus-within:border-blue-300/70 transition-all duration-300">
               <input ref={inputRef} type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={e => {
@@ -466,7 +466,7 @@ export default function ChatInterface({
                   handleSendMessage(e as any);
                 }
               }
-            }} placeholder="Ask anything..." className="flex-1 bg-transparent text-slate-700 placeholder:text-slate-400 focus:outline-none text-sm font-normal min-w-[300px]" disabled={isTyping} />
+            }} placeholder="Ask anything..." className="flex-1 bg-transparent text-slate-700 placeholder:text-slate-400 focus:outline-none text-sm font-normal" disabled={isTyping} />
               
               <button type="submit" disabled={!inputValue.trim() || isTyping} className={`ml-3 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 ${
                 inputValue.trim() && !isTyping 
