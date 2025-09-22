@@ -235,7 +235,7 @@ export const MainContent = ({
   };
   return <div className={`flex-1 relative ${className || ''}`}>
       {/* Background based on current view */}
-      {currentView === 'search' || currentView === 'home' ? (
+      {(currentView === 'search' || currentView === 'home') && !isInChatMode ? (
         <div 
           className="fixed inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${searchBg})` }}
