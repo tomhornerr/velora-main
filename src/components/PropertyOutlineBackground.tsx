@@ -71,29 +71,29 @@ export const PropertyOutlineBackground = () => {
         </g>
 
         {/* Building Complex 2 - Center */}
-        <g className="opacity-40">
+        <g className="opacity-80">
           {/* Main skyscraper */}
           <motion.path
             d="M800 200 L800 1080 L950 1080 L950 200 Z"
             stroke="white"
-            strokeWidth="2"
+            strokeWidth="3"
             fill="none"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.4 }}
+            animate={{ pathLength: 1, opacity: 0.8 }}
             transition={{ duration: 4, delay: 0.2 }}
           />
           
           {/* Geometric details */}
           <motion.g
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.3 }}
+            animate={{ opacity: 0.6 }}
             transition={{ duration: 3, delay: 2.5 }}
           >
             {Array.from({ length: 15 }, (_, i) => (
               <g key={i}>
-                <rect x={820} y={220 + i * 55} width={25} height={35} stroke="white" strokeWidth="0.6" fill="none" />
-                <rect x={855} y={220 + i * 55} width={25} height={35} stroke="white" strokeWidth="0.6" fill="none" />
-                <rect x={890} y={220 + i * 55} width={25} height={35} stroke="white" strokeWidth="0.6" fill="none" />
+                <rect x={820} y={220 + i * 55} width={25} height={35} stroke="white" strokeWidth="1" fill="none" />
+                <rect x={855} y={220 + i * 55} width={25} height={35} stroke="white" strokeWidth="1" fill="none" />
+                <rect x={890} y={220 + i * 55} width={25} height={35} stroke="white" strokeWidth="1" fill="none" />
               </g>
             ))}
           </motion.g>
@@ -102,24 +102,24 @@ export const PropertyOutlineBackground = () => {
           <motion.path
             d="M970 350 L970 1080 L1100 1080 L1100 350 Z"
             stroke="white"
-            strokeWidth="1.8"
+            strokeWidth="2.5"
             fill="none"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.4 }}
+            animate={{ pathLength: 1, opacity: 0.8 }}
             transition={{ duration: 3, delay: 1.2 }}
           />
         </g>
 
         {/* Building Complex 3 - Right side */}
-        <g className="opacity-35">
+        <g className="opacity-70">
           {/* Bridge/connection structure */}
           <motion.path
             d="M1400 500 L1600 500 M1400 520 L1600 520 M1400 500 L1400 520 M1600 500 L1600 520"
             stroke="white"
-            strokeWidth="1.5"
+            strokeWidth="2"
             fill="none"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.35 }}
+            animate={{ pathLength: 1, opacity: 0.7 }}
             transition={{ duration: 2, delay: 2 }}
           />
 
@@ -127,10 +127,10 @@ export const PropertyOutlineBackground = () => {
           <motion.path
             d="M1620 450 L1620 1080 L1750 1080 L1750 450 L1685 380 Z"
             stroke="white"
-            strokeWidth="1.8"
+            strokeWidth="2.5"
             fill="none"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.35 }}
+            animate={{ pathLength: 1, opacity: 0.7 }}
             transition={{ duration: 3.5, delay: 1.5 }}
           />
 
@@ -138,10 +138,10 @@ export const PropertyOutlineBackground = () => {
           <motion.path
             d="M1380 600 L1380 1080 L1420 1080 L1420 600 Z"
             stroke="white"
-            strokeWidth="1.2"
+            strokeWidth="1.8"
             fill="none"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.25 }}
+            animate={{ pathLength: 1, opacity: 0.6 }}
             transition={{ duration: 2, delay: 2.8 }}
           />
         </g>
