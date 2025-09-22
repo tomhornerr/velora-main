@@ -179,7 +179,7 @@ export default function PropertyValuationUpload({
                       step.completed 
                         ? 'bg-gradient-to-br from-teal-500 to-cyan-600 text-white shadow-lg shadow-teal-200' 
                         : step.active
-                        ? 'bg-gradient-to-br from-indigo-600 to-blue-600 text-white shadow-lg shadow-indigo-200'
+                        ? 'bg-gradient-to-br from-slate-600 to-slate-700 text-white shadow-lg shadow-slate-300'
                         : 'bg-slate-200 text-slate-400'
                     }`}
                     whileHover={{ scale: 1.05 }}
