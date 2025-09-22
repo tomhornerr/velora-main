@@ -317,7 +317,7 @@ export default function ChatInterface({
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto px-8 pt-6 pb-20 space-y-6 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-300/70">
+        <div className="flex-1 overflow-y-auto px-8 pt-6 pb-32 space-y-6 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-300/70">
           <AnimatePresence initial={false}>
             {messages.map((message, index) => {
               // Check if this is a property-related assistant message
