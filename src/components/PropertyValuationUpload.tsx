@@ -399,7 +399,7 @@ export default function PropertyValuationUpload({
               </p>
               
               {!showCompletionTick && (
-                <div className="bg-slate-800 border border-slate-600 rounded-lg p-3 mx-auto max-w-md">
+                <div className="bg-slate-700 border border-slate-500 rounded-lg p-3 mx-auto max-w-md">
                   <p className="text-sm text-slate-200 font-medium">
                     💡 You can leave this screen and continue working
                   </p>
