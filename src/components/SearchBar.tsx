@@ -87,7 +87,7 @@ export const SearchBar = ({
                   : 'text-white/50 cursor-not-allowed'
               }`} disabled={isSubmitted || !searchValue.trim()}>
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <polygon points="5,3 19,12 5,21"/>
+                    <path d="M6 6c-1 4 -1 8 0 12l13-6z"/>
                   </svg>
                 </button>
               </div>
