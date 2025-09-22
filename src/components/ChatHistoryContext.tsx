@@ -43,8 +43,17 @@ const saveChatHistory = (chatHistory: ChatHistoryEntry[]) => {
 };
 
 // Helper function to generate a chat title from messages
-const generateChatTitle = (messages: any[]): string => {
-  if (!messages || messages.length === 0) return 'New conversation';
+const generateChatTitle = (messages: any[], query?: string): string => {
+  if (!messages || messages.length === 0) {
+    // If no messages but we have a query, use that as the title
+    if (query && query.trim()) {
+      if (query.length > 40) {
+        return query.substring(0, 40) + '...';
+      }
+      return query;
+    }
+    return 'New conversation';
+  }
   
   // Find the first user message - check for both 'role' and 'type' properties
   const firstUserMessage = messages.find(msg => msg.role === 'user' || msg.type === 'user');
@@ -94,7 +103,7 @@ export function ChatHistoryProvider({
     const newChat: ChatHistoryEntry = {
       ...chat,
       id: `chat-${Date.now()}`,
-      title: chat.title || generateChatTitle(chat.messages)
+      title: chat.title || generateChatTitle(chat.messages, chat.preview)
     };
     setChatHistory(prev => [newChat, ...prev]);
     return newChat.id; // Return the ID for tracking
@@ -106,7 +115,7 @@ export function ChatHistoryProvider({
         ? { 
             ...chat,
             messages,
-            title: chat.title || generateChatTitle(messages),
+            title: chat.title || generateChatTitle(messages, chat.preview),
             timestamp: new Date().toISOString()
           }
         : chat
