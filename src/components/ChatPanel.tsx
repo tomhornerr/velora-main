@@ -114,7 +114,7 @@ export const ChatPanel = ({
   const handleNewChat = () => {
     console.log('Create new chat');
     onNewChat?.();
-    onToggle?.(); // Close the chat panel after creating new chat
+    // Don't call onToggle here as DashboardLayout handles closing the panel
   };
   React.useEffect(() => {
     // Close menu when clicking outside
