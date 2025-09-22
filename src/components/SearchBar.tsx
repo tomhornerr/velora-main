@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Mic, Send, Upload } from "lucide-react";
+import { Sparkles, Mic, Play, Upload } from "lucide-react";
 export interface SearchBarProps {
   className?: string;
   onSearch?: (query: string) => void;
@@ -86,7 +86,7 @@ export const SearchBar = ({
                   ? 'bg-white text-black hover:bg-white/90 hover:scale-110 shadow-lg backdrop-blur-lg border-none active:scale-95' 
                   : 'bg-white/20 text-white/50 cursor-not-allowed border border-white/10'
               }`} disabled={isSubmitted || !searchValue.trim()}>
-                  <Send className="w-3.5 h-3.5" strokeWidth={3} />
+                  <Play className="w-3.5 h-3.5" strokeWidth={0} fill="currentColor" />
                 </button>
               </div>
             </div>
