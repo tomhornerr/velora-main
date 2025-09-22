@@ -46,6 +46,8 @@ export const Sidebar = ({
   isChatPanelOpen = false,
   activeItem = 'search'
 }: SidebarProps) => {
+  console.log('Sidebar rendering with props:', { className, isChatPanelOpen, activeItem });
+  
   const handleItemClick = (itemId: string) => {
     onItemClick?.(itemId);
   };
@@ -71,7 +73,7 @@ export const Sidebar = ({
       duration: 0.1,
       ease: [0.4, 0, 0.2, 1]
     }
-  }} className={`w-10 lg:w-14 flex flex-col items-center py-6 ${className || ''}`} style={{ background: 'var(--sidebar-background)' }}>
+  }} className={`w-10 lg:w-14 flex flex-col items-center py-6 relative z-50 ${className || ''}`} style={{ background: 'var(--sidebar-background)' }}>
       {/* Chat Toggle Button */}
       <motion.button initial={{
       opacity: 0,
