@@ -201,7 +201,7 @@ export const ChatPanel = ({
           y: -1
         }} whileTap={{
           scale: 0.98
-        }} className="w-full flex items-center justify-center space-x-3 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 border-2 border-indigo-100/60 hover:border-indigo-200/80 rounded-2xl transition-all duration-300 group shadow-[0_4px_20px_rgba(99,102,241,0.08)]">
+        }} className="w-full flex items-center justify-center space-x-2 p-2.5 bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 border-2 border-indigo-100/60 hover:border-indigo-200/80 rounded-xl transition-all duration-300 group shadow-[0_4px_20px_rgba(99,102,241,0.08)]">
               <Plus className="w-5 h-5 text-indigo-600 group-hover:text-indigo-700" strokeWidth={1.5} />
               <span className="text-indigo-600 group-hover:text-indigo-700 font-semibold">
                 <span>New Chat</span>
