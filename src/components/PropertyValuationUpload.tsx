@@ -347,7 +347,7 @@ export default function PropertyValuationUpload({
                               <div className="flex-1 min-w-0">
                                 <p className="font-medium text-slate-900 truncate text-sm">{file.name}</p>
                                  <div className="flex items-center space-x-2 mt-0.5">
-                                   <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${file.type === 'PDF' ? 'bg-gradient-to-r from-rose-100 to-orange-100 text-rose-700' : 'bg-gradient-to-r from-indigo-100 to-blue-100 text-indigo-700'}`}>
+                                   <span className={`px-1.5 py-0.5 rounded text-xs font-medium ${file.type === 'PDF' ? 'bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700' : 'bg-gradient-to-r from-slate-100 to-slate-200 text-slate-700'}`}>
                                      {file.type}
                                    </span>
                                    <span className="text-xs text-slate-500">{file.size}</span>
