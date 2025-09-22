@@ -155,10 +155,9 @@ export const ChatPanel = ({
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-slate-200/40">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-slate-100 to-slate-200 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-4 h-4 text-slate-600" strokeWidth={1.5} />
+              <div className="text-slate-800 font-semibold text-lg tracking-tight">
+                Velora
               </div>
-              <span className="text-slate-800 font-medium text-sm">Chat History</span>
             </div>
             
             <div className="flex items-center space-x-1">
