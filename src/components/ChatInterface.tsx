@@ -470,7 +470,7 @@ export default function ChatInterface({
               
               <button type="submit" disabled={!inputValue.trim() || isTyping} className={`ml-3 w-7 h-7 flex items-center justify-center rounded-full transition-all duration-200 ${
                 inputValue.trim() && !isTyping 
-                  ? 'bg-green-700 text-white hover:bg-green-800 shadow-sm hover:scale-105' 
+                  ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm hover:scale-105' 
                   : 'bg-slate-300/70 text-slate-400 cursor-not-allowed'
               }`}>
                 <ArrowUp className="w-3.5 h-3.5" strokeWidth={2.5} />
