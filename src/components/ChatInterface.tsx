@@ -168,7 +168,7 @@ export default function ChatInterface({
       }
       
       setIsTyping(false);
-    }, 1800);
+    }, 800);
   };
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -206,7 +206,7 @@ export default function ChatInterface({
       }
       
       setIsTyping(false);
-    }, 1500 + Math.random() * 500);
+    }, 600);
   };
   const handleCopyMessage = async (content: string, messageId: string) => {
     try {
