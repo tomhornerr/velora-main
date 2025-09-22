@@ -46,12 +46,12 @@ export const ChatReturnNotification = ({
           transition={{ duration: 0.2, ease: "easeOut" }}
           className="fixed top-16 left-20 z-50 sm:top-4 sm:left-20"
         >
-          <div className="bg-white/95 backdrop-blur-sm border border-slate-200/60 rounded-full shadow-lg px-4 py-2 flex items-center space-x-3 min-w-72 max-w-96">
+          <div className="bg-white/95 backdrop-blur-sm border border-slate-200/60 rounded-lg shadow-lg px-4 py-2 flex items-center space-x-3 min-w-72 max-w-96">
             <MessageCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
             
             <button
               onClick={onReturnToChat}
-              className="flex-1 text-left hover:bg-slate-50/50 rounded-full px-2 py-1 transition-colors flex items-center space-x-2"
+              className="flex-1 text-left hover:bg-slate-50/50 rounded-md px-2 py-1 transition-colors flex items-center space-x-2"
             >
               <div>
                 <span className="text-xs text-slate-500 font-medium">Return to chat</span>
@@ -63,7 +63,7 @@ export const ChatReturnNotification = ({
             
             <button
               onClick={onDismiss}
-              className="text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full hover:bg-slate-100/50"
+              className="text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-md hover:bg-slate-100/50"
             >
               <X className="w-3.5 h-3.5" />
             </button>
