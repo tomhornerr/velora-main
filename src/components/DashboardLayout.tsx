@@ -86,7 +86,7 @@ const DashboardLayoutContent = ({
     console.log('Starting new chat');
     setCurrentChatId(null);
     setCurrentChatData(null);
-    setIsInChatMode(false); // Go back to search mode for new chat
+    setIsInChatMode(true); // Show blank chat interface
     setCurrentView('search');
     setIsChatPanelOpen(false);
   }, []);
