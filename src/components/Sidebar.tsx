@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, User, BarChart3, Upload, Search, Home, MessageSquare, Settings } from "lucide-react";
+import { Bell, User, BarChart3, Upload, Search, Home, PanelLeft, Settings } from "lucide-react";
 const sidebarItems = [{
   icon: Home,
   id: 'home',
@@ -116,7 +116,7 @@ export const Sidebar = ({
         }} className="absolute -left-[2px] top-1/2 -translate-y-1/2 w-1 h-6 bg-sidebar-primary rounded-full" />}
         </AnimatePresence>
         
-        <MessageSquare className="w-4 h-4 lg:w-5 lg:h-5 text-white drop-shadow-sm transition-all duration-300 ease-out" strokeWidth={1.8} />
+        <PanelLeft className="w-4 h-4 lg:w-5 lg:h-5 text-white drop-shadow-sm transition-all duration-300 ease-out" strokeWidth={1.8} />
       </motion.button>
 
       {/* Navigation Items */}
