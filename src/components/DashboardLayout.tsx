@@ -33,29 +33,33 @@ const DashboardLayoutContent = ({
   };
 
   const handleChatModeChange = (inChatMode: boolean, chatData?: any) => {
-    console.log('DashboardLayout: Chat mode changed to:', inChatMode);
+    console.log('DashboardLayout: Chat mode changed to:', inChatMode, 'with data:', chatData);
     
     setIsInChatMode(inChatMode);
-    if (chatData) {
+    if (chatData && chatData.messages && chatData.messages.length > 0) {
       setCurrentChatData(chatData);
       setHasPerformedSearch(true);
       
-      // ChatGPT-like behavior: Create or update chat immediately
+      // ChatGPT-like behavior: Always save/update chat when messages change
       if (currentChatId) {
         // Update existing chat
         updateChatInHistory(currentChatId, chatData.messages);
-        console.log('Updated existing chat:', currentChatId);
+        console.log('Updated existing chat:', currentChatId, 'with', chatData.messages.length, 'messages');
       } else {
-        // Create new chat
+        // Create new chat - this happens on first message
         const newChatId = addChatToHistory({
-          title: '', // Will be auto-generated
+          title: '', // Will be auto-generated from first message
           timestamp: new Date().toISOString(),
           preview: chatData.query || '',
           messages: chatData.messages
         });
         setCurrentChatId(newChatId);
-        console.log('Created new chat:', newChatId);
+        console.log('Created new chat:', newChatId, 'with', chatData.messages.length, 'messages');
       }
+    } else if (chatData) {
+      // Handle case where chatData exists but no messages yet
+      setCurrentChatData(chatData);
+      setHasPerformedSearch(true);
     } else if (!inChatMode) {
       // Don't clear currentChatId immediately to allow for re-entering
       setCurrentChatData(null);
