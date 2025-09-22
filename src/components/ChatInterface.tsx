@@ -263,8 +263,18 @@ export default function ChatInterface({
   }} className={`flex flex-col h-full w-full relative ${className || ''}`}>
       {/* Fullscreen Chat Container - Animated Background */}
       <div className="w-full h-full relative overflow-hidden">
-        {/* White Background */}
-        <div className="absolute inset-0 bg-white">
+        {/* Flowing Gradient Background matching the reference image */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-800 to-teal-400">
+          {/* Additional gradient layers to match the flowing effect */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-teal-500/60 via-emerald-400/40 to-amber-200/30"></div>
+          <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-blue-600/30 to-coral-400/20"></div>
+          
+          {/* Flowing curved overlays */}
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="absolute -top-40 -right-40 w-96 h-96 bg-gradient-to-bl from-teal-300/30 to-emerald-400/20 rounded-full blur-3xl"></div>
+            <div className="absolute top-1/2 -left-20 w-80 h-80 bg-gradient-to-tr from-blue-500/25 to-cyan-400/15 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-gradient-to-tl from-amber-300/25 to-orange-400/15 rounded-full blur-3xl"></div>
+          </div>
         </div>
         
         {/* Content Layer */}
@@ -458,7 +468,7 @@ export default function ChatInterface({
         {/* Input Area */}
         <div className="px-6 pt-12 pb-6">
           <form onSubmit={handleSendMessage} className="relative">
-            <div className="relative flex items-center bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200/50 rounded-full px-5 py-2.5 max-w-2xl mx-auto shadow-sm hover:shadow-md focus-within:shadow-md focus-within:border-blue-300/70 transition-all duration-300 mt-3">
+            <div className="relative flex items-center bg-white/90 backdrop-blur-xl border border-white/20 rounded-full px-5 py-2.5 max-w-2xl mx-auto shadow-xl hover:shadow-2xl focus-within:shadow-2xl focus-within:border-white/40 transition-all duration-300 mt-3">
               <input ref={inputRef} type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={e => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
@@ -466,7 +476,7 @@ export default function ChatInterface({
                   handleSendMessage(e as any);
                 }
               }
-            }} placeholder="Ask anything..." className="flex-1 bg-transparent text-slate-700 placeholder:text-slate-400 focus:outline-none text-sm font-normal" disabled={isTyping} />
+            }} placeholder="Ask anything..." className="flex-1 bg-transparent text-slate-800 placeholder:text-slate-500 focus:outline-none text-sm font-normal" disabled={isTyping} />
               
               <button type="submit" disabled={!inputValue.trim() || isTyping} className={`ml-3 w-7 h-7 flex items-center justify-center rounded-full transition-all duration-200 ${
                 inputValue.trim() && !isTyping 
