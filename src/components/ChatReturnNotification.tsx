@@ -46,7 +46,7 @@ export const ChatReturnNotification = ({
           transition={{ duration: 0.2, ease: "easeOut" }}
           className="fixed top-16 left-20 z-50 sm:top-4 sm:left-20"
         >
-          <div className="bg-white/95 backdrop-blur-sm border border-slate-200/60 rounded-lg shadow-lg px-4 py-2 flex items-center space-x-3 min-w-72 max-w-96">
+          <div className="bg-white/95 backdrop-blur-sm border border-slate-200/60 rounded-lg shadow-lg px-4 py-2 flex items-center space-x-3 min-w-60 max-w-80">
             <MessageCircle className="w-4 h-4 text-blue-500 flex-shrink-0" />
             
             <button
