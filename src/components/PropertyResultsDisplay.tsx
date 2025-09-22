@@ -70,6 +70,7 @@ export default function PropertyResultsDisplay({
   const [isMapOpen, setIsMapOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
+  const hasScrolled = useRef(false);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const nextProperty = () => {
@@ -100,21 +101,29 @@ export default function PropertyResultsDisplay({
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       
+      // Only allow one change per scroll gesture
+      if (hasScrolled.current) return;
+      
+      // Mark that we've scrolled and make the change
+      hasScrolled.current = true;
+      
+      if (e.deltaY > 0) {
+        // Scroll down - next property
+        setCurrentIndex(prev => (prev + 1) % properties.length);
+      } else if (e.deltaY < 0) {
+        // Scroll up - previous property  
+        setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
+      }
+      
       // Clear existing timeout
       if (scrollTimeout.current) {
         clearTimeout(scrollTimeout.current);
       }
       
-      // Debounce scroll events - only act after scrolling stops
+      // Reset flag after scroll gesture completes
       scrollTimeout.current = setTimeout(() => {
-        if (e.deltaY > 0) {
-          // Scroll down - next property
-          setCurrentIndex(prev => (prev + 1) % properties.length);
-        } else if (e.deltaY < 0) {
-          // Scroll up - previous property  
-          setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
-        }
-      }, 50);
+        hasScrolled.current = false;
+      }, 200);
     };
 
     // Add event listeners
