@@ -43,6 +43,7 @@ export default function PropertyValuationUpload({
   const [uploadedFiles, setUploadedFiles] = React.useState<UploadedFile[]>([]);
   const [currentStep, setCurrentStep] = React.useState(1);
   const [steps, setSteps] = React.useState(uploadSteps);
+  const [showCompletionTick, setShowCompletionTick] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const {
     toast
@@ -143,8 +144,12 @@ export default function PropertyValuationUpload({
         className: "border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50 shadow-lg shadow-emerald-100/50"
       });
 
-      // Reset to initial state after notification
+      // Show tick animation
+      setShowCompletionTick(true);
+
+      // Reset to initial state after tick animation
       setTimeout(() => {
+        setShowCompletionTick(false);
         setUploadedFiles([]);
         setCurrentStep(1);
         setSteps(uploadSteps);
@@ -153,7 +158,7 @@ export default function PropertyValuationUpload({
         setTimeout(() => {
           onContinueWithReport?.();
         }, 500);
-      }, 1500);
+      }, 2000);
     }, 10000);
   };
   const formatFileSize = (bytes: number): string => {
@@ -358,26 +363,47 @@ export default function PropertyValuationUpload({
             </div>}
 
           {/* Processing State */}
-          {(currentStep === 2 || currentStep === 3) && <div className="p-8 text-center">
-              <motion.div animate={{
-            rotate: 360
-          }} transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "linear"
-          }} className="w-16 h-16 border-4 border-slate-200 border-t-indigo-500 rounded-full mx-auto mb-4" />
+          {(currentStep === 2 || currentStep === 3 || showCompletionTick) && <div className="p-8 text-center">
+              {showCompletionTick ? (
+                <motion.div 
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg shadow-emerald-500/30"
+                >
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.2, duration: 0.3, ease: "easeOut" }}
+                  >
+                    <CheckCircle className="w-8 h-8 text-white" />
+                  </motion.div>
+                </motion.div>
+              ) : (
+                <motion.div animate={{
+                  rotate: 360
+                }} transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "linear"
+                }} className="w-16 h-16 border-4 border-slate-200 border-t-indigo-500 rounded-full mx-auto mb-4" />
+              )}
               
               <p className="text-slate-600 mb-3">
-                {currentStep === 2 ? 'We\'re extracting information from your documents' : 'AI is analyzing your property details'}
+                {showCompletionTick ? 'Documents successfully processed!' : 
+                 currentStep === 2 ? 'We\'re extracting information from your documents' : 'AI is analyzing your property details'}
               </p>
-              <div className="bg-slate-800 border border-slate-600 rounded-lg p-3 mx-auto max-w-md">
-                <p className="text-sm text-slate-200 font-medium">
-                  💡 You can leave this screen and continue working
-                </p>
-                <p className="text-xs text-slate-300 mt-1">
-                  We'll notify you when the analysis is complete
-                </p>
-              </div>
+              
+              {!showCompletionTick && (
+                <div className="bg-slate-800 border border-slate-600 rounded-lg p-3 mx-auto max-w-md">
+                  <p className="text-sm text-slate-200 font-medium">
+                    💡 You can leave this screen and continue working
+                  </p>
+                  <p className="text-xs text-slate-300 mt-1">
+                    We'll notify you when the analysis is complete
+                  </p>
+                </div>
+              )}
             </div>}
 
           {/* Action Buttons - Only show when files exist */}
