@@ -95,9 +95,8 @@ export const Sidebar = ({
         duration: 0.05
       }
         }} onClick={onChatToggle} className={`
-          w-11 h-11 lg:w-13 lg:h-13 rounded-lg flex items-center justify-center mb-6
+          w-11 h-11 lg:w-13 lg:h-13 flex items-center justify-center mb-6
           transition-all duration-100 group cursor-pointer
-          ${isChatPanelOpen ? 'bg-sidebar-accent shadow-lg' : 'hover:bg-sidebar-accent'}
         `} aria-label="Toggle Chat History">
         <AnimatePresence>
           {isChatPanelOpen && <motion.div initial={{
@@ -149,11 +148,7 @@ export const Sidebar = ({
         }} onClick={() => {
           // Always navigate to the selected page, regardless of current state
           handleItemClick(item.id);
-        }} className={`
-          w-11 h-11 lg:w-13 lg:h-13 rounded-lg flex items-center justify-center
-          transition-all duration-200 group
-          ${isActive ? 'bg-sidebar-accent shadow-lg' : 'hover:bg-sidebar-accent'}
-        `} aria-label={item.label}>
+        }} className="w-11 h-11 lg:w-13 lg:h-13 flex items-center justify-center transition-all duration-200 group" aria-label={item.label}>
               {/* Icon */}
               <Icon className={`w-4 h-4 lg:w-5 lg:h-5 transition-all duration-200 drop-shadow-sm ${isActive ? 'text-sidebar-active scale-110' : 'text-white hover:scale-105'}`} strokeWidth={1.8} />
             </motion.button>;
