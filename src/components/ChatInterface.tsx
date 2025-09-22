@@ -292,7 +292,7 @@ export default function ChatInterface({
         </div>
 
         {/* Messages Area */}
-        <div className="flex-1 overflow-y-auto px-8 pt-6 pb-20 space-y-6 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+        <div className="flex-1 overflow-y-auto px-8 pt-6 pb-20 space-y-6 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-200 hover:scrollbar-thumb-slate-300">
           <AnimatePresence initial={false}>
             {messages.map((message, index) => {
               // Check if this is a property-related assistant message
