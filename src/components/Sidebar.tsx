@@ -71,7 +71,7 @@ export const Sidebar = ({
       duration: 0.1,
       ease: [0.4, 0, 0.2, 1]
     }
-  }} className={`w-10 lg:w-14 bg-sidebar flex flex-col items-center py-6 ${className || ''}`}>
+  }} className={`w-10 lg:w-14 flex flex-col items-center py-6 ${className || ''}`} style={{ background: 'var(--sidebar-background)' }}>
       {/* Chat Toggle Button */}
       <motion.button initial={{
       opacity: 0,
