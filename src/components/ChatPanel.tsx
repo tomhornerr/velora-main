@@ -155,9 +155,11 @@ export const ChatPanel = ({
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-slate-200/40">
             <div className="flex items-center space-x-2">
-              <div className="text-slate-800 font-semibold text-lg tracking-tight">
-                Velora
-              </div>
+              <img 
+                src="/src/assets/velora-logo.png" 
+                alt="Velora" 
+                className="h-6 w-auto"
+              />
             </div>
             
             <div className="flex items-center space-x-1">
