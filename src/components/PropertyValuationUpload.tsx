@@ -135,10 +135,10 @@ export default function PropertyValuationUpload({
       ));
       
       toast({
-        title: "✨ Documents Successfully Processed",
+        title: "Documents Successfully Processed",
         description: "Your files are now integrated and ready for intelligent analysis.",
         duration: 5000,
-        className: "border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50",
+        className: "border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50 shadow-lg shadow-emerald-100/50",
       });
       
       // Continue with report after notification
