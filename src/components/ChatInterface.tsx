@@ -264,7 +264,7 @@ export default function ChatInterface({
       {/* Fullscreen Chat Container - Animated Background */}
       <div className="w-full h-full relative overflow-hidden">
         {/* White Background */}
-        <div className="absolute inset-0 bg-white">
+        <div className="absolute inset-0 bg-white rounded-lg">
         </div>
         
         {/* Content Layer */}
