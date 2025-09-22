@@ -204,7 +204,7 @@ export const ChatPanel = ({
           </div>
 
           {/* Chat List */}
-          {showChatHistory && <div className="flex-1 overflow-y-auto px-2 py-2">
+           {showChatHistory && <div className="flex-1 overflow-y-auto px-3 py-1">
               <AnimatePresence mode="popLayout">
                 {displayedChats.map((chat, index) => {
             const isPendingDeletion = pendingDeletion?.chatId === chat.id;
@@ -229,7 +229,7 @@ export const ChatPanel = ({
               duration: 0.2,
               delay: isPendingDeletion ? 0 : index * 0.02,
               ease: [0.23, 1, 0.32, 1]
-            }} onClick={() => handleChatClick(chat.id)} className={`group relative px-3 py-3 rounded-lg transition-all duration-50 cursor-pointer mb-1 transform-gpu ${isPendingDeletion ? 'bg-red-50' : 'hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 hover:scale-[1.025] hover:shadow-md hover:-translate-y-0.5'}`}>
+            }} onClick={() => handleChatClick(chat.id)} className={`group relative px-3 py-2 rounded-md transition-all duration-50 cursor-pointer mb-0.5 transform-gpu ${isPendingDeletion ? 'bg-red-50' : 'hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 hover:scale-[1.01] hover:shadow-sm hover:-translate-y-0.5'}`}>
                       
                       {isEditing ? (
                         <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
@@ -242,13 +242,13 @@ export const ChatPanel = ({
                               if (e.key === 'Escape') handleCancelRename();
                             }}
                             onBlur={() => handleSaveRename(chat.id)}
-                            className="flex-1 px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-indigo-500"
+                            className="flex-1 px-2 py-1 text-xs border border-slate-300 rounded focus:outline-none focus:border-indigo-500"
                             autoFocus
                           />
                         </div>
                       ) : (
                         <div className="flex items-center justify-between">
-                          <span className={`text-sm font-medium truncate pr-2 transition-all duration-50 transform-gpu ${isPendingDeletion ? 'text-red-600' : 'text-slate-700 group-hover:text-slate-900 group-hover:font-bold group-hover:tracking-wide'}`}>
+                          <span className={`text-xs font-normal truncate pr-2 transition-all duration-50 transform-gpu ${isPendingDeletion ? 'text-red-600' : 'text-slate-600 group-hover:text-slate-800 group-hover:font-medium'}`}>
                             {chat.title}
                           </span>
                           
