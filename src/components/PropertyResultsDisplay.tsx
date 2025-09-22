@@ -70,7 +70,7 @@ export default function PropertyResultsDisplay({
   const [isMapOpen, setIsMapOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
-  const lastScrollTime = useRef(0);
+  const isScrolling = useRef(false);
 
   const nextProperty = () => {
     setCurrentIndex(prev => (prev + 1) % properties.length);
@@ -98,11 +98,10 @@ export default function PropertyResultsDisplay({
     };
 
     const handleWheel = (e: WheelEvent) => {
-      const now = Date.now();
-      // Throttle scroll events to prevent rapid changes
-      if (now - lastScrollTime.current < 300) return;
+      // Prevent multiple rapid scroll changes
+      if (isScrolling.current) return;
       
-      lastScrollTime.current = now;
+      isScrolling.current = true;
       e.preventDefault();
       
       if (e.deltaY > 0) {
@@ -112,6 +111,11 @@ export default function PropertyResultsDisplay({
         // Scroll up - previous property  
         setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
       }
+      
+      // Reset flag after a short delay
+      setTimeout(() => {
+        isScrolling.current = false;
+      }, 150);
     };
 
     // Add event listeners
