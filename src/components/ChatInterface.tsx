@@ -4,21 +4,18 @@ import * as React from "react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUp, Copy, ThumbsUp, ThumbsDown, Check, ArrowLeft } from "lucide-react";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import PropertyResultsDisplay from './PropertyResultsDisplay';
 
 // Import property images
 import property1 from "@/assets/property-1.jpg";
 import property2 from "@/assets/property-2.jpg";
 import property3 from "@/assets/property-3.jpg";
-
 export interface Message {
   id: string;
   content: string;
   role: 'user' | 'assistant';
   timestamp: Date;
 }
-
 export interface ChatInterfaceProps {
   initialQuery?: string;
   onBack?: () => void;
@@ -32,7 +29,6 @@ export interface ChatInterfaceProps {
 const smoothEasing = [0.4, 0, 0.2, 1] as const;
 const snapEasing = [0.6, 0, 0.4, 1] as const;
 const preciseEasing = [0.25, 0.1, 0.25, 1] as const;
-
 export default function ChatInterface({
   initialQuery = "",
   onBack,
@@ -49,11 +45,8 @@ export default function ChatInterface({
   const [likedMessages, setLikedMessages] = useState<Set<string>>(new Set());
   const [dislikedMessages, setDislikedMessages] = useState<Set<string>>(new Set());
   const [propertyQueries, setPropertyQueries] = useState<Set<string>>(new Set()); // Track which messages are property responses
-  const [searchLocation, setSearchLocation] = useState("Toronto");
-  const [chatStartTime] = useState<Date>(new Date());
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [isManuallyTyping, setIsManuallyTyping] = useState(false);
 
   // Load messages when loadedMessages prop changes
   React.useEffect(() => {
@@ -122,26 +115,14 @@ export default function ChatInterface({
     baths: 2,
     sqft: "1,100 sqft"
   }] as any[];
-
-  const formatTimeStamp = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit'
-    });
-  };
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({
       behavior: "smooth"
     });
   };
-
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
   useEffect(() => {
     if (inputRef.current && document.activeElement === inputRef.current) {
       const timeoutId = setTimeout(() => {
@@ -150,7 +131,6 @@ export default function ChatInterface({
       return () => clearTimeout(timeoutId);
     }
   }, [messages]);
-
   useEffect(() => {
     if (initialQuery && !isInitialized && !isFromHistory) {
       console.log('ChatInterface: Initializing with query:', initialQuery);
@@ -158,7 +138,6 @@ export default function ChatInterface({
       setIsInitialized(true);
     }
   }, [initialQuery, isInitialized, isFromHistory]);
-
   const handleInitialQuery = async (query: string) => {
     const isPropertyRelated = isPropertyRelatedQuery(query);
     
@@ -191,7 +170,6 @@ export default function ChatInterface({
       setIsTyping(false);
     }, 1800);
   };
-
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || isTyping) return;
@@ -230,7 +208,6 @@ export default function ChatInterface({
       setIsTyping(false);
     }, 1500 + Math.random() * 500);
   };
-
   const handleCopyMessage = async (content: string, messageId: string) => {
     try {
       await navigator.clipboard.writeText(content);
@@ -242,7 +219,6 @@ export default function ChatInterface({
       console.error('Failed to copy text: ', err);
     }
   };
-
   const handleThumbsUp = (messageId: string) => {
     setLikedMessages(prev => {
       const newSet = new Set(prev);
@@ -259,7 +235,6 @@ export default function ChatInterface({
       return newSet;
     });
   };
-
   const handleThumbsDown = (messageId: string) => {
     setDislikedMessages(prev => {
       const newSet = new Set(prev);
@@ -276,210 +251,237 @@ export default function ChatInterface({
       return newSet;
     });
   };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
-    setIsManuallyTyping(true);
-  };
-
-  return (
-    <motion.div 
-      initial={{ opacity: 0, y: 4 }} 
-      animate={{ opacity: 1, y: 0 }} 
-      transition={{ duration: 0.2, ease: smoothEasing }} 
-      className={`flex flex-col h-full w-full relative ${className || ''}`}
-    >
-      {/* Fullscreen Chat Container - Gradient Background */}
+  return <motion.div initial={{
+    opacity: 0,
+    y: 4
+  }} animate={{
+    opacity: 1,
+    y: 0
+  }} transition={{
+    duration: 0.2,
+    ease: smoothEasing
+  }} className={`flex flex-col h-full w-full relative ${className || ''}`}>
+      {/* Fullscreen Chat Container - Animated Background */}
       <div className="w-full h-full relative overflow-hidden">
-        {/* Smooth curved gradient background matching the reference design */}
-        <div className="absolute inset-0" style={{
-          background: `
-            radial-gradient(ellipse 120% 80% at 20% 50%, #1e1b4b 0%, #0c4a6e 30%, #0891b2 60%),
-            radial-gradient(ellipse 150% 100% at 80% 30%, rgba(6, 182, 212, 0.8) 0%, rgba(20, 184, 166, 0.6) 40%, transparent 70%),
-            linear-gradient(135deg, #0f172a 0%, #1e293b 20%, #0369a1 50%, #0891b2 70%, #14b8a6 90%, #a7f3d0 100%)
-          `
-        }}>
-          {/* Large curved flowing shape */}
-          <div className="absolute inset-0 overflow-hidden">
-            <div 
-              className="absolute w-[200%] h-[200%] -top-1/2 -left-1/4"
-              style={{
-                background: `
-                  radial-gradient(ellipse 60% 40% at 40% 60%, rgba(251, 146, 60, 0.3) 0%, rgba(249, 115, 22, 0.2) 30%, transparent 60%),
-                  radial-gradient(ellipse 80% 60% at 60% 40%, rgba(6, 182, 212, 0.4) 0%, rgba(14, 165, 233, 0.3) 40%, transparent 70%)
-                `,
-                borderRadius: '50%',
-                transform: 'rotate(-25deg)',
-                filter: 'blur(60px)'
-              }}
-            />
+        {/* White Background */}
+        <div className="absolute inset-0 bg-white">
+        </div>
+        
+        {/* Content Layer */}
+        <div className="relative z-10 flex flex-col h-full">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-3 mx-4 mt-4 border-b border-slate-100/20">
+          <div className="flex items-center space-x-2">
+            <motion.button whileHover={{
+            scale: 1.02
+          }} whileTap={{
+            scale: 0.98
+          }} transition={{
+            duration: 0.1,
+            ease: snapEasing
+          }} onClick={onBack} className="w-6 h-6 rounded-lg bg-slate-50 hover:bg-slate-100 flex items-center justify-center transition-colors duration-150">
+              <ArrowLeft className="w-3 h-3 text-slate-600" />
+            </motion.button>
+            <div>
+              <h2 className="text-xs font-medium text-slate-700">
+                <span>Property Search Results</span>
+              </h2>
+            </div>
           </div>
-          
-          {/* Smooth organic curve overlay */}
-          <div className="absolute inset-0">
-            <div 
-              className="absolute w-[180%] h-[150%] -top-1/3 -right-1/4"
-              style={{
-                background: `
-                  radial-gradient(ellipse 50% 70% at 30% 70%, rgba(20, 184, 166, 0.4) 0%, rgba(6, 182, 212, 0.3) 50%, transparent 80%),
-                  radial-gradient(ellipse 70% 50% at 70% 30%, rgba(245, 101, 101, 0.2) 0%, rgba(251, 146, 60, 0.3) 40%, transparent 70%)
-                `,
-                borderRadius: '60% 40% 50% 70%',
-                transform: 'rotate(15deg)',
-                filter: 'blur(40px)'
-              }}
-            />
-          </div>
-          
-          {/* Additional soft glow elements */}
-          <div className="absolute bottom-0 left-0 w-full h-1/2"
-               style={{
-                 background: 'radial-gradient(ellipse 100% 60% at 50% 100%, rgba(14, 165, 233, 0.3) 0%, rgba(6, 182, 212, 0.2) 40%, transparent 80%)',
-                 filter: 'blur(30px)'
-               }}
-          />
+          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
         </div>
 
-        {/* White floating chat panel */}
-        <div className="relative z-10 flex flex-col h-full max-w-6xl mx-auto px-8 py-8">
-          <div className="bg-white rounded-3xl shadow-2xl flex flex-col h-full overflow-hidden">
-            {/* Header */}
-            <div className="flex items-center justify-between px-6 py-3 border-b border-slate-100">
-              <div className="flex items-center space-x-2">
-                <motion.button 
-                  whileHover={{ scale: 1.02 }} 
-                  whileTap={{ scale: 0.98 }} 
-                  transition={{ duration: 0.1, ease: snapEasing }} 
-                  onClick={onBack} 
-                  className="w-6 h-6 rounded-lg bg-slate-50 hover:bg-slate-100 flex items-center justify-center transition-colors duration-150"
-                >
-                  <ArrowLeft className="w-3 h-3 text-slate-600" />
-                </motion.button>
-                <div>
-                  <h2 className="text-xs font-medium text-slate-700">
-                    <span>Property Search Results</span>
-                  </h2>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="text-xs text-slate-500 font-medium">
-                  {searchLocation} · {formatTimeStamp(chatStartTime)}
-                </div>
-              </div>
-            </div>
-
-            {/* Messages */}
-            <div className="flex-1 overflow-hidden">
-              <ScrollArea className="h-full">
-                <div className="px-6 py-4 space-y-6">
-                  {messages.map((message, index) => {
-                    // Check if this is a property-related assistant message
-                    const isPropertyResponse = message.role === 'assistant' && propertyQueries.has(message.id);
-                    
-                    return (
-                      <motion.div 
-                        key={message.id}
-                        initial={isFromHistory ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 6, scale: 0.98 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -4, scale: 0.98 }}
-                        transition={isFromHistory ? { duration: 0 } : { duration: 0.15, ease: smoothEasing, delay: index * 0.02 }}
-                        className="space-y-4"
-                      >
-                        {/* Non-Property Messages */}
-                        {!isPropertyResponse && (
-                          <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} gap-3`}>
-                            {/* Avatar */}
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
-                              message.role === 'user' 
-                                ? 'bg-blue-600 text-white order-last' 
-                                : 'bg-emerald-100 text-emerald-700'
-                            }`}>
-                              {message.role === 'user' ? 'U' : 'AI'}
-                            </div>
+        {/* Messages Area */}
+        <div className="flex-1 overflow-y-auto px-8 pt-6 pb-4 space-y-6 scrollbar-thin scrollbar-track-slate-100 scrollbar-thumb-slate-300">
+          <AnimatePresence initial={false}>
+            {messages.map((message, index) => {
+              // Check if this is a property-related assistant message
+              const isPropertyResponse = message.role === 'assistant' && propertyQueries.has(message.id);
+              
+              return <motion.div key={message.id} initial={isFromHistory ? { opacity: 1, y: 0, scale: 1 } : {
+              opacity: 0,
+              y: 6,
+              scale: 0.98
+            }} animate={{
+              opacity: 1,
+              y: 0,
+              scale: 1
+            }} exit={{
+              opacity: 0,
+              y: -4,
+              scale: 0.98
+            }} transition={isFromHistory ? { duration: 0 } : {
+              duration: 0.15,
+              ease: smoothEasing,
+              delay: index * 0.02
+            }} className="space-y-4">
+                {/* User Message or Non-Property Assistant Message */}
+                {!isPropertyResponse && (
+                  <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`flex max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start space-x-3`}>
+                      {/* Message Content */}
+                      <motion.div className={`group relative ${message.role === 'user' ? 'px-3 py-2 rounded-2xl text-slate-800 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/50' : 'text-slate-700'}`} whileHover={{
+                    y: message.role === 'user' ? -1 : 0,
+                    scale: message.role === 'user' ? 1.005 : 1
+                  }} transition={{
+                    duration: 0.1,
+                    ease: snapEasing
+                  }}>
+                        <motion.p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">
+                          <motion.span initial={{
+                        opacity: 0,
+                        y: 2
+                      }} animate={{
+                        opacity: 1,
+                        y: 0
+                      }} transition={{
+                        duration: 0.12,
+                        ease: preciseEasing,
+                        delay: message.role === 'assistant' ? 0.05 : 0.02
+                      }}>
+                            {message.content}
+                          </motion.span>
+                        </motion.p>
+                        
+                        {/* Message Actions */}
+                        {message.role === 'assistant' && <motion.div className="flex items-center space-x-3 mt-4 opacity-0 group-hover:opacity-100 transition-all duration-150" initial={{
+                      y: 2,
+                      opacity: 0
+                    }} whileHover={{
+                      y: 0,
+                      opacity: 1
+                    }} transition={{
+                      duration: 0.1,
+                      ease: snapEasing
+                    }}>
+                            <motion.button whileHover={{
+                        scale: 1.08
+                      }} whileTap={{
+                        scale: 0.92
+                      }} transition={{
+                        duration: 0.08,
+                        ease: snapEasing
+                      }} onClick={() => handleCopyMessage(message.content, message.id)} className={`w-8 h-8 flex items-center justify-center transition-all duration-100 rounded-xl ${copiedMessageId === message.id ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'}`}>
+                              {copiedMessageId === message.id ? <Check className="w-4 h-4" strokeWidth={1.5} /> : <Copy className="w-4 h-4" strokeWidth={1.5} />}
+                            </motion.button>
                             
-                            {/* Message Bubble */}
-                            <div className={`max-w-[70%] px-4 py-3 rounded-2xl text-sm leading-relaxed ${
-                              message.role === 'user' 
-                                ? 'bg-blue-600 text-white' 
-                                : 'bg-slate-50 text-slate-800 border border-slate-100'
-                            }`}>
-                              {message.content}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Property Response */}
-                        {isPropertyResponse && (
-                          <div className="space-y-4">
-                            <div className="flex justify-start gap-3">
-                              <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-medium">
-                                AI
-                              </div>
-                              <div className="bg-slate-50 text-slate-800 border border-slate-100 px-4 py-3 rounded-2xl text-sm leading-relaxed">
-                                {message.content}
-                              </div>
-                            </div>
-                            <PropertyResultsDisplay properties={propertyResults} />
-                          </div>
-                        )}
+                            <motion.button whileHover={{
+                        scale: 1.08
+                      }} whileTap={{
+                        scale: 0.92
+                      }} transition={{
+                        duration: 0.08,
+                        ease: snapEasing
+                      }} onClick={() => handleThumbsUp(message.id)} className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all duration-100 ${likedMessages.has(message.id) ? 'text-emerald-500 bg-emerald-50 hover:bg-emerald-100 shadow-[0_0_8px_rgba(34,197,94,0.15)]' : 'text-slate-400 hover:text-emerald-500 hover:bg-emerald-50'}`}>
+                              <ThumbsUp className="w-4 h-4" strokeWidth={1.5} />
+                            </motion.button>
+                            
+                            <motion.button whileHover={{
+                        scale: 1.08
+                      }} whileTap={{
+                        scale: 0.92
+                      }} transition={{
+                        duration: 0.08,
+                        ease: snapEasing
+                      }} onClick={() => handleThumbsDown(message.id)} className={`w-8 h-8 flex items-center justify-center rounded-xl transition-all duration-100 ${dislikedMessages.has(message.id) ? 'text-red-500 bg-red-50 hover:bg-red-100 shadow-[0_0_8px_rgba(239,68,68,0.15)]' : 'text-slate-400 hover:text-red-500 hover:bg-red-50'}`}>
+                              <ThumbsDown className="w-4 h-4" strokeWidth={1.5} />
+                            </motion.button>
+                          </motion.div>}
                       </motion.div>
-                    );
-                  })}
-                  
-                  {isTyping && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="flex justify-start gap-3"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-medium">
-                        AI
-                      </div>
-                      <div className="bg-slate-50 border border-slate-100 px-4 py-3 rounded-2xl">
-                        <div className="flex space-x-1">
-                          <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
-                          <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                          <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                  <div ref={messagesEndRef} />
-                </div>
-              </ScrollArea>
-            </div>
-
-            {/* Input Area */}
-            <div className="border-t border-slate-100 p-4">
-              <form onSubmit={handleSendMessage} className="flex items-center space-x-3">
-                <div className="flex-1 relative">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    placeholder="Ask anything..."
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-800 placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm font-normal transition-all duration-200"
-                    disabled={isTyping}
-                  />
-                </div>
+                    </div>
+                  </div>
+                )}
                 
-                <button
-                  type="submit"
-                  disabled={!inputValue.trim() || isTyping}
-                  className={`w-10 h-10 flex items-center justify-center rounded-2xl transition-all duration-200 ${
-                    inputValue.trim() && !isTyping 
-                      ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-sm hover:scale-105' 
-                      : 'bg-slate-300/70 text-slate-400 cursor-not-allowed'
-                  }`}
-                >
-                  <ArrowUp className="w-4 h-4" strokeWidth={2.5} />
-                </button>
-              </form>
+                {/* Property Results Display for Property Messages */}
+                {isPropertyResponse && (
+                  <motion.div initial={{
+                    opacity: 0,
+                    y: 12,
+                    scale: 0.98
+                  }} animate={{
+                    opacity: 1,
+                    y: 0,
+                    scale: 1
+                  }} transition={{
+                    duration: 0.2,
+                    delay: 0.15,
+                    ease: smoothEasing
+                  }} className="flex justify-start">
+                    <div className="w-full max-w-md">
+                      <PropertyResultsDisplay properties={propertyResults} />
+                    </div>
+                  </motion.div>
+                )}
+              </motion.div>
+            })}
+          </AnimatePresence>
+
+          {/* Typing indicator */}
+          <AnimatePresence>
+            {isTyping && <motion.div key="typing" initial={{
+            opacity: 0,
+            y: 6,
+            scale: 0.98
+          }} animate={{
+            opacity: 1,
+            y: 0,
+            scale: 1
+          }} exit={{
+            opacity: 0,
+            y: -4,
+            scale: 0.98
+          }} transition={{
+            duration: 0.15,
+            ease: smoothEasing
+          }} className="flex justify-start">
+                <div className="flex items-start space-x-4">
+                  <div className="bg-slate-50 border border-slate-200/60 rounded-2xl px-4 py-3 shadow-sm">
+                    <div className="flex space-x-1.5">
+                      {[0, 1, 2].map(i => <motion.div key={i} className="w-1.5 h-1.5 bg-slate-600 rounded-full" animate={{
+                    scale: [1, 1.2, 1],
+                    opacity: [0.5, 0.9, 0.5]
+                  }} transition={{
+                    duration: 0.6,
+                    repeat: Infinity,
+                    delay: i * 0.1,
+                    ease: preciseEasing
+                  }} />)}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>}
+          </AnimatePresence>
+
+          <div ref={messagesEndRef} />
+        </div>
+
+        {/* Input Area */}
+        <div className="px-6 pt-12 pb-6">
+          <form onSubmit={handleSendMessage} className="relative">
+            <div className="relative flex items-center bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200/50 rounded-full px-5 py-2.5 max-w-2xl mx-auto shadow-sm hover:shadow-md focus-within:shadow-md focus-within:border-blue-300/70 transition-all duration-300 mt-3">
+              <input ref={inputRef} type="text" value={inputValue} onChange={e => setInputValue(e.target.value)} onKeyDown={e => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (inputValue.trim() && !isTyping) {
+                  handleSendMessage(e as any);
+                }
+              }
+            }} placeholder="Ask anything..." className="flex-1 bg-transparent text-slate-700 placeholder:text-slate-400 focus:outline-none text-sm font-normal" disabled={isTyping} />
+              
+              <button type="submit" disabled={!inputValue.trim() || isTyping} className={`ml-3 w-7 h-7 flex items-center justify-center rounded-full transition-all duration-200 ${
+                inputValue.trim() && !isTyping 
+                  ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm hover:scale-105' 
+                  : 'bg-slate-300/70 text-slate-400 cursor-not-allowed'
+              }`}>
+                <ArrowUp className="w-3.5 h-3.5" strokeWidth={2.5} />
+              </button>
             </div>
-          </div>
+          </form>
+        </div>
+        
+        {/* Extended white space below chat bar */}
+        <div className="bg-white h-16"></div>
         </div>
       </div>
-    </motion.div>
-  );
+    </motion.div>;
 }
