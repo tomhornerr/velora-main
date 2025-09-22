@@ -44,6 +44,11 @@ export const ChatPanel = ({
     chatId: string;
     chatTitle: string;
   } | null>(null);
+  const [showArchiveToast, setShowArchiveToast] = React.useState<{
+    chatId: string;
+    chatTitle: string;
+    isArchived: boolean;
+  } | null>(null);
   const handleChatClick = (chatId: string) => {
     if (editingChatId === chatId) return;
     onChatSelect?.(chatId);
@@ -76,14 +81,46 @@ export const ChatPanel = ({
 
   const handleArchiveChat = (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
-    archiveChat(chatId);
     setOpenMenuId(null);
+    
+    const chatToArchive = chatHistory.find(chat => chat.id === chatId);
+    if (!chatToArchive) return;
+    
+    archiveChat(chatId);
+    
+    // Show archive toast at bottom
+    setShowArchiveToast({
+      chatId,
+      chatTitle: chatToArchive.title,
+      isArchived: true
+    });
+    
+    // Auto-hide toast after 1 second
+    setTimeout(() => {
+      setShowArchiveToast(null);
+    }, 1000);
   };
 
   const handleUnarchiveChat = (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
-    unarchiveChat(chatId);
     setOpenMenuId(null);
+    
+    const chatToUnarchive = chatHistory.find(chat => chat.id === chatId);
+    if (!chatToUnarchive) return;
+    
+    unarchiveChat(chatId);
+    
+    // Show unarchive toast at bottom
+    setShowArchiveToast({
+      chatId,
+      chatTitle: chatToUnarchive.title,
+      isArchived: false
+    });
+    
+    // Auto-hide toast after 1 second
+    setTimeout(() => {
+      setShowArchiveToast(null);
+    }, 1000);
   };
 
   // Filter chats based on archived status
@@ -351,6 +388,28 @@ export const ChatPanel = ({
               <Trash2 className="w-4 h-4" />
               <span className="text-sm font-medium">
                 Deleted "{showUndoToast.chatTitle}"
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        {/* Bottom Archive Toast */}
+        <AnimatePresence>
+          {showArchiveToast && (
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.9 }}
+              transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+              className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2"
+            >
+              {showArchiveToast.isArchived ? (
+                <Archive className="w-4 h-4" />
+              ) : (
+                <ArchiveRestore className="w-4 h-4" />
+              )}
+              <span className="text-sm font-medium">
+                {showArchiveToast.isArchived ? 'Archived' : 'Unarchived'} "{showArchiveToast.chatTitle}"
               </span>
             </motion.div>
           )}
