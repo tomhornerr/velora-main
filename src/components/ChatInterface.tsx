@@ -124,26 +124,31 @@ export default function ChatInterface({
   };
   
   const scrollToShowLatestExchange = () => {
-    // More aggressive scroll to ensure only the latest exchange is visible
+    // Push content up more with smoother, minimal transition
     if (messagesEndRef.current) {
       const container = messagesEndRef.current.parentElement;
       if (container) {
-        container.scrollTop = container.scrollHeight;
+        // Push up more by adding extra offset for spacing
+        const targetScroll = container.scrollHeight + 60; // Add extra space
+        container.scrollTo({
+          top: targetScroll,
+          behavior: "smooth"
+        });
       }
     }
   };
   
   useEffect(() => {
-    // When messages change, scroll to show only the latest exchange
+    // When messages change, scroll with minimal delay
     if (messages.length > 0) {
-      setTimeout(() => scrollToShowLatestExchange(), 100);
+      setTimeout(() => scrollToShowLatestExchange(), 50);
     }
   }, [messages]);
   
   useEffect(() => {
-    // When typing starts/stops, ensure we're showing the latest content
+    // Immediate scroll for typing indicator
     if (isTyping) {
-      setTimeout(() => scrollToShowLatestExchange(), 50);
+      setTimeout(() => scrollToShowLatestExchange(), 20);
     }
   }, [isTyping]);
   // Auto-focus behavior for chat input after activation
