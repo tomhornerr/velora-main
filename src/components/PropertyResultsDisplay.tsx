@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Scan, MapPin } from "lucide-react";
 import { MapPopup } from './MapPopup';
@@ -68,6 +68,8 @@ export default function PropertyResultsDisplay({
   const [activeScan, setActiveScan] = useState(false);
   const [activeLocation, setActiveLocation] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isScrollingRef = useRef(false);
 
   const nextProperty = () => {
     setCurrentIndex(prev => (prev + 1) % properties.length);
@@ -81,10 +83,86 @@ export default function PropertyResultsDisplay({
     setCurrentIndex(index);
   };
 
+  // Scroll-based navigation
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      
+      // Prevent rapid scrolling
+      if (isScrollingRef.current) return;
+      isScrollingRef.current = true;
+
+      // Determine scroll direction
+      const scrollingDown = e.deltaY > 0;
+      const scrollingUp = e.deltaY < 0;
+
+      if (scrollingDown) {
+        nextProperty();
+      } else if (scrollingUp) {
+        prevProperty();
+      }
+
+      // Reset scroll lock after a delay
+      setTimeout(() => {
+        isScrollingRef.current = false;
+      }, 300);
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      container.dataset.touchStartY = touch.clientY.toString();
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (isScrollingRef.current) return;
+      
+      const touch = e.changedTouches[0];
+      const startY = parseFloat(container.dataset.touchStartY || '0');
+      const endY = touch.clientY;
+      const diffY = startY - endY;
+
+      // Minimum swipe distance
+      if (Math.abs(diffY) > 50) {
+        isScrollingRef.current = true;
+        
+        if (diffY > 0) {
+          // Swiped up - next property
+          nextProperty();
+        } else {
+          // Swiped down - previous property
+          prevProperty();
+        }
+
+        setTimeout(() => {
+          isScrollingRef.current = false;
+        }, 300);
+      }
+    };
+
+    container.addEventListener('wheel', handleWheel, { passive: false });
+    container.addEventListener('touchstart', handleTouchStart);
+    container.addEventListener('touchmove', handleTouchMove, { passive: false });
+    container.addEventListener('touchend', handleTouchEnd);
+
+    return () => {
+      container.removeEventListener('wheel', handleWheel);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
+    };
+  }, []);
+
   const currentProperty = properties[currentIndex];
 
   return (
-    <div className={`w-full max-w-2xl ${className || ''}`}>
+    <div ref={containerRef} className={`w-full max-w-2xl ${className || ''}`}>
       {/* Header */}
       <div className="mb-6">
         <h3 className="text-base font-semibold text-slate-800 mb-1">
@@ -92,6 +170,9 @@ export default function PropertyResultsDisplay({
         </h3>
         <p className="text-sm text-slate-600">
           Here are the most suitable comps I found for your search
+        </p>
+        <p className="text-xs text-slate-500 mt-2">
+          💡 Scroll up or down to navigate through properties
         </p>
       </div>
 
@@ -112,17 +193,10 @@ export default function PropertyResultsDisplay({
             </div>
           </div>
 
-          {/* Navigation Controls - Top Right */}
+          {/* Scroll Indicator - Top Right */}
           <div className="absolute top-4 right-4 flex items-center space-x-2">
-            <div className="flex items-center bg-white/95 backdrop-blur-sm rounded-lg p-1 shadow-sm">
-              <button
-                onClick={prevProperty}
-                className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-slate-100 transition-colors"
-              >
-                <ChevronLeft className="w-4 h-4 text-slate-700" />
-              </button>
-              
-              <div className="flex items-center space-x-1 px-2">
+            <div className="flex items-center bg-white/95 backdrop-blur-sm rounded-lg p-2 shadow-sm">              
+              <div className="flex items-center space-x-1">
                 {properties.map((_, index) => (
                   <button
                     key={index}
@@ -135,13 +209,6 @@ export default function PropertyResultsDisplay({
                   />
                 ))}
               </div>
-              
-              <button
-                onClick={nextProperty}
-                className="w-8 h-8 rounded-md flex items-center justify-center hover:bg-slate-100 transition-colors"
-              >
-                <ChevronRight className="w-4 h-4 text-slate-700" />
-              </button>
             </div>
           </div>
         </div>
@@ -193,7 +260,7 @@ export default function PropertyResultsDisplay({
           {/* Property Counter */}
           <div className="mt-4 pt-4 border-t border-slate-100">
             <div className="text-center text-sm text-slate-500">
-              Property {currentIndex + 1} of {properties.length}
+              Property {currentIndex + 1} of {properties.length} • Scroll to navigate
             </div>
           </div>
         </div>
