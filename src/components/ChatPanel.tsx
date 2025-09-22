@@ -294,19 +294,19 @@ export const ChatPanel = ({
                                   >
                                      <button
                                        onClick={(e) => handleRename(e, chat.id, chat.title)}
-                                       className="w-full flex items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors duration-75 group/item"
+                                       className="w-full flex items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors duration-[25ms] group/item"
                                      >
-                                       <Edit className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-75" />
+                                       <Edit className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-[25ms]" />
                                        <span className="font-medium">Rename</span>
                                      </button>
                                      <button
                                        onClick={(e) => chat.archived ? handleUnarchiveChat(e, chat.id) : handleArchiveChat(e, chat.id)}
-                                       className="w-full flex items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors duration-75 group/item"
+                                       className="w-full flex items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50 transition-colors duration-[25ms] group/item"
                                      >
                                        {chat.archived ? (
-                                         <ArchiveRestore className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-75" />
+                                         <ArchiveRestore className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-[25ms]" />
                                        ) : (
-                                         <Archive className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-75" />
+                                         <Archive className="w-3.5 h-3.5 mr-2.5 text-slate-500 group-hover/item:text-slate-700 transition-colors duration-[25ms]" />
                                        )}
                                        <span className="font-medium">
                                          {chat.archived ? 'Unarchive' : 'Archive'}
@@ -315,9 +315,9 @@ export const ChatPanel = ({
                                      <div className="h-px bg-slate-200 mx-2 my-1" />
                                      <button
                                        onClick={(e) => handleDeleteChat(e, chat.id)}
-                                       className="w-full flex items-center px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 transition-colors duration-75 group/item"
+                                       className="w-full flex items-center px-3 py-1.5 text-xs text-red-600 hover:bg-red-50 transition-colors duration-[25ms] group/item"
                                      >
-                                       <Trash2 className="w-3.5 h-3.5 mr-2.5 text-red-500 group-hover/item:text-red-600 transition-colors duration-75" />
+                                       <Trash2 className="w-3.5 h-3.5 mr-2.5 text-red-500 group-hover/item:text-red-600 transition-colors duration-[25ms]" />
                                        <span className="font-medium">Delete</span>
                                      </button>
                                    </motion.div>
