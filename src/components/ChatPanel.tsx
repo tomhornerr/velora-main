@@ -40,8 +40,12 @@ export const ChatPanel = ({
     chat: any;
     timeoutId: NodeJS.Timeout;
   } | null>(null);
+  const [showUndoToast, setShowUndoToast] = React.useState<{
+    chatId: string;
+    chatTitle: string;
+  } | null>(null);
   const handleChatClick = (chatId: string) => {
-    if (pendingDeletion?.chatId === chatId || editingChatId === chatId) return;
+    if (editingChatId === chatId) return;
     onChatSelect?.(chatId);
   };
 
@@ -88,29 +92,26 @@ export const ChatPanel = ({
   const displayedChats = showArchived ? archivedChats : activeChats;
   const handleDeleteChat = (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
-    if (pendingDeletion) {
-      clearTimeout(pendingDeletion.timeoutId);
-      setPendingDeletion(null);
-    }
+    setOpenMenuId(null);
+    
     const chatToDelete = chatHistory.find(chat => chat.id === chatId);
     if (!chatToDelete) return;
-    const timeoutId = setTimeout(() => {
-      removeChatFromHistory(chatId);
-      setPendingDeletion(null);
-    }, 3000);
-    setPendingDeletion({
+    
+    // Show undo toast at bottom
+    setShowUndoToast({
       chatId,
-      chat: chatToDelete,
-      timeoutId
+      chatTitle: chatToDelete.title
     });
+    
+    // Auto-hide toast after 1 second
+    setTimeout(() => {
+      setShowUndoToast(null);
+    }, 1000);
+    
+    // Delete chat immediately (since we're showing toast for only 1 second)
+    removeChatFromHistory(chatId);
   };
-  const handleUndoDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (pendingDeletion) {
-      clearTimeout(pendingDeletion.timeoutId);
-      setPendingDeletion(null);
-    }
-  };
+  
   const handleNewChat = () => {
     console.log('Create new chat');
     onNewChat?.();
@@ -124,14 +125,6 @@ export const ChatPanel = ({
       return () => document.removeEventListener('click', handleClickOutside);
     }
   }, [openMenuId]);
-
-  React.useEffect(() => {
-    return () => {
-      if (pendingDeletion) {
-        clearTimeout(pendingDeletion.timeoutId);
-      }
-    };
-  }, [pendingDeletion]);
   return <AnimatePresence>
       {/* Backdrop overlay - click outside to close */}
       {isOpen && <motion.div
@@ -201,14 +194,13 @@ export const ChatPanel = ({
            {showChatHistory && <div className="flex-1 overflow-y-auto px-4 py-1">
               <AnimatePresence mode="popLayout">
                 {displayedChats.map((chat, index) => {
-            const isPendingDeletion = pendingDeletion?.chatId === chat.id;
             const isEditing = editingChatId === chat.id;
             return <motion.div key={chat.id} layout initial={{
               opacity: 0,
               x: -20,
               scale: 1
             }} animate={{
-              opacity: isPendingDeletion ? 0.5 : 1,
+              opacity: 1,
               x: 0,
               scale: 1
             }} exit={{
@@ -221,9 +213,9 @@ export const ChatPanel = ({
               paddingBottom: 0
             }} transition={{
               duration: 0.2,
-              delay: isPendingDeletion ? 0 : index * 0.02,
+              delay: index * 0.02,
               ease: [0.23, 1, 0.32, 1]
-            }} onClick={() => handleChatClick(chat.id)} className={`group relative px-3 py-2 rounded-md transition-all duration-50 cursor-pointer mb-0.5 transform-gpu ${isPendingDeletion ? 'bg-red-50' : 'hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 hover:scale-[1.01] hover:shadow-sm hover:-translate-y-0.5'}`}>
+            }} onClick={() => handleChatClick(chat.id)} className={`group relative px-3 py-2 rounded-md transition-all duration-50 cursor-pointer mb-0.5 transform-gpu hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 hover:scale-[1.01] hover:shadow-sm hover:-translate-y-0.5`}>
                       
                       {isEditing ? (
                         <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
@@ -242,80 +234,60 @@ export const ChatPanel = ({
                         </div>
                       ) : (
                         <div className="flex items-center justify-between">
-                          <span className={`text-xs font-normal truncate pr-2 transition-all duration-50 transform-gpu ${isPendingDeletion ? 'text-red-600' : 'text-slate-600 group-hover:text-slate-800 group-hover:font-medium'}`}>
+                          <span className={`text-xs font-normal truncate pr-2 transition-all duration-50 transform-gpu text-slate-600 group-hover:text-slate-800 group-hover:font-medium`}>
                             {chat.title}
                           </span>
                           
-                          {!isPendingDeletion && (
-                            <div className="relative">
-                              <button
-                                onClick={(e) => handleMenuToggle(e, chat.id)}
-                                className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md hover:bg-slate-200 transition-all duration-50 transform hover:scale-125 hover:rotate-90 active:scale-95"
-                              >
-                                <MoreVertical className="w-3.5 h-3.5 text-slate-400 hover:text-slate-700 transition-all duration-50" />
-                              </button>
+                          <div className="relative">
+                            <button
+                              onClick={(e) => handleMenuToggle(e, chat.id)}
+                              className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md hover:bg-slate-200 transition-all duration-50 transform hover:scale-125 hover:rotate-90 active:scale-95"
+                            >
+                              <MoreVertical className="w-3.5 h-3.5 text-slate-400 hover:text-slate-700 transition-all duration-50" />
+                            </button>
                               
-                              {openMenuId === chat.id && (
-                                 <motion.div
-                                   initial={{ opacity: 0, scale: 0.9, y: -12 }}
-                                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                                   exit={{ opacity: 0, scale: 0.9, y: -12 }}
-                                   transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}
-                                   className="absolute right-0 top-10 w-48 bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-200/60 py-2 z-50"
-                                   onClick={(e) => e.stopPropagation()}
-                                 >
-                                    <button
-                                      onClick={(e) => handleRename(e, chat.id, chat.title)}
-                                      className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
-                                    >
-                                      <Edit className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:rotate-12 group-hover/item:text-indigo-600" />
-                                      <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">Rename</span>
-                                    </button>
-                                    <button
-                                      onClick={(e) => chat.archived ? handleUnarchiveChat(e, chat.id) : handleArchiveChat(e, chat.id)}
-                                      className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
-                                    >
-                                      {chat.archived ? (
-                                        <ArchiveRestore className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:text-green-600" />
-                                      ) : (
-                                        <Archive className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:text-amber-600" />
-                                      )}
-                                      <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">
-                                        {chat.archived ? 'Unarchive' : 'Archive'}
-                                      </span>
-                                    </button>
-                                    <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent mx-2 my-1" />
-                                    <button
-                                      onClick={(e) => handleDeleteChat(e, chat.id)}
-                                      className="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
-                                    >
-                                      <Trash2 className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:rotate-12 group-hover/item:text-red-700" />
-                                      <span className="group-hover/item:font-semibold group-hover/item:text-red-700 transition-all duration-50">Delete</span>
-                                    </button>
-                                  </motion.div>
-                               )}
-                             </div>
-                           )}
-                        </div>
-                      )}
-
-                      {/* Undo overlay for pending deletion */}
-                      {isPendingDeletion && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}
-                          className="absolute inset-0 flex items-center justify-center bg-red-50/95 backdrop-blur-sm rounded-lg"
-                        >
-                          <button
-                            onClick={handleUndoDelete}
-                            className="flex items-center space-x-2 px-4 py-2 bg-white rounded-lg shadow-lg border hover:scale-110 hover:shadow-xl transition-all duration-50 active:scale-95"
-                          >
-                            <Undo2 className="w-4 h-4 text-red-600 hover:rotate-180 transition-transform duration-200" />
-                            <span className="text-sm text-red-600 font-semibold">Undo</span>
-                          </button>
-                        </motion.div>
-                      )}
+                               {openMenuId === chat.id && (
+                                  <motion.div
+                                    initial={{ opacity: 0, scale: 0.9, y: -12 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.9, y: -12 }}
+                                    transition={{ duration: 0.08, ease: [0.16, 1, 0.3, 1] }}
+                                    className="absolute right-0 top-10 w-48 bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-slate-200/60 py-2 z-50"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                     <button
+                                       onClick={(e) => handleRename(e, chat.id, chat.title)}
+                                       className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
+                                     >
+                                       <Edit className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:rotate-12 group-hover/item:text-indigo-600" />
+                                       <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">Rename</span>
+                                     </button>
+                                     <button
+                                       onClick={(e) => chat.archived ? handleUnarchiveChat(e, chat.id) : handleArchiveChat(e, chat.id)}
+                                       className="w-full flex items-center px-4 py-2.5 text-sm text-slate-700 hover:bg-gradient-to-r hover:from-slate-50 hover:to-slate-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
+                                     >
+                                       {chat.archived ? (
+                                         <ArchiveRestore className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:text-green-600" />
+                                       ) : (
+                                         <Archive className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:text-amber-600" />
+                                       )}
+                                       <span className="group-hover/item:font-semibold group-hover/item:text-slate-900 transition-all duration-50">
+                                         {chat.archived ? 'Unarchive' : 'Archive'}
+                                       </span>
+                                     </button>
+                                     <div className="h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent mx-2 my-1" />
+                                     <button
+                                       onClick={(e) => handleDeleteChat(e, chat.id)}
+                                       className="w-full flex items-center px-4 py-2.5 text-sm text-red-600 hover:bg-gradient-to-r hover:from-red-50 hover:to-red-100 transition-all duration-50 hover:scale-[1.03] active:scale-[0.98] group/item"
+                                     >
+                                       <Trash2 className="w-4 h-4 mr-3 transition-all duration-50 group-hover/item:scale-125 group-hover/item:rotate-12 group-hover/item:text-red-700" />
+                                       <span className="group-hover/item:font-semibold group-hover/item:text-red-700 transition-all duration-50">Delete</span>
+                                     </button>
+                                   </motion.div>
+                                )}
+                              </div>
+                         </div>
+                       )}
                     </motion.div>;
           })}
               </AnimatePresence>
@@ -365,5 +337,23 @@ export const ChatPanel = ({
             </p>
           </div>
         </motion.div>}
+        
+        {/* Bottom Undo Toast */}
+        <AnimatePresence>
+          {showUndoToast && (
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.9 }}
+              transition={{ duration: 0.2, ease: [0.23, 1, 0.32, 1] }}
+              className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900 text-white px-4 py-2 rounded-lg shadow-lg flex items-center space-x-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                Deleted "{showUndoToast.chatTitle}"
+              </span>
+            </motion.div>
+          )}
+        </AnimatePresence>
     </AnimatePresence>;
 };
