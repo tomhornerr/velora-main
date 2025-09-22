@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageSquare, Clock, X, Trash2, Plus, Undo2, Sparkles } from "lucide-react";
+import { MessageSquare, Clock, X, Trash2, Plus, Undo2, Sparkles, MoreVertical, Share, Edit, Archive, Folder } from "lucide-react";
 import { useChatHistory } from "./ChatHistoryContext";
 export interface ChatPanelProps {
   isOpen?: boolean;
@@ -25,14 +25,41 @@ export const ChatPanel = ({
     removeChatFromHistory
   } = useChatHistory();
   const [hoveredChat, setHoveredChat] = React.useState<string | null>(null);
+  const [openMenuId, setOpenMenuId] = React.useState<string | null>(null);
+  const [editingChatId, setEditingChatId] = React.useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = React.useState<string>('');
   const [pendingDeletion, setPendingDeletion] = React.useState<{
     chatId: string;
     chat: any;
     timeoutId: NodeJS.Timeout;
   } | null>(null);
   const handleChatClick = (chatId: string) => {
-    if (pendingDeletion?.chatId === chatId) return;
+    if (pendingDeletion?.chatId === chatId || editingChatId === chatId) return;
     onChatSelect?.(chatId);
+  };
+
+  const handleMenuToggle = (e: React.MouseEvent, chatId: string) => {
+    e.stopPropagation();
+    setOpenMenuId(openMenuId === chatId ? null : chatId);
+  };
+
+  const handleRename = (e: React.MouseEvent, chatId: string, currentTitle: string) => {
+    e.stopPropagation();
+    setEditingChatId(chatId);
+    setEditingTitle(currentTitle);
+    setOpenMenuId(null);
+  };
+
+  const handleSaveRename = (chatId: string) => {
+    // Here you would update the chat title in your state/context
+    // For now, we'll just exit edit mode
+    setEditingChatId(null);
+    setEditingTitle('');
+  };
+
+  const handleCancelRename = () => {
+    setEditingChatId(null);
+    setEditingTitle('');
   };
   const handleDeleteChat = (e: React.MouseEvent, chatId: string) => {
     e.stopPropagation();
@@ -62,6 +89,15 @@ export const ChatPanel = ({
   const handleNewChat = () => {
     console.log('Create new chat');
   };
+  React.useEffect(() => {
+    // Close menu when clicking outside
+    const handleClickOutside = () => setOpenMenuId(null);
+    if (openMenuId) {
+      document.addEventListener('click', handleClickOutside);
+      return () => document.removeEventListener('click', handleClickOutside);
+    }
+  }, [openMenuId]);
+
   React.useEffect(() => {
     return () => {
       if (pendingDeletion) {
@@ -129,10 +165,11 @@ export const ChatPanel = ({
           </div>
 
           {/* Chat List */}
-          {showChatHistory && <div className="flex-1 overflow-y-auto px-4 py-4 space-y-2">
+          {showChatHistory && <div className="flex-1 overflow-y-auto px-2 py-2">
               <AnimatePresence mode="popLayout">
                 {chatHistory.map((chat, index) => {
             const isPendingDeletion = pendingDeletion?.chatId === chat.id;
+            const isEditing = editingChatId === chat.id;
             return <motion.div key={chat.id} layout initial={{
               opacity: 0,
               x: -20,
@@ -150,90 +187,107 @@ export const ChatPanel = ({
               paddingTop: 0,
               paddingBottom: 0
             }} transition={{
-              duration: 0.3,
-              delay: isPendingDeletion ? 0 : index * 0.03 + 0.1,
+              duration: 0.2,
+              delay: isPendingDeletion ? 0 : index * 0.02,
               ease: [0.23, 1, 0.32, 1]
-            }} onMouseEnter={() => !isPendingDeletion && setHoveredChat(chat.id)} onMouseLeave={() => setHoveredChat(null)} onClick={() => handleChatClick(chat.id)} className={`group relative p-4 rounded-2xl border-2 transition-all duration-300 overflow-hidden cursor-pointer ${isPendingDeletion ? 'bg-red-50 border-red-200/60' : 'bg-slate-50/80 hover:bg-white border-slate-200/40 hover:border-indigo-200/60 hover:shadow-[0_4px_20px_rgba(99,102,241,0.08)] hover:-translate-y-0.5'}`}>
-                      <div className="space-y-3">
-                        <div className="flex items-start justify-between">
-                          <h4 className={`font-semibold text-sm leading-tight line-clamp-1 pr-2 transition-colors duration-300 ${isPendingDeletion ? 'text-red-600/80' : 'text-slate-800'}`}>
-                            <span>{chat.title}</span>
-                          </h4>
+            }} onClick={() => handleChatClick(chat.id)} className={`group relative px-3 py-3 rounded-lg transition-all duration-200 cursor-pointer mb-1 ${isPendingDeletion ? 'bg-red-50' : 'hover:bg-slate-50'}`}>
+                      
+                      {isEditing ? (
+                        <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
+                          <input
+                            type="text"
+                            value={editingTitle}
+                            onChange={(e) => setEditingTitle(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') handleSaveRename(chat.id);
+                              if (e.key === 'Escape') handleCancelRename();
+                            }}
+                            onBlur={() => handleSaveRename(chat.id)}
+                            className="flex-1 px-2 py-1 text-sm border border-slate-300 rounded focus:outline-none focus:border-indigo-500"
+                            autoFocus
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between">
+                          <span className={`text-sm font-medium truncate pr-2 ${isPendingDeletion ? 'text-red-600' : 'text-slate-800'}`}>
+                            {chat.title}
+                          </span>
                           
-                          <AnimatePresence mode="wait">
-                            {isPendingDeletion ? <motion.button key="undo" initial={{
-                      opacity: 0,
-                      scale: 0.8,
-                      rotate: -90
-                    }} animate={{
-                      opacity: 1,
-                      scale: 1,
-                      rotate: 0
-                    }} exit={{
-                      opacity: 0,
-                      scale: 0.8,
-                      rotate: 90
-                    }} transition={{
-                      duration: 0.2
-                    }} onClick={handleUndoDelete} className="flex-shrink-0 w-7 h-7 flex items-center justify-center text-red-500 hover:text-red-600 hover:bg-red-100 rounded-lg transition-all duration-200">
-                                <Undo2 className="w-4 h-4" strokeWidth={1.5} />
-                              </motion.button> : hoveredChat === chat.id && <motion.button key="delete" initial={{
-                      opacity: 0,
-                      scale: 0.8
-                    }} animate={{
-                      opacity: 1,
-                      scale: 1
-                    }} exit={{
-                      opacity: 0,
-                      scale: 0.8
-                    }} transition={{
-                      duration: 0.15
-                    }} whileHover={{
-                      scale: 1.1
-                    }} whileTap={{
-                      scale: 0.9
-                    }} onClick={e => handleDeleteChat(e, chat.id)} className="flex-shrink-0 w-7 h-7 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200">
-                                <Trash2 className="w-4 h-4" strokeWidth={1.5} />
-                              </motion.button>}
-                          </AnimatePresence>
+                          {!isPendingDeletion && (
+                            <div className="relative">
+                              <button
+                                onClick={(e) => handleMenuToggle(e, chat.id)}
+                                className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-slate-200 transition-all duration-200"
+                              >
+                                <MoreVertical className="w-4 h-4 text-slate-500" />
+                              </button>
+                              
+                              {openMenuId === chat.id && (
+                                <motion.div
+                                  initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                                  exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                  className="absolute right-0 top-8 w-48 bg-white rounded-xl shadow-xl border border-slate-200 py-2 z-50"
+                                  onClick={(e) => e.stopPropagation()}
+                                >
+                                  <button
+                                    onClick={(e) => handleRename(e, chat.id, chat.title)}
+                                    className="w-full flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                                  >
+                                    <Edit className="w-4 h-4 mr-3" />
+                                    Rename
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setOpenMenuId(null);
+                                    }}
+                                    className="w-full flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                                  >
+                                    <Share className="w-4 h-4 mr-3" />
+                                    Share
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setOpenMenuId(null);
+                                    }}
+                                    className="w-full flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+                                  >
+                                    <Archive className="w-4 h-4 mr-3" />
+                                    Archive
+                                  </button>
+                                  <div className="h-px bg-slate-200 mx-2 my-1" />
+                                  <button
+                                    onClick={(e) => handleDeleteChat(e, chat.id)}
+                                    className="w-full flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                                  >
+                                    <Trash2 className="w-4 h-4 mr-3" />
+                                    Delete
+                                  </button>
+                                </motion.div>
+                              )}
+                            </div>
+                          )}
                         </div>
-                        
-                        <p className={`text-sm leading-relaxed line-clamp-2 font-medium transition-colors duration-300 ${isPendingDeletion ? 'text-red-500/60' : 'text-slate-600'}`}>
-                          <span>{chat.preview}</span>
-                        </p>
-                        
-                        <div className="flex items-center space-x-2 pt-1">
-                          <Clock className={`w-3 h-3 transition-colors duration-300 ${isPendingDeletion ? 'text-red-400/60' : 'text-slate-400'}`} strokeWidth={1.5} />
-                          <span className={`text-xs font-medium transition-colors duration-300 ${isPendingDeletion ? 'text-red-400/60' : 'text-slate-400'}`}>
-                            <span>{chat.timestamp}</span>
-                          </span>
-                        </div>
-                      </div>
+                      )}
 
-                      {/* Hover indicator */}
-                      {!isPendingDeletion && <motion.div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-indigo-400 to-purple-400 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300" />}
-
-                      {/* Deletion indicator */}
-                      {isPendingDeletion && <motion.div initial={{
-                opacity: 0,
-                scaleX: 0
-              }} animate={{
-                opacity: 1,
-                scaleX: 1
-              }} className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-gradient-to-b from-red-400 to-red-500 rounded-full" />}
-
-                      {/* Undo overlay */}
-                      {isPendingDeletion && <motion.div initial={{
-                opacity: 0,
-                y: 10
-              }} animate={{
-                opacity: 1,
-                y: 0
-              }} className="absolute inset-0 flex items-center justify-center bg-red-50/90 backdrop-blur-sm rounded-2xl">
-                          <span className="text-red-600 text-sm font-semibold">
-                            <span>Click undo to restore</span>
-                          </span>
-                        </motion.div>}
+                      {/* Undo overlay for pending deletion */}
+                      {isPendingDeletion && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="absolute inset-0 flex items-center justify-center bg-red-50/90 backdrop-blur-sm rounded-lg"
+                        >
+                          <button
+                            onClick={handleUndoDelete}
+                            className="flex items-center space-x-2 px-3 py-1 bg-white rounded-md shadow-sm border"
+                          >
+                            <Undo2 className="w-4 h-4 text-red-600" />
+                            <span className="text-sm text-red-600 font-medium">Undo</span>
+                          </button>
+                        </motion.div>
+                      )}
                     </motion.div>;
           })}
               </AnimatePresence>
