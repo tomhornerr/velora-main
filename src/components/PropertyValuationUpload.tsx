@@ -288,7 +288,7 @@ export default function PropertyValuationUpload({
                     <h3 className="text-sm font-semibold text-slate-900 mb-3">
                       Uploaded Files ({uploadedFiles.length})
                     </h3>
-                    <div className="space-y-2 max-h-60 overflow-y-auto">
+                    <div className="space-y-2 max-h-60 overflow-y-auto pr-3 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300 hover:scrollbar-thumb-slate-400">
                       <AnimatePresence>
                         {uploadedFiles.map((file) => (
                           <motion.div
@@ -296,7 +296,7 @@ export default function PropertyValuationUpload({
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.95 }}
-                            className="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-200 group hover:shadow-md transition-all duration-200"
+                            className="flex items-center p-3 bg-slate-50 rounded-lg border border-slate-200 group hover:shadow-md transition-all duration-200 mr-1"
                           >
                             <div className="flex items-center space-x-3 flex-1 min-w-0">
                               <div className="relative flex-shrink-0">
