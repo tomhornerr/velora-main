@@ -114,7 +114,7 @@ export default function PropertyResultsDisplay({
           // Scroll up - previous property  
           setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
         }
-      }, 100);
+      }, 1);
     };
 
     // Add event listeners
