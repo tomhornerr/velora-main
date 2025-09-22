@@ -15,6 +15,7 @@ export interface MainContentProps {
   className?: string;
   currentView?: string;
   onChatModeChange?: (inChatMode: boolean, chatData?: any) => void;
+  onChatHistoryCreate?: (chatData: any) => void;
   currentChatData?: {
     query: string;
     messages: any[];
@@ -27,6 +28,7 @@ export const MainContent = ({
   className,
   currentView = 'search',
   onChatModeChange,
+  onChatHistoryCreate,
   currentChatData,
   isInChatMode: inChatMode = false
 }: MainContentProps) => {
@@ -37,16 +39,14 @@ export const MainContent = ({
   const isInChatMode = inChatMode;
   const handleQueryStart = (query: string) => {
     console.log('MainContent: Query started with:', query);
-    setChatQuery(query);
-    setChatMessages([]);
-
-    // Create a preliminary chat entry without submitting
+    
+    // Only create chat history entry, don't switch to chat mode yet
     const chatData = {
       query,
       messages: [],
       timestamp: new Date()
     };
-    onChatModeChange?.(true, chatData);
+    onChatHistoryCreate?.(chatData);
   };
 
   const handleSearch = (query: string) => {
@@ -54,7 +54,7 @@ export const MainContent = ({
     setChatQuery(query);
     setChatMessages([]); // Reset messages for new chat
 
-    // Pass chat data to parent for actual search submission
+    // Now actually enter chat mode and submit
     const chatData = {
       query,
       messages: [],

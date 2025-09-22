@@ -40,6 +40,25 @@ const DashboardLayoutContent = ({
     setCurrentChatData(null);
   };
 
+  const handleChatHistoryCreate = React.useCallback((chatData: any) => {
+    // Create chat history without switching to chat mode
+    if (chatData && chatData.query) {
+      setPreviousChatData(chatData);
+      
+      if (currentChatId) {
+        updateChatInHistory(currentChatId, chatData.messages || []);
+      } else {
+        const newChatId = addChatToHistory({
+          title: '',
+          timestamp: new Date().toISOString(),
+          preview: chatData.query,
+          messages: chatData.messages || []
+        });
+        setCurrentChatId(newChatId);
+      }
+    }
+  }, [currentChatId, addChatToHistory, updateChatInHistory, setPreviousChatData]);
+
   const handleChatModeChange = (inChatMode: boolean, chatData?: any) => {
     if (inChatMode) {
       setIsInChatMode(true);
@@ -164,6 +183,7 @@ const DashboardLayoutContent = ({
       <MainContent 
         currentView={currentView} 
         onChatModeChange={handleChatModeChange}
+        onChatHistoryCreate={handleChatHistoryCreate}
         currentChatData={currentChatData}
         isInChatMode={isInChatMode}
       />
