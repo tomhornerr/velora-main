@@ -314,7 +314,7 @@ export default function PropertyValuationUpload({
                           >
                             <div className="flex items-center space-x-3 flex-1 min-w-0">
                               <div className="relative flex-shrink-0">
-                                 {file.type === 'PDF' ? (
+                                {file.preview ? (
                                    <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-100">
                                      <img 
                                        src={file.preview} 
