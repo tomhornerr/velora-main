@@ -88,10 +88,10 @@ export const SearchBar = ({
             {/* Main search container - Glassmorphism Design */}
             <div className={`
               relative flex items-center 
-              bg-black/30 backdrop-blur-xl 
+              bg-black/30 
               border border-white/30 
               rounded-full px-6 py-3 
-              shadow-2xl transition-all duration-300 
+              shadow-2xl
               hover:bg-black/35 hover:border-white/40
               focus-within:bg-black/35 focus-within:border-white/40
               ${isSubmitted ? 'opacity-75' : ''}
