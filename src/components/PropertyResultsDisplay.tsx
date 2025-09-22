@@ -121,9 +121,12 @@ export default function PropertyResultsDisplay({
       if (!isHorizontalSwipe && !isVerticalScroll) return;
       
       if (isHorizontalSwipe) {
-        // Prevent multiple swipe changes from single gesture
+        // Prevent multiple swipe changes from single gesture - more aggressive debouncing
         if (swipeRef.current) return;
         swipeRef.current = true;
+        
+        // Also prevent any scroll events during swipe
+        isScrollingRef.current = true;
         
         // Horizontal trackpad swipe navigation
         const swipingLeft = e.deltaX > 0;
@@ -135,10 +138,11 @@ export default function PropertyResultsDisplay({
           prevProperty();
         }
         
-        // Reset swipe lock after longer delay to prevent multiple changes
+        // Reset both locks after longer delay to ensure gesture is complete
         setTimeout(() => {
           swipeRef.current = false;
-        }, 500);
+          isScrollingRef.current = false;
+        }, 800);
       } else if (isVerticalScroll) {
         // Prevent rapid scrolling for vertical scroll
         if (isScrollingRef.current) return;
