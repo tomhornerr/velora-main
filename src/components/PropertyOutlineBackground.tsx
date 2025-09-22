@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 
 export const PropertyOutlineBackground = () => {
   return (
-    <div className="fixed inset-0 overflow-hidden">
+    <div className="fixed inset-0 overflow-hidden" style={{ zIndex: -10 }}>
       {/* Sky gradient background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-300/40 via-sky-200/30 to-sky-100/20" />
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-400/60 via-sky-300/50 to-sky-200/40" />
       
       {/* Cloud shapes */}
       <div className="absolute inset-0">
@@ -33,21 +33,21 @@ export const PropertyOutlineBackground = () => {
         xmlns="http://www.w3.org/2000/svg"
       >
         {/* Building Complex 1 - Left side */}
-        <g className="opacity-30">
+        <g className="opacity-60">
           {/* Tall tower */}
           <motion.path
             d="M120 400 L120 1080 L220 1080 L220 400 Z"
             stroke="white"
-            strokeWidth="1.5"
+            strokeWidth="2"
             fill="none"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.3 }}
+            animate={{ pathLength: 1, opacity: 0.6 }}
             transition={{ duration: 3, delay: 0.5 }}
           />
           {/* Windows for tall tower */}
           <motion.g
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.2 }}
+            animate={{ opacity: 0.4 }}
             transition={{ duration: 2, delay: 2 }}
           >
             {Array.from({ length: 12 }, (_, i) => (
@@ -65,7 +65,7 @@ export const PropertyOutlineBackground = () => {
             strokeWidth="1.5"
             fill="none"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.3 }}
+            animate={{ pathLength: 1, opacity: 0.6 }}
             transition={{ duration: 2.5, delay: 1 }}
           />
         </g>
