@@ -26,12 +26,11 @@ const DashboardLayoutContent = ({
   const { addChatToHistory, updateChatInHistory, getChatById } = useChatHistory();
 
   const handleViewChange = (viewId: string) => {
-    console.log('handleViewChange called:', { viewId, isInChatMode, currentChatData, currentView });
+    console.log('handleViewChange called:', { viewId, isInChatMode, currentChatData, previousChatData, currentView });
     
-    // Store current chat data if exiting from a chat
-    if (isInChatMode && currentChatData && (viewId !== 'search')) {
-      console.log('Storing chat data for notification:', currentChatData);
-      setPreviousChatData(currentChatData);
+    // Show notification if we have any previous chat data and we're navigating away from search/home
+    if (previousChatData && (viewId !== 'search' && viewId !== 'home')) {
+      console.log('Showing chat notification for previous chat data:', previousChatData);
       setShowChatNotification(true);
     }
     
@@ -50,6 +49,8 @@ const DashboardLayoutContent = ({
     setIsInChatMode(inChatMode);
     if (chatData) {
       setCurrentChatData(chatData);
+      // Always store the latest chat data for potential notification
+      setPreviousChatData(chatData);
       setHasPerformedSearch(true);
       
       // Instantly create/update chat history when any query or message is entered
