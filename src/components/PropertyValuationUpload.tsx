@@ -449,7 +449,7 @@ export default function PropertyValuationUpload({
               <h3 className="text-lg font-semibold text-white mb-2">
                 {currentStep === 2 ? 'Processing Documents...' : 'Analyzing Properties...'}
               </h3>
-              <p className="text-slate-300 mb-3">
+              <p className="text-slate-600 mb-3">
                 {currentStep === 2 
                   ? 'We\'re extracting information from your documents' 
                   : 'AI is analyzing your property details'
