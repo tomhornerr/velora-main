@@ -158,10 +158,10 @@ export const ChatPanel = ({
               onClick={handleNewChat} 
               whileHover={{ scale: 1.01 }} 
               whileTap={{ scale: 0.99 }} 
-              className="flex items-center space-x-2.5 px-3 py-2 border border-slate-200/60 hover:border-slate-300/80 bg-white/70 hover:bg-slate-50/80 rounded-lg transition-all duration-200 group"
+              className="flex items-center space-x-1.5 px-2.5 py-1.5 border border-slate-200/60 hover:border-slate-300/80 bg-white/70 hover:bg-slate-50/80 rounded-md transition-all duration-200 group"
             >
-              <Plus className="w-4 h-4 text-slate-600 group-hover:text-slate-700" strokeWidth={1.5} />
-              <span className="text-slate-700 group-hover:text-slate-800 font-medium text-sm">
+              <Plus className="w-3.5 h-3.5 text-slate-600 group-hover:text-slate-700" strokeWidth={1.5} />
+              <span className="text-slate-700 group-hover:text-slate-800 font-medium text-xs">
                 New chat
               </span>
             </motion.button>
