@@ -109,19 +109,36 @@ export default function PropertyResultsDisplay({
       
       const threshold = sensitivityMap[scrollSensitivity];
       
-      // Only proceed if scroll exceeds sensitivity threshold
-      if (Math.abs(e.deltaY) < threshold) return;
+      // Check for horizontal swipe (trackpad swipe left/right on Mac)
+      const isHorizontalSwipe = Math.abs(e.deltaX) > Math.abs(e.deltaY) && Math.abs(e.deltaX) > threshold;
+      // Check for vertical scroll
+      const isVerticalScroll = Math.abs(e.deltaY) > threshold && !isHorizontalSwipe;
+      
+      // Only proceed if scroll/swipe exceeds sensitivity threshold
+      if (!isHorizontalSwipe && !isVerticalScroll) return;
       
       isScrollingRef.current = true;
 
-      // Determine scroll direction
-      const scrollingDown = e.deltaY > 0;
-      const scrollingUp = e.deltaY < 0;
+      if (isHorizontalSwipe) {
+        // Horizontal trackpad swipe navigation
+        const swipingLeft = e.deltaX > 0;
+        const swipingRight = e.deltaX < 0;
+        
+        if (swipingLeft) {
+          nextProperty();
+        } else if (swipingRight) {
+          prevProperty();
+        }
+      } else if (isVerticalScroll) {
+        // Vertical scroll navigation
+        const scrollingDown = e.deltaY > 0;
+        const scrollingUp = e.deltaY < 0;
 
-      if (scrollingDown) {
-        nextProperty();
-      } else if (scrollingUp) {
-        prevProperty();
+        if (scrollingDown) {
+          nextProperty();
+        } else if (scrollingUp) {
+          prevProperty();
+        }
       }
 
       // Reset scroll lock after a delay (longer for lower sensitivity)
@@ -214,7 +231,7 @@ export default function PropertyResultsDisplay({
           Here are the most suitable comps I found for your search
         </p>
         <p className="text-xs text-slate-500 mt-2">
-          💡 Hover over the property card and scroll to navigate
+          💡 Hover over the property card and scroll or swipe left/right to navigate
         </p>
       </div>
 
