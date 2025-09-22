@@ -70,7 +70,7 @@ export default function PropertyResultsDisplay({
   const [isMapOpen, setIsMapOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
-  const isScrolling = useRef(false);
+  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const nextProperty = () => {
     setCurrentIndex(prev => (prev + 1) % properties.length);
@@ -98,24 +98,23 @@ export default function PropertyResultsDisplay({
     };
 
     const handleWheel = (e: WheelEvent) => {
-      // Prevent multiple rapid scroll changes
-      if (isScrolling.current) return;
-      
-      isScrolling.current = true;
       e.preventDefault();
       
-      if (e.deltaY > 0) {
-        // Scroll down - next property
-        setCurrentIndex(prev => (prev + 1) % properties.length);
-      } else if (e.deltaY < 0) {
-        // Scroll up - previous property  
-        setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
+      // Clear existing timeout
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
       }
       
-      // Reset flag after a short delay
-      setTimeout(() => {
-        isScrolling.current = false;
-      }, 150);
+      // Debounce scroll events - only act after scrolling stops
+      scrollTimeout.current = setTimeout(() => {
+        if (e.deltaY > 0) {
+          // Scroll down - next property
+          setCurrentIndex(prev => (prev + 1) % properties.length);
+        } else if (e.deltaY < 0) {
+          // Scroll up - previous property  
+          setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
+        }
+      }, 100);
     };
 
     // Add event listeners
@@ -124,6 +123,9 @@ export default function PropertyResultsDisplay({
     container.addEventListener('wheel', handleWheel, { passive: false });
 
     return () => {
+      if (scrollTimeout.current) {
+        clearTimeout(scrollTimeout.current);
+      }
       container.removeEventListener('mouseenter', handleMouseEnter);
       container.removeEventListener('mouseleave', handleMouseLeave);
       container.removeEventListener('wheel', handleWheel);
