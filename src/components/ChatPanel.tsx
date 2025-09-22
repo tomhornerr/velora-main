@@ -230,7 +230,7 @@ export const ChatPanel = ({
           {/* Chat List */}
            {showChatHistory && <div className="flex-1 overflow-y-auto px-4 py-1">
               <AnimatePresence mode="popLayout">
-                {displayedChats.map((chat, index) => {
+                {displayedChats.map((chat) => {
             const isEditing = editingChatId === chat.id;
             return <motion.div key={chat.id} layout initial={{
               opacity: 0,
@@ -248,10 +248,10 @@ export const ChatPanel = ({
               marginBottom: 0,
               paddingTop: 0,
               paddingBottom: 0
-            }} transition={{
-              duration: 0.2,
-              delay: index * 0.02,
-              ease: [0.23, 1, 0.32, 1]
+             }} transition={{
+               duration: 0.2,
+               delay: 0.02,
+               ease: [0.23, 1, 0.32, 1]
             }} onClick={() => handleChatClick(chat.id)} className={`group relative px-3 py-2 rounded-md transition-all duration-50 cursor-pointer mb-0.5 transform-gpu hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 hover:scale-[1.01] hover:shadow-sm hover:-translate-y-0.5`}>
                       
                       {isEditing ? (

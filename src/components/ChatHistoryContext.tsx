@@ -11,7 +11,8 @@ export interface ChatHistoryEntry {
 }
 interface ChatHistoryContextType {
   chatHistory: ChatHistoryEntry[];
-  addChatToHistory: (chat: Omit<ChatHistoryEntry, 'id'>) => void;
+  addChatToHistory: (chat: Omit<ChatHistoryEntry, 'id'>) => string;
+  updateChatInHistory: (chatId: string, messages: any[]) => void;
   removeChatFromHistory: (chatId: string) => void;
   updateChatTitle: (chatId: string, newTitle: string) => void;
   archiveChat: (chatId: string) => void;
@@ -39,6 +40,23 @@ const saveChatHistory = (chatHistory: ChatHistoryEntry[]) => {
   } catch (error) {
     console.error('Error saving chat history to localStorage:', error);
   }
+};
+
+// Helper function to generate a chat title from messages
+const generateChatTitle = (messages: any[]): string => {
+  if (!messages || messages.length === 0) return 'New conversation';
+  
+  // Find the first user message
+  const firstUserMessage = messages.find(msg => msg.type === 'user' || msg.role === 'user');
+  if (firstUserMessage) {
+    const content = firstUserMessage.content || firstUserMessage.text || '';
+    if (content.length > 40) {
+      return content.substring(0, 40) + '...';
+    }
+    return content || 'New conversation';
+  }
+  
+  return 'New conversation';
 };
 
 // Helper function to format timestamp
@@ -71,13 +89,30 @@ export function ChatHistoryProvider({
   React.useEffect(() => {
     saveChatHistory(chatHistory);
   }, [chatHistory]);
+
   const addChatToHistory = React.useCallback((chat: Omit<ChatHistoryEntry, 'id'>) => {
     const newChat: ChatHistoryEntry = {
       ...chat,
       id: `chat-${Date.now()}`,
+      title: chat.title || generateChatTitle(chat.messages)
     };
     setChatHistory(prev => [newChat, ...prev]);
+    return newChat.id; // Return the ID for tracking
   }, []);
+
+  const updateChatInHistory = React.useCallback((chatId: string, messages: any[]) => {
+    setChatHistory(prev => prev.map(chat => 
+      chat.id === chatId 
+        ? { 
+            ...chat,
+            messages,
+            title: chat.title || generateChatTitle(messages),
+            timestamp: new Date().toISOString()
+          }
+        : chat
+    ));
+  }, []);
+
   const removeChatFromHistory = React.useCallback((chatId: string) => {
     setChatHistory(prev => prev.filter(chat => chat.id !== chatId));
   }, []);
@@ -109,20 +144,24 @@ export function ChatHistoryProvider({
   const getChatById = React.useCallback((chatId: string) => {
     return chatHistory.find(chat => chat.id === chatId);
   }, [chatHistory]);
+
   const value = React.useMemo(() => ({
     chatHistory,
     addChatToHistory,
+    updateChatInHistory,
     removeChatFromHistory,
     updateChatTitle,
     archiveChat,
     unarchiveChat,
     getChatById,
     formatTimestamp
-  }), [chatHistory, addChatToHistory, removeChatFromHistory, updateChatTitle, archiveChat, unarchiveChat, getChatById]);
+  }), [chatHistory, addChatToHistory, updateChatInHistory, removeChatFromHistory, updateChatTitle, archiveChat, unarchiveChat, getChatById]);
+
   return <ChatHistoryContext.Provider value={value}>
       {children}
     </ChatHistoryContext.Provider>;
 }
+
 export function useChatHistory() {
   const context = React.useContext(ChatHistoryContext);
   if (context === undefined) {
