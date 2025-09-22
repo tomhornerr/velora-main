@@ -188,6 +188,12 @@ export default function ChatInterface({
       console.log('ChatInterface: Initializing with query:', initialQuery);
       handleInitialQuery(initialQuery);
       setIsInitialized(true);
+      setIsInputActivated(true);
+      
+      // Focus input after a brief delay to ensure component is ready
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
     }
   }, [initialQuery, isInitialized, isFromHistory]);
   const handleInitialQuery = async (query: string) => {
