@@ -196,43 +196,62 @@ export default function PropertyValuationUpload({
       />
       <div className="w-full max-w-2xl relative z-10 px-4">
         {/* Step Indicator */}
-        <div className="flex-shrink-0 flex items-center justify-center mb-6">
-          <div className="flex items-center space-x-4">
+        <div className="flex-shrink-0 flex items-center justify-center mb-8">
+          <div className="flex items-center space-x-8">
             {steps.map((step, index) => (
               <React.Fragment key={step.id}>
                 <div className="flex flex-col items-center">
                   <motion.div
-                    className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 ${
+                    className={`relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 ${
                       step.completed 
-                        ? 'bg-gradient-to-br from-emerald-500 to-green-600 text-white shadow-lg shadow-emerald-300' 
+                        ? 'bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-600 text-white shadow-2xl shadow-emerald-500/40' 
                         : step.active
-                        ? 'bg-gradient-to-br from-slate-600 to-slate-700 text-white shadow-lg shadow-slate-300'
-                        : 'bg-slate-200 text-slate-400'
+                        ? 'bg-gradient-to-br from-slate-500 via-slate-600 to-slate-700 text-white shadow-2xl shadow-slate-400/30'
+                        : 'bg-slate-700/50 border-2 border-slate-600/50 text-slate-400'
                     }`}
                     whileHover={{ scale: 1.05 }}
+                    animate={{ 
+                      scale: step.active ? [1, 1.02, 1] : 1,
+                    }}
+                    transition={{ 
+                      scale: { duration: 2, repeat: step.active ? Infinity : 0, ease: "easeInOut" }
+                    }}
                   >
+                    {/* Glow effect for active/completed states */}
+                    {(step.completed || step.active) && (
+                      <div className={`absolute inset-0 rounded-full ${
+                        step.completed 
+                          ? 'bg-gradient-to-br from-emerald-400 to-emerald-600' 
+                          : 'bg-gradient-to-br from-slate-500 to-slate-700'
+                      } blur-sm opacity-60 -z-10`} />
+                    )}
+                    
                     {step.completed ? (
-                      <CheckCircle className="w-5 h-5" />
+                      <CheckCircle className="w-6 h-6" />
                     ) : step.id === 1 ? (
-                      <Upload className="w-5 h-5" />
+                      <Upload className="w-6 h-6" />
                     ) : step.id === 2 ? (
-                      <FileText className="w-5 h-5" />
+                      <FileText className="w-6 h-6" />
                     ) : (
-                      <Camera className="w-5 h-5" />
+                      <Camera className="w-6 h-6" />
                     )}
                   </motion.div>
-                  <span className={`text-xs mt-1 font-medium ${
-                    step.active ? 'text-white' : 'text-slate-300'
+                  <span className={`text-sm mt-3 font-semibold tracking-wide ${
+                    step.active || step.completed ? 'text-white' : 'text-slate-400'
                   }`}>
                     {step.title}
                   </span>
                 </div>
                 {index < steps.length - 1 && (
-                  <div className={`w-12 h-0.5 transition-colors duration-300 ${
-                    steps[index + 1].completed || steps[index + 1].active 
-                      ? 'bg-gradient-to-r from-emerald-500 to-green-500' 
-                      : 'bg-slate-200'
-                  }`} />
+                  <div className="flex items-center">
+                    <div className={`w-16 h-1 rounded-full transition-all duration-500 ${
+                      steps[index + 1].completed 
+                        ? 'bg-gradient-to-r from-emerald-500 to-emerald-400 shadow-lg shadow-emerald-500/30' 
+                        : steps[index + 1].active
+                        ? 'bg-gradient-to-r from-slate-600 to-slate-500'
+                        : 'bg-slate-700/50'
+                    }`} />
+                  </div>
                 )}
               </React.Fragment>
             ))}
