@@ -39,12 +39,21 @@ export const SearchBar = ({
         ease: [0.25, 0.1, 0.25, 1]
       }} className="relative">
           <form onSubmit={handleSubmit} className="relative">
-            {/* Main search container */}
-            <div className={`relative flex items-center bg-white border border-slate-300 rounded-xl px-4 py-4 shadow-sm transition-all duration-200 hover:shadow-md focus-within:border-slate-400 backdrop-blur-sm ${isSubmitted ? 'opacity-75' : ''}`}>
+            {/* Main search container - Glassmorphism Design */}
+            <div className={`
+              relative flex items-center 
+              bg-black/20 backdrop-blur-xl 
+              border border-white/20 
+              rounded-full px-6 py-4 
+              shadow-2xl transition-all duration-300 
+              hover:bg-black/25 hover:border-white/30
+              focus-within:bg-black/30 focus-within:border-white/40
+              ${isSubmitted ? 'opacity-75' : ''}
+            `}>
               {/* Upload indicator */}
-              <div className="flex-shrink-0 mr-3">
+              <div className="flex-shrink-0 mr-4">
                 <div className="w-6 h-6 flex items-center justify-center">
-                  <Upload className="w-5 h-5 text-slate-500" strokeWidth={1.5} />
+                  <Upload className="w-5 h-5 text-white/80" strokeWidth={1.5} />
                 </div>
               </div>
               
@@ -54,12 +63,12 @@ export const SearchBar = ({
                 if (e.key === 'Enter') {
                   handleSubmit(e);
                 }
-              }} placeholder="What can I help you find today?" className="w-full bg-transparent text-slate-800 placeholder:text-slate-500 focus:outline-none text-base" autoComplete="off" disabled={isSubmitted} />
+              }} placeholder="What can I help you find today?" className="w-full bg-transparent text-white placeholder:text-white/60 focus:outline-none text-base font-medium" autoComplete="off" disabled={isSubmitted} />
               </div>
               
               {/* Action buttons */}
-              <div className="flex items-center space-x-2 ml-3">
-                <button type="button" className="w-8 h-8 flex items-center justify-center text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors duration-200">
+              <div className="flex items-center space-x-3 ml-4">
+                <button type="button" className="w-8 h-8 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200">
                   <Mic className="w-5 h-5" strokeWidth={1.5} />
                 </button>
                 
@@ -74,8 +83,8 @@ export const SearchBar = ({
                 }
               }} className={`w-8 h-8 flex items-center justify-center rounded-lg transition-all duration-200 ${
                 searchValue.trim() && !isSubmitted 
-                  ? 'bg-slate-800 text-white hover:bg-slate-700 shadow-sm' 
-                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  ? 'bg-white/20 text-white hover:bg-white/30 shadow-lg backdrop-blur-sm' 
+                  : 'bg-white/10 text-white/50 cursor-not-allowed'
               }`} disabled={isSubmitted || !searchValue.trim()}>
                   <Send className="w-4 h-4" strokeWidth={2} />
                 </button>
