@@ -202,7 +202,7 @@ export default function PropertyValuationUpload({
               <React.Fragment key={step.id}>
                 <div className="flex flex-col items-center">
                   <motion.div
-                    className={`relative w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 ${
+                    className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500 ${
                       step.completed 
                         ? 'bg-gradient-to-br from-emerald-400 via-emerald-500 to-emerald-600 text-white shadow-2xl shadow-emerald-500/40' 
                         : step.active
@@ -227,16 +227,16 @@ export default function PropertyValuationUpload({
                     )}
                     
                     {step.completed ? (
-                      <CheckCircle className="w-6 h-6" />
+                      <CheckCircle className="w-5 h-5" />
                     ) : step.id === 1 ? (
-                      <Upload className="w-6 h-6" />
+                      <Upload className="w-5 h-5" />
                     ) : step.id === 2 ? (
-                      <FileText className="w-6 h-6" />
+                      <FileText className="w-5 h-5" />
                     ) : (
-                      <Camera className="w-6 h-6" />
+                      <Camera className="w-5 h-5" />
                     )}
                   </motion.div>
-                  <span className={`text-sm mt-3 font-semibold tracking-wide ${
+                  <span className={`text-xs mt-2 font-semibold tracking-wide ${
                     step.active || step.completed ? 'text-white' : 'text-slate-400'
                   }`}>
                     {step.title}
