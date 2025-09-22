@@ -8,7 +8,7 @@ import PropertyValuationUpload from './PropertyValuationUpload';
 import { CloudBackground } from './CloudBackground';
 import FlowBackground from './FlowBackground';
 import DotGrid from './DotGrid';
-import searchBg from '../assets/search-background.png';
+import { PropertyOutlineBackground } from './PropertyOutlineBackground';
 export interface MainContentProps {
   className?: string;
   currentView?: string;
@@ -237,10 +237,7 @@ export const MainContent = ({
   return <div className={`flex-1 relative ${className || ''}`}>
       {/* Background based on current view */}
       {(currentView === 'search' || currentView === 'home') && !isInChatMode ? (
-        <div 
-          className="fixed inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${searchBg})` }}
-        />
+        <PropertyOutlineBackground />
       ) : currentView !== 'upload' ? (
         <FlowBackground />
       ) : null}
