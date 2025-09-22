@@ -194,7 +194,7 @@ export const ChatPanel = ({
           </div>
 
           {/* Chat List */}
-           {showChatHistory && <div className="flex-1 overflow-y-auto px-3 py-1">
+           {showChatHistory && <div className="flex-1 overflow-y-auto px-4 py-1">
               <AnimatePresence mode="popLayout">
                 {displayedChats.map((chat, index) => {
             const isPendingDeletion = pendingDeletion?.chatId === chat.id;
