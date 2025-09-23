@@ -1,12 +1,16 @@
-import React from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, FileText, Eye, Trash2 } from 'lucide-react';
+import { MapPin, FileText, Eye, Trash2, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface SystemDocument {
   id: string;
   name: string;
   propertyAddress?: string;
+  location?: { lat: number; lng: number };
   status: string;
   size: string;
 }
@@ -22,6 +26,88 @@ export default function DocumentMapping({
   onDocumentSelect, 
   onDocumentDelete 
 }: DocumentMappingProps) {
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const map = useRef<mapboxgl.Map | null>(null);
+  const [mapboxToken, setMapboxToken] = useState<string>('');
+  const [showTokenInput, setShowTokenInput] = useState(true);
+  const markers = useRef<mapboxgl.Marker[]>([]);
+
+  // Initialize map when token is provided
+  useEffect(() => {
+    if (!mapContainer.current || !mapboxToken || map.current) return;
+
+    mapboxgl.accessToken = mapboxToken;
+    
+    try {
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/light-v11',
+        center: [-74.006, 40.7128], // Default to NYC
+        zoom: 10
+      });
+
+      // Add navigation controls
+      map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+      
+      setShowTokenInput(false);
+    } catch (error) {
+      console.error('Failed to initialize map:', error);
+      setShowTokenInput(true);
+    }
+
+    return () => {
+      markers.current.forEach(marker => marker.remove());
+      markers.current = [];
+      if (map.current) {
+        map.current.remove();
+        map.current = null;
+      }
+    };
+  }, [mapboxToken]);
+
+  // Update markers when documents change
+  useEffect(() => {
+    if (!map.current) return;
+
+    // Clear existing markers
+    markers.current.forEach(marker => marker.remove());
+    markers.current = [];
+
+    // Add markers for documents with coordinates
+    documents.forEach((doc) => {
+      if (doc.location && doc.location.lat && doc.location.lng) {
+        const el = document.createElement('div');
+        el.className = `w-6 h-6 rounded-full border-2 border-white shadow-lg cursor-pointer ${
+          doc.status === 'processed' ? 'bg-emerald-500' : 
+          doc.status === 'processing' ? 'bg-amber-500' : 'bg-red-500'
+        }`;
+        
+        const marker = new mapboxgl.Marker(el)
+          .setLngLat([doc.location.lng, doc.location.lat])
+          .setPopup(new mapboxgl.Popup().setHTML(`
+            <div class="p-2">
+              <h3 class="font-semibold text-sm">${doc.name}</h3>
+              <p class="text-xs text-slate-600">${doc.propertyAddress || 'No address'}</p>
+              <p class="text-xs text-slate-500">Status: ${doc.status}</p>
+            </div>
+          `))
+          .addTo(map.current);
+
+        marker.getElement().addEventListener('click', () => {
+          onDocumentSelect(doc);
+        });
+
+        markers.current.push(marker);
+      }
+    });
+  }, [documents, onDocumentSelect]);
+
+  const handleTokenSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (mapboxToken.trim()) {
+      // Token will be used in useEffect
+    }
+  };
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'processed': return 'text-emerald-700 bg-emerald-100 border-emerald-200';
@@ -47,82 +133,48 @@ export default function DocumentMapping({
       
       <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[400px]">
         {/* Interactive Map Area */}
-        <div className="bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative flex items-center justify-center border-r border-slate-100">
-          <div className="text-center z-10">
-            <div className="w-16 h-16 bg-white rounded-2xl shadow-lg flex items-center justify-center mb-4 mx-auto">
-              <MapPin className="w-8 h-8 text-slate-600" />
+        <div className="relative">
+          {showTokenInput && (
+            <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-6">
+              <div className="text-center mb-6">
+                <Settings className="w-12 h-12 text-slate-400 mx-auto mb-3" />
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">Setup Map</h3>
+                <p className="text-sm text-slate-600 max-w-xs">
+                  Enter your Mapbox public token to enable the interactive map
+                </p>
+                <p className="text-xs text-slate-500 mt-2">
+                  Get your token from <a href="https://mapbox.com/" target="_blank" rel="noopener" className="text-blue-600 hover:underline">mapbox.com</a>
+                </p>
+              </div>
+              <form onSubmit={handleTokenSubmit} className="w-full max-w-sm">
+                <div className="flex flex-col space-y-3">
+                  <Input
+                    type="text"
+                    placeholder="pk.eyJ1..."
+                    value={mapboxToken}
+                    onChange={(e) => setMapboxToken(e.target.value)}
+                    className="text-sm"
+                  />
+                  <Button type="submit" className="w-full">
+                    Initialize Map
+                  </Button>
+                </div>
+              </form>
             </div>
-            <p className="text-slate-700 font-semibold text-lg">Interactive Map</p>
-            <p className="text-sm text-slate-500 mt-2 max-w-xs">
-              Property locations with document links and status indicators
-            </p>
-          </div>
-        
-          {/* Enhanced property pins with animations */}
-          <motion.div 
-            className="absolute top-20 left-16"
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.8, 1, 0.8]
-            }}
-            transition={{ 
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            <div className="w-4 h-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full shadow-lg border-2 border-white" />
-          </motion.div>
-          
-          <motion.div 
-            className="absolute top-32 right-20"
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.8, 1, 0.8]
-            }}
-            transition={{ 
-              duration: 2,
-              delay: 0.5,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            <div className="w-4 h-4 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full shadow-lg border-2 border-white" />
-          </motion.div>
-          
-          <motion.div 
-            className="absolute bottom-24 left-1/3"
-            animate={{ 
-              scale: [1, 1.2, 1],
-              opacity: [0.8, 1, 0.8]
-            }}
-            transition={{ 
-              duration: 2,
-              delay: 1,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            <div className="w-4 h-4 bg-gradient-to-br from-amber-500 to-amber-600 rounded-full shadow-lg border-2 border-white" />
-          </motion.div>
-
-          {/* Connecting lines */}
-          <div className="absolute inset-0 pointer-events-none">
-            <svg className="w-full h-full opacity-20">
-              <path d="M 80 100 Q 200 150 300 140" stroke="url(#gradient1)" strokeWidth="2" fill="none" strokeDasharray="5,5" />
-              <path d="M 300 140 Q 250 200 150 280" stroke="url(#gradient2)" strokeWidth="2" fill="none" strokeDasharray="5,5" />
-              <defs>
-                <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#3b82f6" />
-                  <stop offset="100%" stopColor="#10b981" />
-                </linearGradient>
-                <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#10b981" />
-                  <stop offset="100%" stopColor="#f59e0b" />
-                </linearGradient>
-              </defs>
-            </svg>
-          </div>
+          )}
+          <div 
+            ref={mapContainer} 
+            className="w-full h-full min-h-[400px] bg-slate-100 border-r border-slate-200"
+            style={{ display: showTokenInput ? 'none' : 'block' }}
+          />
+          {!showTokenInput && !map.current && (
+            <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
+              <div className="text-center">
+                <MapPin className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+                <p className="text-sm text-slate-500">Initializing map...</p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Enhanced Document List */}
