@@ -73,12 +73,11 @@ export default function PropertyResultsDisplay({
   const hasScrolled = useRef(false);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
   
-  // Touch/trackpad swipe handling
-  const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
-  const touchEndX = useRef(0);
-  const touchEndY = useRef(0);
+  // Touch/trackpad swipe handling - using pointer events for better trackpad support
+  const pointerStartX = useRef(0);
+  const pointerStartY = useRef(0);
   const hasSwiped = useRef(false);
+  const isPointerDown = useRef(false);
 
   const nextProperty = () => {
     setCurrentIndex(prev => (prev + 1) % properties.length);
@@ -127,34 +126,24 @@ export default function PropertyResultsDisplay({
       }, 300);
     };
 
-    const handleTouchStart = (e: TouchEvent) => {
-      const touch = e.touches[0];
-      touchStartX.current = touch.clientX;
-      touchStartY.current = touch.clientY;
-      touchEndX.current = touch.clientX;
-      touchEndY.current = touch.clientY;
+    const handlePointerDown = (e: PointerEvent) => {
+      pointerStartX.current = e.clientX;
+      pointerStartY.current = e.clientY;
+      isPointerDown.current = true;
       hasSwiped.current = false;
     };
 
-    const handleTouchMove = (e: TouchEvent) => {
-      if (!e.touches[0]) return;
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!isPointerDown.current || hasSwiped.current) return;
       
-      const touch = e.touches[0];
-      touchEndX.current = touch.clientX;
-      touchEndY.current = touch.clientY;
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      if (hasSwiped.current) return;
+      const deltaX = pointerStartX.current - e.clientX;
+      const deltaY = pointerStartY.current - e.clientY;
+      const minSwipeDistance = 40;
       
-      const deltaX = touchStartX.current - touchEndX.current;
-      const deltaY = touchStartY.current - touchEndY.current;
-      const minSwipeDistance = 30; // Reduced from 50 for better sensitivity
-      
-      // Only process horizontal swipes that are greater than vertical movement
+      // Check for horizontal swipe
       if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
         hasSwiped.current = true;
-        e.preventDefault();
+        isPointerDown.current = false;
         
         if (deltaX > 0) {
           // Swiped left - go to next property
@@ -167,17 +156,21 @@ export default function PropertyResultsDisplay({
         // Reset swipe flag after delay
         setTimeout(() => {
           hasSwiped.current = false;
-        }, 200); // Reduced delay
+        }, 200);
       }
+    };
+
+    const handlePointerUp = () => {
+      isPointerDown.current = false;
     };
 
     // Add event listeners
     container.addEventListener('mouseenter', handleMouseEnter);
     container.addEventListener('mouseleave', handleMouseLeave);
     container.addEventListener('wheel', handleWheel, { passive: false });
-    container.addEventListener('touchstart', handleTouchStart, { passive: true });
-    container.addEventListener('touchmove', handleTouchMove, { passive: true });
-    container.addEventListener('touchend', handleTouchEnd, { passive: true });
+    container.addEventListener('pointerdown', handlePointerDown, { passive: true });
+    container.addEventListener('pointermove', handlePointerMove, { passive: true });
+    container.addEventListener('pointerup', handlePointerUp, { passive: true });
 
     return () => {
       if (scrollTimeout.current) {
@@ -186,9 +179,9 @@ export default function PropertyResultsDisplay({
       container.removeEventListener('mouseenter', handleMouseEnter);
       container.removeEventListener('mouseleave', handleMouseLeave);
       container.removeEventListener('wheel', handleWheel);
-      container.removeEventListener('touchstart', handleTouchStart);
-      container.removeEventListener('touchmove', handleTouchMove);
-      container.removeEventListener('touchend', handleTouchEnd);
+      container.removeEventListener('pointerdown', handlePointerDown);
+      container.removeEventListener('pointermove', handlePointerMove);
+      container.removeEventListener('pointerup', handlePointerUp);
     };
   }, [properties.length]);
 
