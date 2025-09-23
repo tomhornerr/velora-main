@@ -154,11 +154,11 @@ export default function PropertyResultsDisplay({
         hasSwiped.current = true;
         
         if (deltaX > 0) {
-          // Swiped left - go to next property
-          setCurrentIndex(prev => (prev + 1) % properties.length);
-        } else {
-          // Swiped right - go to previous property
+          // Swiped left - go to previous property
           setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
+        } else {
+          // Swiped right - go to next property
+          setCurrentIndex(prev => (prev + 1) % properties.length);
         }
         
         // Reset swipe flag after delay
