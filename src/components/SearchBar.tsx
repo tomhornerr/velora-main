@@ -88,25 +88,28 @@ export const SearchBar = ({
         ease: [0.25, 0.1, 0.25, 1]
       }} className="relative">
           <form onSubmit={handleSubmit} className="relative">
-            {/* Main search container - Glassmorphism Design */}
+            {/* Main search container - Ultra Premium Glassmorphism */}
             <div className={`
-              relative flex items-center 
-              bg-black/30 
-              border border-white/30 
-              rounded-full px-6 py-3 
-              shadow-2xl
-              hover:bg-black/35 hover:border-white/40
-              focus-within:bg-black/35 focus-within:border-white/40
-              ${isSubmitted ? 'opacity-75' : ''}
+              relative flex items-center group
+              bg-white/[0.08] backdrop-blur-xl
+              border border-white/[0.15] 
+              rounded-2xl px-8 py-4
+              shadow-[0_8px_32px_rgba(0,0,0,0.12),0_2px_16px_rgba(255,255,255,0.08),inset_0_1px_0_rgba(255,255,255,0.15)]
+              ring-1 ring-white/[0.05] ring-inset
+              before:absolute before:inset-0 before:rounded-2xl before:bg-gradient-to-br before:from-white/[0.12] before:to-transparent before:opacity-0
+              hover:before:opacity-100 hover:bg-white/[0.12] hover:border-white/[0.25] hover:shadow-[0_12px_40px_rgba(0,0,0,0.15),0_4px_20px_rgba(255,255,255,0.1)]
+              focus-within:before:opacity-100 focus-within:bg-white/[0.12] focus-within:border-white/[0.25] focus-within:ring-white/[0.08]
+              transition-all duration-300 ease-out
+              ${isSubmitted ? 'opacity-75 scale-[0.98]' : 'hover:scale-[1.02] active:scale-[0.99]'}
             `}>
-              {/* Upload indicator */}
-              <div className="flex-shrink-0 mr-4">
-                <div className="w-6 h-6 flex items-center justify-center">
-                  <Upload className="w-5 h-5 text-white/80" strokeWidth={1.5} />
+              {/* Upload indicator - Premium Style */}
+              <div className="flex-shrink-0 mr-5">
+                <div className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/[0.08] border border-white/[0.12] backdrop-blur-sm group-hover:bg-white/[0.12] group-hover:border-white/[0.18] transition-all duration-200">
+                  <Upload className="w-4 h-4 text-white/90 group-hover:text-white transition-colors duration-200" strokeWidth={1.8} />
                 </div>
               </div>
               
-              {/* Search input */}
+              {/* Search input - Enhanced */}
               <div className="flex-1 relative">
                 <input 
                   ref={inputRef}
@@ -131,32 +134,42 @@ export const SearchBar = ({
                     }
                   }} 
                   placeholder="What can I help you find today?" 
-                  className="w-full bg-transparent text-white placeholder:text-white/60 focus:outline-none text-base font-medium" 
+                  className="w-full bg-transparent text-white/95 placeholder:text-white/50 focus:outline-none text-base font-medium tracking-wide selection:bg-white/20" 
                   autoComplete="off" 
                   disabled={isSubmitted} 
                 />
+                {/* Focus indicator */}
+                <div className={`absolute -bottom-1 left-0 h-[1px] bg-gradient-to-r from-white/40 to-white/10 transition-all duration-300 ${isFocused ? 'w-full opacity-100' : 'w-0 opacity-0'}`} />
               </div>
               
-              {/* Action buttons */}
-              <div className="flex items-center space-x-3 ml-4">
-                <button type="button" className="w-8 h-8 flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200">
-                  <Mic className="w-5 h-5" strokeWidth={1.5} />
+              {/* Action buttons - Ultra Premium */}
+              <div className="flex items-center space-x-2 ml-5">
+                <button 
+                  type="button" 
+                  className="w-9 h-9 flex items-center justify-center text-white/80 hover:text-white rounded-xl bg-white/[0.05] border border-white/[0.08] hover:bg-white/[0.12] hover:border-white/[0.15] hover:scale-105 active:scale-95 transition-all duration-200 backdrop-blur-sm"
+                >
+                  <Mic className="w-4 h-4" strokeWidth={1.8} />
                 </button>
                 
-                <button type="submit" onClick={e => {
-                e.preventDefault();
-                if (searchValue.trim() && !isSubmitted) {
-                  console.log('SearchBar: Button clicked, submitting search with value:', searchValue.trim());
-                  setIsSubmitted(true);
-                  // Instantly trigger search and chat history creation
-                  onSearch?.(searchValue.trim());
-                }
-              }} className={`w-8 h-8 flex items-center justify-center transition-all duration-100 ${
-                searchValue.trim() && !isSubmitted 
-                  ? 'text-white hover:scale-110 active:scale-95' 
-                  : 'text-white/50 cursor-not-allowed'
-              }`} disabled={isSubmitted || !searchValue.trim()}>
-                  <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
+                <button 
+                  type="submit" 
+                  onClick={e => {
+                    e.preventDefault();
+                    if (searchValue.trim() && !isSubmitted) {
+                      console.log('SearchBar: Button clicked, submitting search with value:', searchValue.trim());
+                      setIsSubmitted(true);
+                      // Instantly trigger search and chat history creation
+                      onSearch?.(searchValue.trim());
+                    }
+                  }} 
+                  className={`w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-200 backdrop-blur-sm ${
+                    searchValue.trim() && !isSubmitted 
+                      ? 'text-white bg-white/[0.15] border border-white/[0.25] hover:bg-white/[0.25] hover:border-white/[0.35] hover:scale-110 active:scale-95 shadow-[0_4px_12px_rgba(255,255,255,0.15)]' 
+                      : 'text-white/40 bg-white/[0.03] border border-white/[0.05] cursor-not-allowed'
+                  }`} 
+                  disabled={isSubmitted || !searchValue.trim()}
+                >
+                  <ChevronRight className="w-4 h-4" strokeWidth={2.5} />
                 </button>
               </div>
             </div>
