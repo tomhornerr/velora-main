@@ -42,8 +42,8 @@ export default function DocumentMapping({
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
         style: 'mapbox://styles/mapbox/light-v11',
-        center: [-74.006, 40.7128], // Default to NYC
-        zoom: 10
+        center: [-2.5879, 51.4545], // Default to Bristol, UK
+        zoom: 11
       });
 
       // Add navigation controls
