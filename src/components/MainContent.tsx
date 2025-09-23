@@ -256,12 +256,16 @@ export const MainContent = ({
           ? 'bg-transparent' 
           : currentView === 'upload' 
             ? 'bg-white/95 backdrop-blur-sm' 
-            : 'bg-white/20 backdrop-blur-sm'
-      } ${currentView === 'upload' ? 'p-8' : 'p-8 lg:p-16'}`}>
+            : currentView === 'analytics'
+              ? 'bg-white/95 backdrop-blur-sm'
+              : 'bg-white/20 backdrop-blur-sm'
+      } ${currentView === 'upload' ? 'p-8' : currentView === 'analytics' ? 'p-4' : 'p-8 lg:p-16'}`}>
         <div className={`relative w-full ${
           isInChatMode 
             ? 'h-full w-full' 
-            : currentView === 'upload' ? 'h-full' : 'max-w-5xl mx-auto'
+            : currentView === 'upload' ? 'h-full' 
+            : currentView === 'analytics' ? 'h-full overflow-hidden'
+            : 'max-w-5xl mx-auto'
         } flex-1 flex flex-col`}>
           <motion.div initial={{
           opacity: 1,
