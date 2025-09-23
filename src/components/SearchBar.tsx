@@ -102,7 +102,7 @@ export const SearchBar = ({
             `}>
               {/* Upload indicator */}
               <div className="flex-shrink-0 mr-4">
-                <Upload className="w-5 h-5 text-white" strokeWidth={1.5} />
+                <Upload className="w-5 h-5 text-gray-100" strokeWidth={1.5} />
               </div>
               
               {/* Search input */}
@@ -130,7 +130,7 @@ export const SearchBar = ({
                     }
                   }} 
                   placeholder="What can I help you find today?" 
-                  className="w-full bg-transparent text-white placeholder:text-white/70 focus:outline-none text-base font-medium" 
+                  className="w-full bg-transparent text-gray-100 placeholder:text-gray-300 focus:outline-none text-base font-medium" 
                   autoComplete="off" 
                   disabled={isSubmitted} 
                 />
@@ -138,7 +138,7 @@ export const SearchBar = ({
               
               {/* Action buttons */}
               <div className="flex items-center space-x-3 ml-4">
-                <button type="button" className="w-8 h-8 flex items-center justify-center text-white hover:text-white/80 hover:scale-110 active:scale-95 transition-all duration-200">
+                <button type="button" className="w-8 h-8 flex items-center justify-center text-gray-100 hover:text-gray-50 hover:scale-110 active:scale-95 transition-all duration-200">
                   <Mic className="w-5 h-5" strokeWidth={1.5} />
                 </button>
                 
@@ -152,8 +152,8 @@ export const SearchBar = ({
                 }
               }} className={`w-8 h-8 flex items-center justify-center transition-all duration-200 ${
                 searchValue.trim() && !isSubmitted 
-                  ? 'text-white hover:scale-110 active:scale-95' 
-                  : 'text-white/50 cursor-not-allowed'
+                  ? 'text-gray-50 hover:scale-110 active:scale-95' 
+                  : 'text-gray-400 cursor-not-allowed'
               }`} disabled={isSubmitted || !searchValue.trim()}>
                   <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
                 </button>
