@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import mapboxgl from 'mapbox-gl';
@@ -10,22 +10,37 @@ interface MapPopupProps {
   propertyAddress?: string;
 }
 
+// Property coordinates for Bristol properties
+const getPropertyCoordinates = (address: string): [number, number] => {
+  const coordinates: { [key: string]: [number, number] } = {
+    '24 Rudthorpe Rd': [-2.5879, 51.4545], // Central Bristol
+    '18 Maple Street': [-2.5900, 51.4500], // Harbourside area
+    '42 Oak Avenue': [-2.6000, 51.4600], // Clifton area
+    '156 Pine Boulevard': [-2.5700, 51.4400], // Old Market area
+  };
+  return coordinates[address] || [-2.5879, 51.4545]; // Default to Bristol center
+};
+
 export const MapPopup: React.FC<MapPopupProps> = ({ isOpen, onClose, propertyAddress }) => {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [mapboxToken, setMapboxToken] = useState('');
+  const mapboxToken = 'pk.eyJ1IjoidG9taG9ybmVyciIsImEiOiJjbWZ3bjhyczUwMTVtMmxyNHMxcnVtdm1yIn0.K8xbjDjt_mcIIDajF23M2g';
 
   useEffect(() => {
-    if (!isOpen || !mapContainer.current || !mapboxToken) return;
+    if (!isOpen || !mapContainer.current) return;
+
+    // Get property coordinates
+    const propertyCoords = getPropertyCoordinates(propertyAddress || '');
 
     // Initialize map
     mapboxgl.accessToken = mapboxToken;
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: [-74.006, 40.7128], // Default to NYC
-      zoom: 12,
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
+      center: propertyCoords,
+      zoom: 15,
+      antialias: true
     });
 
     // Add navigation controls
@@ -38,14 +53,14 @@ export const MapPopup: React.FC<MapPopupProps> = ({ isOpen, onClose, propertyAdd
 
     // Add a marker for the property
     new mapboxgl.Marker({ color: '#10b981' })
-      .setLngLat([-74.006, 40.7128])
+      .setLngLat(propertyCoords)
       .addTo(map.current);
 
     // Cleanup
     return () => {
       map.current?.remove();
     };
-  }, [isOpen, mapboxToken]);
+  }, [isOpen, propertyAddress]);
 
   if (!isOpen) return null;
 
@@ -81,31 +96,9 @@ export const MapPopup: React.FC<MapPopupProps> = ({ isOpen, onClose, propertyAdd
             </button>
           </div>
 
-          {/* Map or Token Input */}
+          {/* Map */}
           <div className="flex-1 relative">
-            {!mapboxToken ? (
-              <div className="flex items-center justify-center h-full bg-slate-50">
-                <div className="text-center p-8">
-                  <h4 className="text-lg font-medium text-slate-800 mb-4">Enter Mapbox Token</h4>
-                  <p className="text-sm text-slate-600 mb-6">
-                    Please enter your Mapbox public token to view the interactive map.
-                    <br />
-                    Get your token at <a href="https://mapbox.com/" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">mapbox.com</a>
-                  </p>
-                  <input
-                    type="text"
-                    placeholder="pk.eyJ1IjoieW91ci11c2VybmFtZSIsImEiOiJjbG..."
-                    className="w-full max-w-md px-4 py-3 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
-                    onChange={(e) => setMapboxToken(e.target.value)}
-                  />
-                  <p className="text-xs text-slate-500">
-                    Your token is only stored temporarily and not saved anywhere.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div ref={mapContainer} className="w-full h-full" />
-            )}
+            <div ref={mapContainer} className="w-full h-full" />
           </div>
         </motion.div>
       </motion.div>
