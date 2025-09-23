@@ -131,6 +131,8 @@ export default function PropertyResultsDisplay({
       const touch = e.touches[0];
       touchStartX.current = touch.clientX;
       touchStartY.current = touch.clientY;
+      touchEndX.current = touch.clientX;
+      touchEndY.current = touch.clientY;
       hasSwiped.current = false;
     };
 
@@ -147,24 +149,25 @@ export default function PropertyResultsDisplay({
       
       const deltaX = touchStartX.current - touchEndX.current;
       const deltaY = touchStartY.current - touchEndY.current;
-      const minSwipeDistance = 50;
+      const minSwipeDistance = 30; // Reduced from 50 for better sensitivity
       
       // Only process horizontal swipes that are greater than vertical movement
       if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
         hasSwiped.current = true;
+        e.preventDefault();
         
         if (deltaX > 0) {
-          // Swiped left - go to previous property
-          setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
-        } else {
-          // Swiped right - go to next property
+          // Swiped left - go to next property
           setCurrentIndex(prev => (prev + 1) % properties.length);
+        } else {
+          // Swiped right - go to previous property  
+          setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
         }
         
         // Reset swipe flag after delay
         setTimeout(() => {
           hasSwiped.current = false;
-        }, 300);
+        }, 200); // Reduced delay
       }
     };
 
