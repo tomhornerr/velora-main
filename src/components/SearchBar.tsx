@@ -88,15 +88,15 @@ export const SearchBar = ({
         ease: [0.25, 0.1, 0.25, 1]
       }} className="relative">
           <form onSubmit={handleSubmit} className="relative">
-            {/* Main search container - Sleek Glassmorphism */}
+            {/* Main search container - Dark Elegant Glassmorphism */}
             <div className={`
               relative flex items-center 
-              bg-slate-900/25 backdrop-blur-2xl
-              border border-slate-300/20 
+              bg-slate-950/40 backdrop-blur-2xl
+              border border-slate-700/30 
               rounded-full px-6 py-3 
-              shadow-[0_8px_32px_rgba(15,23,42,0.4),0_1px_1px_rgba(255,255,255,0.05)_inset]
-              hover:bg-slate-800/30 hover:border-slate-200/25 hover:shadow-[0_12px_40px_rgba(15,23,42,0.5)]
-              focus-within:bg-slate-800/30 focus-within:border-slate-200/30 focus-within:ring-1 focus-within:ring-slate-200/15
+              shadow-[0_8px_32px_rgba(2,6,23,0.6),0_1px_1px_rgba(255,255,255,0.03)_inset]
+              hover:bg-slate-900/45 hover:border-slate-600/35 hover:shadow-[0_12px_40px_rgba(2,6,23,0.7)]
+              focus-within:bg-slate-900/45 focus-within:border-slate-600/40 focus-within:ring-1 focus-within:ring-slate-500/20
               transition-all duration-300 ease-out
               ${isSubmitted ? 'opacity-75' : ''}
             `}>
