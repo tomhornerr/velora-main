@@ -32,6 +32,43 @@ export default function DocumentMapping({
   const [showTokenInput, setShowTokenInput] = useState(true);
   const markers = useRef<mapboxgl.Marker[]>([]);
 
+  // Sample property boundaries for Bristol
+  const samplePropertyBoundaries = [
+    {
+      id: 'property-1',
+      coordinates: [[
+        [-2.5900, 51.4560],
+        [-2.5890, 51.4560],
+        [-2.5890, 51.4550],
+        [-2.5900, 51.4550],
+        [-2.5900, 51.4560]
+      ]],
+      address: '123 Park Street, Bristol'
+    },
+    {
+      id: 'property-2',
+      coordinates: [[
+        [-2.5850, 51.4530],
+        [-2.5840, 51.4530],
+        [-2.5840, 51.4520],
+        [-2.5850, 51.4520],
+        [-2.5850, 51.4530]
+      ]],
+      address: '456 Queen Square, Bristol'
+    },
+    {
+      id: 'property-3',
+      coordinates: [[
+        [-2.5920, 51.4580],
+        [-2.5910, 51.4580],
+        [-2.5910, 51.4570],
+        [-2.5920, 51.4570],
+        [-2.5920, 51.4580]
+      ]],
+      address: '789 Clifton Triangle, Bristol'
+    }
+  ];
+
   // Initialize map when token is provided
   useEffect(() => {
     if (!mapContainer.current || !mapboxToken || map.current) return;
@@ -48,6 +85,80 @@ export default function DocumentMapping({
 
       // Add navigation controls
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+      
+      // Add property boundaries when map style loads
+      map.current.on('style.load', () => {
+        // Add property boundaries source
+        map.current?.addSource('property-boundaries', {
+          type: 'geojson',
+          data: {
+            type: 'FeatureCollection',
+            features: samplePropertyBoundaries.map(property => ({
+              type: 'Feature',
+              properties: {
+                id: property.id,
+                address: property.address
+              },
+              geometry: {
+                type: 'Polygon',
+                coordinates: property.coordinates
+              }
+            }))
+          }
+        });
+
+        // Add property boundary fill layer
+        map.current?.addLayer({
+          id: 'property-boundaries-fill',
+          type: 'fill',
+          source: 'property-boundaries',
+          paint: {
+            'fill-color': '#3b82f6',
+            'fill-opacity': 0.1
+          }
+        });
+
+        // Add property boundary outline layer
+        map.current?.addLayer({
+          id: 'property-boundaries-outline',
+          type: 'line',
+          source: 'property-boundaries',
+          paint: {
+            'line-color': '#3b82f6',
+            'line-width': 2,
+            'line-opacity': 0.8
+          }
+        });
+
+        // Add click event for property boundaries
+        map.current?.on('click', 'property-boundaries-fill', (e) => {
+          if (e.features && e.features[0]) {
+            const properties = e.features[0].properties;
+            new mapboxgl.Popup()
+              .setLngLat(e.lngLat)
+              .setHTML(`
+                <div class="p-2">
+                  <h3 class="font-semibold text-sm">Property Boundary</h3>
+                  <p class="text-xs text-slate-600">${properties?.address || 'Unknown address'}</p>
+                </div>
+              `)
+              .addTo(map.current!);
+          }
+        });
+
+        // Change cursor on hover
+        map.current?.on('mouseenter', 'property-boundaries-fill', () => {
+          if (map.current) {
+            map.current.getCanvas().style.cursor = 'pointer';
+          }
+        });
+
+        map.current?.on('mouseleave', 'property-boundaries-fill', () => {
+          if (map.current) {
+            map.current.getCanvas().style.cursor = '';
+          }
+        });
+      });
       
       setShowTokenInput(false);
     } catch (error) {
