@@ -328,7 +328,7 @@ export default function ChatInterface({
         {/* Content Layer */}
         <div className="relative z-10 flex flex-col h-full">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-3 mx-4 mt-4 border-b border-slate-100/20">
+        <div className="flex items-center justify-between px-6 py-3 mx-4 mt-4 mr-8 border-b border-slate-100/20">
           <div className="flex items-center space-x-2">
             <motion.button whileHover={{
             scale: 1.02
