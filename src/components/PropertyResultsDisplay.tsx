@@ -114,10 +114,10 @@ export default function PropertyResultsDisplay({
         setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
       }
       
-      // Reset after longer delay to ensure one property per gesture
+      // Reset after much longer delay to guarantee one property per gesture
       setTimeout(() => {
         hasScrolled.current = false;
-      }, 500); // Increased from 300ms to 500ms
+      }, 800); // Increased to 800ms for absolute control
     };
 
     // Add event listeners
