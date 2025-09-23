@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SearchBar } from './SearchBar';
 import ChatInterface from './ChatInterface';
 import PropertyValuationUpload from './PropertyValuationUpload';
+import Analytics from './Analytics';
 import { CloudBackground } from './CloudBackground';
 import FlowBackground from './FlowBackground';
 import DotGrid from './DotGrid';
@@ -198,27 +199,8 @@ export const MainContent = ({
             </motion.div>
           </div>;
       case 'analytics':
-        return <div className="text-center max-w-md mx-auto">
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.6,
-            ease: [0.23, 1, 0.32, 1]
-          }} className="bg-white/90 backdrop-blur-xl rounded-3xl p-12 border-2 border-slate-200/60 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
-              <div className="w-16 h-16 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-2xl flex items-center justify-center mx-auto mb-6 border-2 border-emerald-100/60">
-                <span className="text-2xl">📊</span>
-              </div>
-              <h2 className="text-2xl font-semibold text-slate-800 mb-4 tracking-tight">
-                <span>Analytics</span>
-              </h2>
-              <p className="text-slate-600 leading-relaxed font-medium">
-                <span>Insights and metrics to help you understand your data better.</span>
-              </p>
-            </motion.div>
+        return <div className="w-full max-w-none">
+            <Analytics />
           </div>;
       case 'upload':
         return <div className="flex-1 h-full">
