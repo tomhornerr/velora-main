@@ -72,6 +72,13 @@ export default function PropertyResultsDisplay({
   const [isHovering, setIsHovering] = useState(false);
   const hasScrolled = useRef(false);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+  
+  // Touch/trackpad swipe handling
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const touchEndX = useRef(0);
+  const touchEndY = useRef(0);
+  const hasSwiped = useRef(false);
 
   const nextProperty = () => {
     setCurrentIndex(prev => (prev + 1) % properties.length);
@@ -120,10 +127,54 @@ export default function PropertyResultsDisplay({
       }, 300);
     };
 
+    const handleTouchStart = (e: TouchEvent) => {
+      const touch = e.touches[0];
+      touchStartX.current = touch.clientX;
+      touchStartY.current = touch.clientY;
+      hasSwiped.current = false;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!e.touches[0]) return;
+      
+      const touch = e.touches[0];
+      touchEndX.current = touch.clientX;
+      touchEndY.current = touch.clientY;
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      if (hasSwiped.current) return;
+      
+      const deltaX = touchStartX.current - touchEndX.current;
+      const deltaY = touchStartY.current - touchEndY.current;
+      const minSwipeDistance = 50;
+      
+      // Only process horizontal swipes that are greater than vertical movement
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > minSwipeDistance) {
+        hasSwiped.current = true;
+        
+        if (deltaX > 0) {
+          // Swiped left - go to next property
+          setCurrentIndex(prev => (prev + 1) % properties.length);
+        } else {
+          // Swiped right - go to previous property
+          setCurrentIndex(prev => (prev - 1 + properties.length) % properties.length);
+        }
+        
+        // Reset swipe flag after delay
+        setTimeout(() => {
+          hasSwiped.current = false;
+        }, 300);
+      }
+    };
+
     // Add event listeners
     container.addEventListener('mouseenter', handleMouseEnter);
     container.addEventListener('mouseleave', handleMouseLeave);
     container.addEventListener('wheel', handleWheel, { passive: false });
+    container.addEventListener('touchstart', handleTouchStart, { passive: true });
+    container.addEventListener('touchmove', handleTouchMove, { passive: true });
+    container.addEventListener('touchend', handleTouchEnd, { passive: true });
 
     return () => {
       if (scrollTimeout.current) {
@@ -132,6 +183,9 @@ export default function PropertyResultsDisplay({
       container.removeEventListener('mouseenter', handleMouseEnter);
       container.removeEventListener('mouseleave', handleMouseLeave);
       container.removeEventListener('wheel', handleWheel);
+      container.removeEventListener('touchstart', handleTouchStart);
+      container.removeEventListener('touchmove', handleTouchMove);
+      container.removeEventListener('touchend', handleTouchEnd);
     };
   }, [properties.length]);
 
@@ -148,7 +202,7 @@ export default function PropertyResultsDisplay({
           Here are the most suitable comps I found for your search
         </p>
         <p className="text-xs text-slate-500 mt-2">
-          💡 Use the dots or arrow buttons to navigate between properties
+          💡 Use trackpad swipes, dots, or arrow buttons to navigate between properties
         </p>
       </div>
 
