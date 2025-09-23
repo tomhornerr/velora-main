@@ -105,7 +105,7 @@ export default function Analytics({ className }: AnalyticsProps) {
   };
 
   return (
-    <div className={`w-full h-full flex flex-col space-y-4 overflow-hidden ${className || ''}`}>
+    <div className={`w-full h-full flex flex-col space-y-6 overflow-hidden ${className || ''}`}>
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -113,7 +113,7 @@ export default function Analytics({ className }: AnalyticsProps) {
         className="flex items-center justify-between flex-shrink-0"
       >
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 mb-1">Analytics Dashboard</h1>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-2">Analytics Dashboard</h1>
           <p className="text-slate-600 text-sm">Monitor your data usage and system activity</p>
         </div>
         
@@ -123,21 +123,21 @@ export default function Analytics({ className }: AnalyticsProps) {
             disabled={isRefreshing}
             size="sm"
             variant="outline"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 bg-white/60 backdrop-blur-sm border-white/20 hover:bg-white/80"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             {isRefreshing ? 'Refreshing...' : 'Refresh'}
           </Button>
           
-          <div className="flex items-center space-x-2 bg-white rounded-lg border border-slate-200 p-1">
+          <div className="flex items-center space-x-2 bg-slate-950/40 backdrop-blur-xl rounded-xl border border-slate-700/30 p-1">
           {(['overview', 'documents', 'activity'] as const).map((mode) => (
             <button
               key={mode}
               onClick={() => setViewMode(mode)}
-              className={`px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
                 viewMode === mode
-                  ? 'bg-slate-900 text-white shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                  ? 'bg-white/20 text-white shadow-lg backdrop-blur-sm'
+                  : 'text-white/70 hover:text-white hover:bg-white/10'
               }`}
             >
               {mode.charAt(0).toUpperCase() + mode.slice(1)}
@@ -148,52 +148,52 @@ export default function Analytics({ className }: AnalyticsProps) {
       </motion.div>
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto space-y-4">
+      <div className="flex-1 overflow-y-auto space-y-6">
         {/* Overview Cards */}
         {viewMode === 'overview' && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-4"
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
           >
-            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-blue-900 flex items-center gap-2 text-sm">
-                  <Database className="w-4 h-4" />
+            <Card className="bg-gradient-to-br from-blue-500/10 to-indigo-600/10 backdrop-blur-xl border border-blue-400/20 shadow-[0_8px_32px_rgba(59,130,246,0.15)]">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-blue-100 flex items-center gap-2 text-sm font-medium">
+                  <Database className="w-5 h-5" />
                   Total Documents
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-              <div className="text-2xl font-bold text-blue-900 mb-1">{documents.length}</div>
-              <p className="text-blue-700 text-xs">Total storage: {getTotalStorage()}</p>
+              <div className="text-3xl font-bold text-white mb-2">{documents.length}</div>
+              <p className="text-blue-200/80 text-xs">Total storage: {getTotalStorage()}</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-emerald-900 flex items-center gap-2 text-sm">
-                  <Activity className="w-4 h-4" />
+            <Card className="bg-gradient-to-br from-emerald-500/10 to-green-600/10 backdrop-blur-xl border border-emerald-400/20 shadow-[0_8px_32px_rgba(16,185,129,0.15)]">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-emerald-100 flex items-center gap-2 text-sm font-medium">
+                  <Activity className="w-5 h-5" />
                   Active Processes
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-              <div className="text-2xl font-bold text-emerald-900 mb-1">
+              <div className="text-3xl font-bold text-white mb-2">
                 {getProcessingCount()}
               </div>
-              <p className="text-emerald-700 text-xs">Currently processing</p>
+              <p className="text-emerald-200/80 text-xs">Currently processing</p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-purple-900 flex items-center gap-2 text-sm">
-                  <TrendingUp className="w-4 h-4" />
+            <Card className="bg-gradient-to-br from-purple-500/10 to-pink-600/10 backdrop-blur-xl border border-purple-400/20 shadow-[0_8px_32px_rgba(147,51,234,0.15)]">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-purple-100 flex items-center gap-2 text-sm font-medium">
+                  <TrendingUp className="w-5 h-5" />
                   System Actions
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="text-2xl font-bold text-purple-900 mb-1">{activities.length}</div>
-                <p className="text-purple-700 text-xs">In the last hour</p>
+                <div className="text-3xl font-bold text-white mb-2">{activities.length}</div>
+                <p className="text-purple-200/80 text-xs">In the last hour</p>
               </CardContent>
             </Card>
           </motion.div>
@@ -201,38 +201,38 @@ export default function Analytics({ className }: AnalyticsProps) {
 
         {/* Document Tracking with Interactive Map */}
         {(viewMode === 'overview' || viewMode === 'documents') && (
-          <Card className="overflow-hidden">
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <MapPin className="w-4 h-4 text-blue-600" />
+          <Card className="overflow-hidden bg-slate-950/40 backdrop-blur-xl border border-slate-700/30 shadow-[0_8px_32px_rgba(2,6,23,0.6)]">
+            <CardHeader className="pb-4 border-b border-slate-700/30">
+              <CardTitle className="flex items-center gap-2 text-lg text-white">
+                <MapPin className="w-5 h-5 text-blue-400" />
                 Document Property Mapping
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="grid grid-cols-1 lg:grid-cols-2 h-80">
                 {/* Map Area */}
-                <div className="bg-gradient-to-br from-slate-100 to-slate-200 relative flex items-center justify-center border-r border-slate-200">
+                <div className="bg-gradient-to-br from-slate-900/50 to-slate-800/50 relative flex items-center justify-center border-r border-slate-700/30">
                   <div className="text-center">
-                    <MapPin className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                    <p className="text-slate-600 font-medium text-sm">Interactive Map</p>
-                    <p className="text-xs text-slate-500 mt-1">Property locations with document links</p>
+                    <MapPin className="w-8 h-8 text-slate-400 mx-auto mb-3" />
+                    <p className="text-white font-medium text-sm">Interactive Map</p>
+                    <p className="text-xs text-slate-400 mt-1">Property locations with document links</p>
                   </div>
                 
                   {/* Mock property pins */}
                   <div className="absolute top-16 left-12">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse shadow-lg shadow-blue-400/50"></div>
                   </div>
                   <div className="absolute top-24 right-16">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50"></div>
                   </div>
                   <div className="absolute bottom-20 left-1/3">
-                    <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></div>
+                    <div className="w-3 h-3 bg-amber-400 rounded-full animate-pulse shadow-lg shadow-amber-400/50"></div>
                   </div>
                 </div>
 
                 {/* Document List */}
-                <div className="p-3 overflow-y-auto">
-                  <div className="space-y-2">
+                <div className="p-4 overflow-y-auto bg-slate-900/20">
+                  <div className="space-y-3">
                   <AnimatePresence>
                     {documents.map((doc, index) => (
                       <motion.div
@@ -241,19 +241,19 @@ export default function Analytics({ className }: AnalyticsProps) {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: -20 }}
                         transition={{ delay: index * 0.1 }}
-                          className="flex items-center p-2 bg-slate-50 rounded-lg border border-slate-200 hover:shadow-md transition-all cursor-pointer group"
+                          className="flex items-center p-3 bg-slate-800/40 backdrop-blur-sm rounded-xl border border-slate-600/30 hover:shadow-lg hover:shadow-slate-900/20 transition-all cursor-pointer group hover:bg-slate-800/60"
                           onClick={() => setSelectedDocument(doc)}
                         >
-                          <div className="flex items-center space-x-2 flex-1">
-                            <div className="w-8 h-8 bg-gradient-to-br from-red-100 to-orange-100 rounded-lg flex items-center justify-center">
-                              <FileText className="w-4 h-4 text-red-600" />
+                          <div className="flex items-center space-x-3 flex-1">
+                            <div className="w-10 h-10 bg-gradient-to-br from-red-400/20 to-orange-400/20 rounded-xl flex items-center justify-center border border-red-400/20">
+                              <FileText className="w-5 h-5 text-red-400" />
                             </div>
                             
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-slate-900 truncate text-xs">{doc.name}</p>
-                              <p className="text-xs text-slate-500 truncate">{doc.propertyAddress}</p>
-                              <div className="flex items-center space-x-1 mt-0.5">
-                                <span className={`px-1.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(doc.status)}`}>
+                              <p className="font-medium text-white truncate text-sm">{doc.name}</p>
+                              <p className="text-sm text-slate-400 truncate">{doc.propertyAddress}</p>
+                              <div className="flex items-center space-x-2 mt-1">
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(doc.status)}`}>
                                   {doc.status}
                                 </span>
                                 <span className="text-xs text-slate-500">{doc.size}</span>
@@ -261,20 +261,20 @@ export default function Analytics({ className }: AnalyticsProps) {
                             </div>
                           </div>
                           
-                          <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button variant="ghost" size="sm" className="w-6 h-6 p-0">
-                              <Eye className="w-3 h-3" />
+                          <div className="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button variant="ghost" size="sm" className="w-8 h-8 p-0 hover:bg-white/10">
+                              <Eye className="w-4 h-4 text-slate-300" />
                             </Button>
                             <Button 
                               variant="ghost" 
                               size="sm" 
-                              className="w-6 h-6 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                              className="w-8 h-8 p-0 text-red-400 hover:text-red-300 hover:bg-red-400/10"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 handleDeleteDocument(doc.id);
                               }}
                             >
-                              <Trash2 className="w-3 h-3" />
+                              <Trash2 className="w-4 h-4" />
                             </Button>
                           </div>
                       </motion.div>
@@ -289,15 +289,15 @@ export default function Analytics({ className }: AnalyticsProps) {
 
         {/* Real-time System Activity */}
         {(viewMode === 'overview' || viewMode === 'activity') && (
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Activity className="w-4 h-4 text-emerald-600" />
+          <Card className="bg-slate-950/40 backdrop-blur-xl border border-slate-700/30 shadow-[0_8px_32px_rgba(2,6,23,0.6)]">
+            <CardHeader className="pb-4 border-b border-slate-700/30">
+              <CardTitle className="flex items-center gap-2 text-lg text-white">
+                <Activity className="w-5 h-5 text-emerald-400" />
                 Real-time System Activity
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-3 max-h-60 overflow-y-auto">
+            <CardContent className="p-4">
+              <div className="space-y-4 max-h-60 overflow-y-auto">
               <AnimatePresence>
                 {activities.map((activity, index) => (
                   <motion.div
@@ -305,27 +305,27 @@ export default function Analytics({ className }: AnalyticsProps) {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
-                      className="flex items-start space-x-3 p-3 bg-gradient-to-r from-slate-50 to-slate-100/50 rounded-lg border border-slate-200"
+                      className="flex items-start space-x-4 p-4 bg-slate-800/40 backdrop-blur-sm rounded-xl border border-slate-600/30 hover:bg-slate-800/60 transition-all"
                     >
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        activity.type === 'analysis' ? 'bg-blue-100 text-blue-600' :
-                        activity.type === 'comparison' ? 'bg-purple-100 text-purple-600' :
-                        activity.type === 'valuation' ? 'bg-emerald-100 text-emerald-600' :
-                        'bg-amber-100 text-amber-600'
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${
+                        activity.type === 'analysis' ? 'bg-blue-400/20 text-blue-400 border-blue-400/20' :
+                        activity.type === 'comparison' ? 'bg-purple-400/20 text-purple-400 border-purple-400/20' :
+                        activity.type === 'valuation' ? 'bg-emerald-400/20 text-emerald-400 border-emerald-400/20' :
+                        'bg-amber-400/20 text-amber-400 border-amber-400/20'
                       }`}>
                         {getActivityIcon(activity.type)}
                       </div>
                       
                       <div className="flex-1">
-                        <p className="text-slate-900 font-medium text-xs leading-relaxed">
+                        <p className="text-white font-medium text-sm leading-relaxed">
                           {activity.action}
                         </p>
-                        <div className="flex items-center space-x-3 mt-1">
-                          <div className="flex items-center space-x-1 text-xs text-slate-500">
+                        <div className="flex items-center space-x-4 mt-2">
+                          <div className="flex items-center space-x-2 text-xs text-slate-400">
                             <Clock className="w-3 h-3" />
                             {formatTimestamp(activity.timestamp)}
                           </div>
-                          <div className="flex items-center space-x-1 text-xs text-slate-500">
+                          <div className="flex items-center space-x-2 text-xs text-slate-400">
                             <FileText className="w-3 h-3" />
                             {activity.documents.length} document{activity.documents.length !== 1 ? 's' : ''}
                           </div>
@@ -333,7 +333,7 @@ export default function Analytics({ className }: AnalyticsProps) {
                       </div>
                       
                       <div className="flex items-center">
-                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                        <div className="w-3 h-3 bg-emerald-400 rounded-full animate-pulse shadow-lg shadow-emerald-400/50"></div>
                       </div>
                   </motion.div>
                   ))}
