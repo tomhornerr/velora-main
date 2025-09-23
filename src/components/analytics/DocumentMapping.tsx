@@ -41,7 +41,7 @@ export default function DocumentMapping({
     try {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/light-v11',
+        style: 'mapbox://styles/mapbox/satellite-streets-v12',
         center: [-2.5879, 51.4545], // Default to Bristol, UK
         zoom: 11
       });
