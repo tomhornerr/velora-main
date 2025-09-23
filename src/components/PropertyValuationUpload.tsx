@@ -4,6 +4,7 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, FileText, X, Check, AlertCircle, Plus, Image, FileIcon, Camera, CheckCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useSystem } from "@/contexts/SystemContext";
 export interface PropertyValuationUploadProps {
   className?: string;
   onUpload?: (file: File) => void;
@@ -39,6 +40,7 @@ export default function PropertyValuationUpload({
   onUpload,
   onContinueWithReport
 }: PropertyValuationUploadProps) {
+  const { addDocument, updateDocumentStatus, addActivity } = useSystem();
   const [isDragOver, setIsDragOver] = React.useState(false);
   const [uploadedFiles, setUploadedFiles] = React.useState<UploadedFile[]>([]);
   const [currentStep, setCurrentStep] = React.useState(1);
@@ -95,6 +97,10 @@ export default function PropertyValuationUpload({
       reader.readAsDataURL(file);
     }
     setUploadedFiles(prev => [...prev, newFile]);
+    
+    // Add to system context
+    const systemDocId = addDocument(file);
+    
     onUpload?.(file);
 
     // Simulate upload process
@@ -130,19 +136,32 @@ export default function PropertyValuationUpload({
       } : step));
     }, 2000);
 
-    // Show completion notification after 10 seconds
-    setTimeout(() => {
-      setSteps(prev => prev.map(step => step.id === 3 ? {
-        ...step,
-        completed: true,
-        active: false
-      } : step));
-      toast({
-        title: "Documents Successfully Processed",
-        description: "Your files are now integrated and ready for intelligent analysis.",
-        duration: 2500,
-        className: "border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50 shadow-lg shadow-emerald-100/50 max-w-sm text-sm"
-      });
+      // Show completion notification after 10 seconds
+      setTimeout(() => {
+        setSteps(prev => prev.map(step => step.id === 3 ? {
+          ...step,
+          completed: true,
+          active: false
+        } : step));
+        
+        // Add completion activity
+        addActivity({
+          action: `Successfully processed ${uploadedFiles.length} document${uploadedFiles.length !== 1 ? 's' : ''} and integrated into system`,
+          documents: uploadedFiles.map(f => f.name),
+          type: 'analysis',
+          details: { 
+            processingTime: '10.2s', 
+            totalFiles: uploadedFiles.length,
+            completionRate: '100%'
+          }
+        });
+        
+        toast({
+          title: "Documents Successfully Processed",
+          description: "Your files are now integrated and ready for intelligent analysis.",
+          duration: 2500,
+          className: "border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50 shadow-lg shadow-emerald-100/50 max-w-sm text-sm"
+        });
 
       // Show tick animation
       setShowCompletionTick(true);

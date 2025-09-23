@@ -12,6 +12,7 @@ import DotGrid from './DotGrid';
 import { PropertyOutlineBackground } from './PropertyOutlineBackground';
 import { Property3DBackground } from './Property3DBackground';
 import { PropertyCyclingBackground } from './PropertyCyclingBackground';
+import { useSystem } from '@/contexts/SystemContext';
 export interface MainContentProps {
   className?: string;
   currentView?: string;
@@ -33,6 +34,7 @@ export const MainContent = ({
   currentChatData,
   isInChatMode: inChatMode = false
 }: MainContentProps) => {
+  const { addActivity } = useSystem();
   const [chatQuery, setChatQuery] = React.useState<string>("");
   const [chatMessages, setChatMessages] = React.useState<any[]>([]);
   
@@ -40,6 +42,14 @@ export const MainContent = ({
   const isInChatMode = inChatMode;
   const handleQueryStart = (query: string) => {
     console.log('MainContent: Query started with:', query);
+    
+    // Track search activity
+    addActivity({
+      action: `User initiated search: "${query}"`,
+      documents: [],
+      type: 'search',
+      details: { searchTerm: query, timestamp: new Date().toISOString() }
+    });
     
     // Only create chat history entry, don't switch to chat mode yet
     const chatData = {
@@ -54,6 +64,18 @@ export const MainContent = ({
     console.log('MainContent: Search triggered with query:', query);
     setChatQuery(query);
     setChatMessages([]); // Reset messages for new chat
+
+    // Track detailed search activity
+    addActivity({
+      action: `Advanced search initiated: "${query}" - Velora is analyzing relevant documents`,
+      documents: [],
+      type: 'search',
+      details: { 
+        searchQuery: query, 
+        analysisType: 'comprehensive',
+        timestamp: new Date().toISOString() 
+      }
+    });
 
     // Now actually enter chat mode and submit
     const chatData = {
@@ -82,6 +104,22 @@ export const MainContent = ({
   };
   const handleChatMessagesUpdate = (messages: any[]) => {
     setChatMessages(messages);
+    
+    // Track chat interaction activity
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      addActivity({
+        action: `Velora generated response for query: "${chatQuery}" - Analysis complete`,
+        documents: [],
+        type: 'analysis',
+        details: { 
+          messageCount: messages.length,
+          responseType: lastMessage?.type || 'text',
+          timestamp: new Date().toISOString()
+        }
+      });
+    }
+    
     // Update the chat data in parent component
     if (chatQuery) {
       const chatData = {

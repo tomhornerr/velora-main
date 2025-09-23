@@ -17,128 +17,79 @@ import {
   Clock,
   BarChart3,
   TrendingUp,
-  Database
+  Database,
+  RefreshCw
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useSystem } from "@/contexts/SystemContext";
 
 interface AnalyticsProps {
   className?: string;
 }
 
-interface Document {
-  id: string;
-  name: string;
-  type: string;
-  uploadDate: Date;
-  size: string;
-  status: 'processed' | 'processing' | 'error';
-  propertyAddress: string;
-  location: {
-    lat: number;
-    lng: number;
-  };
-}
-
-interface SystemActivity {
-  id: string;
-  action: string;
-  documents: string[];
-  timestamp: Date;
-  type: 'analysis' | 'comparison' | 'valuation' | 'search';
-}
-
-const mockDocuments: Document[] = [
-  {
-    id: '1',
-    name: 'Valuation Report 1.pdf',
-    type: 'PDF',
-    uploadDate: new Date('2024-01-15'),
-    size: '2.4 MB',
-    status: 'processed',
-    propertyAddress: '123 Main St, Sydney NSW 2000',
-    location: { lat: -33.8688, lng: 151.2093 }
-  },
-  {
-    id: '2',
-    name: 'Property Survey 2.pdf',
-    type: 'PDF',
-    uploadDate: new Date('2024-01-16'),
-    size: '1.8 MB',
-    status: 'processed',
-    propertyAddress: '456 George St, Sydney NSW 2000',
-    location: { lat: -33.8700, lng: 151.2100 }
-  },
-  {
-    id: '3',
-    name: 'Valuation Report 3.pdf',
-    type: 'PDF',
-    uploadDate: new Date('2024-01-17'),
-    size: '3.1 MB',
-    status: 'processing',
-    propertyAddress: '789 Pitt St, Sydney NSW 2000',
-    location: { lat: -33.8710, lng: 151.2080 }
-  }
-];
-
-const mockActivities: SystemActivity[] = [
-  {
-    id: '1',
-    action: 'Velora just resurfaced Valuation Report 1 & Valuation Report 3 to give a comprehensive market analysis',
-    documents: ['Valuation Report 1.pdf', 'Valuation Report 3.pdf'],
-    timestamp: new Date(Date.now() - 2 * 60 * 1000),
-    type: 'analysis'
-  },
-  {
-    id: '2', 
-    action: 'Generated comparative analysis using Property Survey 2 and market data',
-    documents: ['Property Survey 2.pdf'],
-    timestamp: new Date(Date.now() - 5 * 60 * 1000),
-    type: 'comparison'
-  },
-  {
-    id: '3',
-    action: 'Performed automated valuation using Valuation Report 1 data points',
-    documents: ['Valuation Report 1.pdf'],
-    timestamp: new Date(Date.now() - 10 * 60 * 1000),
-    type: 'valuation'
-  }
-];
-
 export default function Analytics({ className }: AnalyticsProps) {
-  const [documents, setDocuments] = React.useState<Document[]>(mockDocuments);
-  const [activities, setActivities] = React.useState<SystemActivity[]>(mockActivities);
-  const [selectedDocument, setSelectedDocument] = React.useState<Document | null>(null);
+  const { documents, activities, deleteDocument, getTotalStorage, getProcessingCount, addActivity } = useSystem();
+  const [selectedDocument, setSelectedDocument] = React.useState<any>(null);
   const [viewMode, setViewMode] = React.useState<'overview' | 'documents' | 'activity'>('overview');
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
   const { toast } = useToast();
 
   const handleDeleteDocument = (documentId: string) => {
     const document = documents.find(doc => doc.id === documentId);
-    setDocuments(prev => prev.filter(doc => doc.id !== documentId));
+    if (!document) return;
+    
+    deleteDocument(documentId);
     
     toast({
       title: "Document Deleted",
-      description: `${document?.name} has been removed from the system.`,
+      description: `${document.name} has been removed from the system.`,
       duration: 3000,
       className: "border-red-200 bg-gradient-to-r from-red-50 to-rose-50"
     });
   };
 
-  const getActivityIcon = (type: SystemActivity['type']) => {
+  const handleRefreshData = () => {
+    setIsRefreshing(true);
+    
+    // Simulate data refresh
+    setTimeout(() => {
+      setIsRefreshing(false);
+      addActivity({
+        action: 'Analytics dashboard data refreshed',
+        documents: [],
+        type: 'analysis',
+        details: { refreshTime: new Date().toISOString() }
+      });
+      
+      toast({
+        title: "Data Refreshed",
+        description: "Analytics data has been updated with the latest information.",
+        duration: 2000,
+        className: "border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50"
+      });
+    }, 1000);
+  };
+
+  const getActivityIcon = (type: any) => {
     switch (type) {
       case 'analysis': return <BarChart3 className="w-4 h-4" />;
       case 'comparison': return <TrendingUp className="w-4 h-4" />;
       case 'valuation': return <Building className="w-4 h-4" />;
       case 'search': return <Search className="w-4 h-4" />;
+      case 'upload': return <FileText className="w-4 h-4" />;
+      case 'deletion': return <Trash2 className="w-4 h-4" />;
+      default: return <Activity className="w-4 h-4" />;
     }
   };
 
-  const getStatusColor = (status: Document['status']) => {
+  const getStatusColor = (status: any) => {
     switch (status) {
       case 'processed': return 'text-emerald-600 bg-emerald-100';
       case 'processing': return 'text-amber-600 bg-amber-100';
       case 'error': return 'text-red-600 bg-red-100';
+      default: return 'text-slate-600 bg-slate-100';
     }
   };
 
@@ -166,7 +117,19 @@ export default function Analytics({ className }: AnalyticsProps) {
           <p className="text-slate-600 text-sm">Monitor your data usage and system activity</p>
         </div>
         
-        <div className="flex items-center space-x-2 bg-white rounded-lg border border-slate-200 p-1">
+        <div className="flex items-center space-x-4">
+          <Button
+            onClick={handleRefreshData}
+            disabled={isRefreshing}
+            size="sm"
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Refreshing...' : 'Refresh'}
+          </Button>
+          
+          <div className="flex items-center space-x-2 bg-white rounded-lg border border-slate-200 p-1">
           {(['overview', 'documents', 'activity'] as const).map((mode) => (
             <button
               key={mode}
@@ -181,6 +144,7 @@ export default function Analytics({ className }: AnalyticsProps) {
             </button>
           ))}
         </div>
+      </div>
       </motion.div>
 
       {/* Scrollable Content */}
@@ -200,8 +164,8 @@ export default function Analytics({ className }: AnalyticsProps) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="text-2xl font-bold text-blue-900 mb-1">{documents.length}</div>
-                <p className="text-blue-700 text-xs">Across all properties</p>
+              <div className="text-2xl font-bold text-blue-900 mb-1">{documents.length}</div>
+              <p className="text-blue-700 text-xs">Total storage: {getTotalStorage()}</p>
               </CardContent>
             </Card>
 
@@ -213,10 +177,10 @@ export default function Analytics({ className }: AnalyticsProps) {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-0">
-                <div className="text-2xl font-bold text-emerald-900 mb-1">
-                  {documents.filter(d => d.status === 'processing').length}
-                </div>
-                <p className="text-emerald-700 text-xs">Currently processing</p>
+              <div className="text-2xl font-bold text-emerald-900 mb-1">
+                {getProcessingCount()}
+              </div>
+              <p className="text-emerald-700 text-xs">Currently processing</p>
               </CardContent>
             </Card>
 
