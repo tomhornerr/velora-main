@@ -1,8 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, FileText, Eye, Trash2, Settings } from 'lucide-react';
+import { MapPin, FileText, Eye, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
@@ -28,50 +27,12 @@ export default function DocumentMapping({
 }: DocumentMappingProps) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
-  const [mapboxToken, setMapboxToken] = useState<string>('');
-  const [showTokenInput, setShowTokenInput] = useState(true);
+  const mapboxToken = 'pk.eyJ1IjoidG9taG9ybmVyciIsImEiOiJjbWZ3bjhyczUwMTVtMmxyNHMxcnVtdm1yIn0.K8xbjDjt_mcIIDajF23M2g';
   const markers = useRef<mapboxgl.Marker[]>([]);
 
-  // Sample property boundaries for Bristol
-  const samplePropertyBoundaries = [
-    {
-      id: 'property-1',
-      coordinates: [[
-        [-2.5900, 51.4560],
-        [-2.5890, 51.4560],
-        [-2.5890, 51.4550],
-        [-2.5900, 51.4550],
-        [-2.5900, 51.4560]
-      ]],
-      address: '123 Park Street, Bristol'
-    },
-    {
-      id: 'property-2',
-      coordinates: [[
-        [-2.5850, 51.4530],
-        [-2.5840, 51.4530],
-        [-2.5840, 51.4520],
-        [-2.5850, 51.4520],
-        [-2.5850, 51.4530]
-      ]],
-      address: '456 Queen Square, Bristol'
-    },
-    {
-      id: 'property-3',
-      coordinates: [[
-        [-2.5920, 51.4580],
-        [-2.5910, 51.4580],
-        [-2.5910, 51.4570],
-        [-2.5920, 51.4570],
-        [-2.5920, 51.4580]
-      ]],
-      address: '789 Clifton Triangle, Bristol'
-    }
-  ];
-
-  // Initialize map when token is provided
+  // Initialize map when component mounts
   useEffect(() => {
-    if (!mapContainer.current || !mapboxToken || map.current) return;
+    if (!mapContainer.current || map.current) return;
 
     mapboxgl.accessToken = mapboxToken;
     
@@ -85,85 +46,8 @@ export default function DocumentMapping({
 
       // Add navigation controls
       map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
-      
-      // Add property boundaries when map style loads
-      map.current.on('style.load', () => {
-        // Add property boundaries source
-        map.current?.addSource('property-boundaries', {
-          type: 'geojson',
-          data: {
-            type: 'FeatureCollection',
-            features: samplePropertyBoundaries.map(property => ({
-              type: 'Feature',
-              properties: {
-                id: property.id,
-                address: property.address
-              },
-              geometry: {
-                type: 'Polygon',
-                coordinates: property.coordinates
-              }
-            }))
-          }
-        });
-
-        // Add property boundary fill layer
-        map.current?.addLayer({
-          id: 'property-boundaries-fill',
-          type: 'fill',
-          source: 'property-boundaries',
-          paint: {
-            'fill-color': '#3b82f6',
-            'fill-opacity': 0.1
-          }
-        });
-
-        // Add property boundary outline layer
-        map.current?.addLayer({
-          id: 'property-boundaries-outline',
-          type: 'line',
-          source: 'property-boundaries',
-          paint: {
-            'line-color': '#3b82f6',
-            'line-width': 2,
-            'line-opacity': 0.8
-          }
-        });
-
-        // Add click event for property boundaries
-        map.current?.on('click', 'property-boundaries-fill', (e) => {
-          if (e.features && e.features[0]) {
-            const properties = e.features[0].properties;
-            new mapboxgl.Popup()
-              .setLngLat(e.lngLat)
-              .setHTML(`
-                <div class="p-2">
-                  <h3 class="font-semibold text-sm">Property Boundary</h3>
-                  <p class="text-xs text-slate-600">${properties?.address || 'Unknown address'}</p>
-                </div>
-              `)
-              .addTo(map.current!);
-          }
-        });
-
-        // Change cursor on hover
-        map.current?.on('mouseenter', 'property-boundaries-fill', () => {
-          if (map.current) {
-            map.current.getCanvas().style.cursor = 'pointer';
-          }
-        });
-
-        map.current?.on('mouseleave', 'property-boundaries-fill', () => {
-          if (map.current) {
-            map.current.getCanvas().style.cursor = '';
-          }
-        });
-      });
-      
-      setShowTokenInput(false);
     } catch (error) {
       console.error('Failed to initialize map:', error);
-      setShowTokenInput(true);
     }
 
     return () => {
@@ -174,7 +58,7 @@ export default function DocumentMapping({
         map.current = null;
       }
     };
-  }, [mapboxToken]);
+  }, []);
 
   // Update markers when documents change
   useEffect(() => {
@@ -213,12 +97,6 @@ export default function DocumentMapping({
     });
   }, [documents, onDocumentSelect]);
 
-  const handleTokenSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (mapboxToken.trim()) {
-      // Token will be used in useEffect
-    }
-  };
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'processed': return 'text-emerald-700 bg-emerald-100 border-emerald-200';
@@ -245,47 +123,10 @@ export default function DocumentMapping({
       <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[400px]">
         {/* Interactive Map Area */}
         <div className="relative">
-          {showTokenInput && (
-            <div className="absolute inset-0 bg-white/95 backdrop-blur-sm z-10 flex flex-col items-center justify-center p-6">
-              <div className="text-center mb-6">
-                <Settings className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                <h3 className="text-lg font-semibold text-slate-900 mb-2">Setup Map</h3>
-                <p className="text-sm text-slate-600 max-w-xs">
-                  Enter your Mapbox public token to enable the interactive map
-                </p>
-                <p className="text-xs text-slate-500 mt-2">
-                  Get your token from <a href="https://mapbox.com/" target="_blank" rel="noopener" className="text-blue-600 hover:underline">mapbox.com</a>
-                </p>
-              </div>
-              <form onSubmit={handleTokenSubmit} className="w-full max-w-sm">
-                <div className="flex flex-col space-y-3">
-                  <Input
-                    type="text"
-                    placeholder="pk.eyJ1..."
-                    value={mapboxToken}
-                    onChange={(e) => setMapboxToken(e.target.value)}
-                    className="text-sm"
-                  />
-                  <Button type="submit" className="w-full">
-                    Initialize Map
-                  </Button>
-                </div>
-              </form>
-            </div>
-          )}
           <div 
             ref={mapContainer} 
             className="w-full h-full min-h-[400px] bg-slate-100 border-r border-slate-200"
-            style={{ display: showTokenInput ? 'none' : 'block' }}
           />
-          {!showTokenInput && !map.current && (
-            <div className="absolute inset-0 flex items-center justify-center bg-slate-50">
-              <div className="text-center">
-                <MapPin className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-                <p className="text-sm text-slate-500">Initializing map...</p>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Enhanced Document List */}
@@ -311,7 +152,7 @@ export default function DocumentMapping({
                       <p className="font-semibold text-slate-900 truncate text-base group-hover:text-slate-800 transition-colors">
                         {doc.name}
                       </p>
-                            <p className="text-sm text-slate-600 truncate mt-1">
+                      <p className="text-sm text-slate-600 truncate mt-1">
                         {doc.propertyAddress || 'No address specified'}
                       </p>
                       <div className="flex items-center space-x-3 mt-2">
