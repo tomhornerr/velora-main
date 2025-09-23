@@ -382,7 +382,7 @@ export default function ChatInterface({
             }} className="space-y-4">
                 {/* User Message or Non-Property Assistant Message */}
                 {!isPropertyResponse && (
-                  <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`flex ${message.role === 'user' ? 'justify-end pr-4' : 'justify-start'}`}>
                     <div className={`flex max-w-[85%] ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start space-x-3`}>
                       {/* Message Content */}
                       <motion.div className={`group relative ${message.role === 'user' ? 'px-3 py-1.5 rounded-xl text-slate-800 shadow-sm bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100/30' : 'text-slate-700'}`} whileHover={{
