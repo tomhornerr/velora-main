@@ -170,30 +170,28 @@ export const Sidebar = ({
       )}
     </motion.div>
 
-    {/* Visible Toggle Tab */}
+    {/* Sleek Sidebar Edge Toggle */}
     <motion.button
       initial={{ opacity: 0 }}
       animate={{ 
         opacity: 1,
-        x: isCollapsed ? 0 : -10
+        x: isCollapsed ? 8 : 0
       }}
       whileHover={{ 
-        opacity: 1,
-        x: 0,
-        scale: 1.05
+        scale: 1.1
       }}
       transition={{
         duration: 0.2,
         ease: [0.4, 0, 0.2, 1]
       }}
       onClick={onToggle}
-      className={`fixed left-0 top-1/2 -translate-y-1/2 z-50 w-8 h-20 bg-black/40 backdrop-blur-xl border border-white/20 rounded-r-xl shadow-2xl flex items-center justify-center transition-all duration-300 hover:bg-black/50 hover:border-white/30`}
+      className={`absolute -right-3 top-1/2 -translate-y-1/2 z-50 w-6 h-12 bg-sidebar-background/90 backdrop-blur-sm border border-white/10 rounded-r-md shadow-lg flex items-center justify-center transition-all duration-300 hover:bg-sidebar-background`}
       aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
     >
       <motion.div
         animate={{ rotate: isCollapsed ? 0 : 180 }}
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-        className="w-3 h-3 border-r-2 border-b-2 border-white/80 rotate-45 transform"
+        className="w-2 h-2 border-r border-b border-white/60 rotate-45 transform"
       />
     </motion.button>
   </>;
