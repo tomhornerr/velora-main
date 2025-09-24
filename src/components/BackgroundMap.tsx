@@ -61,7 +61,7 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
       
       // Add new marker
       currentMarker.current = new mapboxgl.Marker({
-        color: '#10b981' // Green color
+        color: '#ff6b35' // Bright orange color
       })
         .setLngLat([location.lng, location.lat])
         .addTo(map.current);
@@ -89,7 +89,7 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
     
     // Add new marker
     currentMarker.current = new mapboxgl.Marker({
-      color: '#10b981'
+      color: '#ff6b35'
     })
       .setLngLat([lng, lat])
       .addTo(map.current);
@@ -122,7 +122,7 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
+      style: 'mapbox://styles/mapbox/satellite-streets-v12',
       center: [-2.5879, 51.4545], // Bristol center
       zoom: 11,
       antialias: true,
@@ -170,7 +170,7 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
           
           // Add new marker
           currentMarker.current = new mapboxgl.Marker({
-            color: '#10b981'
+            color: '#ff6b35'
           })
             .setLngLat([lng, lat])
             .addTo(map.current!);
