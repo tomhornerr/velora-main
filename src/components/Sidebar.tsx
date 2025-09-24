@@ -180,19 +180,6 @@ export const Sidebar = ({
           transition-all duration-300 ease-out group cursor-pointer
         `} aria-label="Toggle Chat History">
         <AnimatePresence>
-          {isChatPanelOpen && <motion.div initial={{
-          opacity: 0,
-          scaleY: 0.8
-        }} animate={{
-          opacity: 1,
-          scaleY: 1
-        }} exit={{
-          opacity: 0,
-          scaleY: 0.8
-        }} transition={{
-          duration: 0.1,
-          ease: [0.4, 0, 0.2, 1]
-        }} className="absolute -left-[2px] top-[calc(50%-2px)] -translate-y-1/2 w-1 h-6 bg-sidebar-primary rounded-full" />}
         </AnimatePresence>
         
         <PanelLeft className="w-4 h-4 lg:w-5 lg:h-5 text-white drop-shadow-sm transition-all duration-300 ease-out" strokeWidth={1.8} />
