@@ -26,10 +26,13 @@ export const SearchBar = ({
   const [hasStartedTyping, setHasStartedTyping] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [isMapIconClicked, setIsMapIconClicked] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   
-  // Auto-focus on any keypress for search bar
+  // Auto-focus on any keypress for search bar - but only when hovered
   useEffect(() => {
+    if (!isHovered) return; // Only add listener when search bar is hovered
+    
     console.log('SearchBar: Setting up global keydown listener');
     
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
@@ -62,7 +65,7 @@ export const SearchBar = ({
       console.log('SearchBar: Cleaning up global keydown listener');
       window.removeEventListener('keydown', handleGlobalKeyDown);
     };
-  }, []);
+  }, [isHovered]);
 
   // Reset SearchBar when resetTrigger changes (new chat created)
   useEffect(() => {
@@ -123,7 +126,11 @@ export const SearchBar = ({
     <>
       {/* Normal position when map is closed */}
       {!isMapOpen && (
-        <div className={`w-full h-full flex items-center justify-center px-6 ${className || ''}`}>
+        <div 
+          className={`w-full h-full flex items-center justify-center px-6 ${className || ''}`}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
           <div className="w-full max-w-2xl mx-auto">
             <motion.div 
               initial={{ opacity: 1, y: 20 }} 
@@ -178,7 +185,11 @@ export const SearchBar = ({
 
       {/* Fixed position at bottom when map is open */}
       {isMapOpen && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4 z-[200]">
+        <div 
+          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4 z-[200]"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
           <motion.div 
             initial={{ opacity: 0, y: -20 }} 
             animate={{ opacity: 1, y: 0 }} 
