@@ -38,42 +38,49 @@ export interface SidebarProps {
   onChatToggle?: () => void;
   isChatPanelOpen?: boolean;
   activeItem?: string;
+  isCollapsed?: boolean;
+  onToggle?: () => void;
 }
 export const Sidebar = ({
   className,
   onItemClick,
   onChatToggle,
   isChatPanelOpen = false,
-  activeItem = 'search'
+  activeItem = 'search',
+  isCollapsed = false,
+  onToggle
 }: SidebarProps) => {
   console.log('Sidebar rendering with props:', { className, isChatPanelOpen, activeItem });
   
   const handleItemClick = (itemId: string) => {
     onItemClick?.(itemId);
   };
-  return <motion.div layout initial={{
-    opacity: 0,
-    x: -8
-  }} animate={{
-    opacity: 1,
-    x: 0
-  }} exit={{
-    opacity: 0,
-    x: -8
-  }} transition={{
-    layout: {
-      duration: 0.12,
-      ease: [0.4, 0, 0.2, 1]
-    },
-    opacity: {
-      duration: 0.1,
-      ease: [0.4, 0, 0.2, 1]
-    },
-    x: {
-      duration: 0.1,
-      ease: [0.4, 0, 0.2, 1]
-    }
-  }} className={`w-10 lg:w-14 flex flex-col items-center py-6 relative z-50 ${className || ''}`} style={{ background: 'var(--sidebar-background)' }}>
+  return <>
+    <motion.div layout initial={{
+      opacity: 0,
+      x: -8
+    }} animate={{
+      opacity: 1,
+      x: isCollapsed ? -40 : 0
+    }} exit={{
+      opacity: 0,
+      x: -8
+    }} transition={{
+      layout: {
+        duration: 0.3,
+        ease: [0.4, 0, 0.2, 1]
+      },
+      opacity: {
+        duration: 0.2,
+        ease: [0.4, 0, 0.2, 1]
+      },
+      x: {
+        duration: 0.3,
+        ease: [0.4, 0, 0.2, 1]
+      }
+    }} className={`${isCollapsed ? 'w-2' : 'w-10 lg:w-14'} flex flex-col items-center py-6 relative z-50 transition-all duration-300 ${className || ''}`} style={{ background: isCollapsed ? 'transparent' : 'var(--sidebar-background)' }}>
+      {!isCollapsed && (
+        <>
       {/* Chat Toggle Button */}
       <motion.button initial={{
       opacity: 0,
@@ -159,5 +166,35 @@ export const Sidebar = ({
             </motion.button>;
       })}
       </div>
-    </motion.div>;
+        </>
+      )}
+    </motion.div>
+
+    {/* Subtle Toggle Tab */}
+    <motion.button
+      initial={{ opacity: 0 }}
+      animate={{ 
+        opacity: isCollapsed ? 0.7 : 0.4,
+        x: isCollapsed ? 0 : -10
+      }}
+      whileHover={{ 
+        opacity: 1,
+        x: 0,
+        scale: 1.05
+      }}
+      transition={{
+        duration: 0.2,
+        ease: [0.4, 0, 0.2, 1]
+      }}
+      onClick={onToggle}
+      className={`fixed left-0 top-1/2 -translate-y-1/2 z-40 w-6 h-16 bg-white/20 backdrop-blur-md border border-white/10 rounded-r-lg shadow-lg flex items-center justify-center transition-all duration-300 ${isCollapsed ? 'hover:bg-white/30' : 'hover:bg-white/25'}`}
+      aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+    >
+      <motion.div
+        animate={{ rotate: isCollapsed ? 0 : 180 }}
+        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        className="w-2 h-2 border-r-2 border-b-2 border-white/60 rotate-45 transform"
+      />
+    </motion.button>
+  </>;
 };

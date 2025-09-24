@@ -25,6 +25,8 @@ const DashboardLayoutContent = ({
   const [showChatNotification, setShowChatNotification] = React.useState(false);
   const [previousChatData, setPreviousChatData] = React.useState<any>(null);
   const [resetTrigger, setResetTrigger] = React.useState<number>(0);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState<boolean>(false);
+  const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
   const { addChatToHistory, updateChatInHistory, getChatById } = useChatHistory();
 
   const handleViewChange = (viewId: string) => {
@@ -107,6 +109,18 @@ const DashboardLayoutContent = ({
     }
   }, [getChatById]);
 
+  const handleMapVisibilityChange = React.useCallback((isVisible: boolean) => {
+    setIsMapVisible(isVisible);
+    // Auto-collapse sidebar when map is visible
+    if (isVisible) {
+      setIsSidebarCollapsed(true);
+    }
+  }, []);
+
+  const handleSidebarToggle = React.useCallback(() => {
+    setIsSidebarCollapsed(prev => !prev);
+  }, []);
+
   const handleNewChat = React.useCallback(() => {
     setCurrentChatId(null);
     setCurrentChatData(null);
@@ -165,7 +179,9 @@ const DashboardLayoutContent = ({
         onItemClick={handleViewChange} 
         onChatToggle={handleChatPanelToggle} 
         isChatPanelOpen={isChatPanelOpen} 
-        activeItem={currentView} 
+        activeItem={currentView}
+        isCollapsed={isSidebarCollapsed}
+        onToggle={handleSidebarToggle}
       />
       
       {/* Main Content */}
@@ -176,6 +192,7 @@ const DashboardLayoutContent = ({
         currentChatData={currentChatData}
         isInChatMode={isInChatMode}
         resetTrigger={resetTrigger}
+        onMapVisibilityChange={handleMapVisibilityChange}
       />
     </motion.div>
   );

@@ -27,6 +27,7 @@ export interface MainContentProps {
   } | null;
   isInChatMode?: boolean;
   resetTrigger?: number;
+  onMapVisibilityChange?: (isVisible: boolean) => void;
 }
 export const MainContent = ({
   className,
@@ -35,7 +36,8 @@ export const MainContent = ({
   onChatHistoryCreate,
   currentChatData,
   isInChatMode: inChatMode = false,
-  resetTrigger: parentResetTrigger
+  resetTrigger: parentResetTrigger,
+  onMapVisibilityChange
 }: MainContentProps) => {
   const { addActivity } = useSystem();
   const [chatQuery, setChatQuery] = React.useState<string>("");
@@ -50,6 +52,7 @@ export const MainContent = ({
   const handleMapToggle = (isMapOpen: boolean) => {
     console.log('MainContent: Map toggle called with:', isMapOpen);
     setIsMapVisible(isMapOpen);
+    onMapVisibilityChange?.(isMapOpen);
   };
 
   const handleQueryStart = (query: string) => {
