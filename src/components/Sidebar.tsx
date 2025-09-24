@@ -170,14 +170,14 @@ export const Sidebar = ({
       )}
     </motion.div>
 
-    {/* Subtle but Visible Toggle */}
+    {/* Glassmorphism Toggle */}
     <motion.button
       initial={{ opacity: 0 }}
       animate={{ 
-        opacity: 0.8
+        opacity: 0.6
       }}
       whileHover={{ 
-        opacity: 1,
+        opacity: 0.9,
         scale: 1.05
       }}
       transition={{
@@ -185,13 +185,13 @@ export const Sidebar = ({
         ease: [0.4, 0, 0.2, 1]
       }}
       onClick={onToggle}
-      className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} top-1/2 -translate-y-1/2 z-50 w-5 h-10 bg-black/30 backdrop-blur-sm border border-white/15 rounded-r-lg shadow-md flex items-center justify-center transition-all duration-300 hover:bg-black/40 hover:border-white/25`}
+      className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} top-1/2 -translate-y-1/2 z-50 w-5 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-r-lg shadow-sm flex items-center justify-center transition-all duration-300 hover:bg-white/15 hover:border-white/30`}
       aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
     >
       <motion.div
         animate={{ rotate: isCollapsed ? 0 : 180 }}
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-        className="w-1.5 h-1.5 border-r border-b border-white/70 rotate-45 transform"
+        className="w-1.5 h-1.5 border-r border-b border-white/60 rotate-45 transform"
       />
     </motion.button>
   </>;
