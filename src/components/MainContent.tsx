@@ -49,7 +49,7 @@ export const MainContent = ({
   const handleQueryStart = (query: string) => {
     console.log('MainContent: Query started with:', query);
     
-    // Track search activity
+    // Track search activity but DON'T create chat history yet
     addActivity({
       action: `User initiated search: "${query}"`,
       documents: [],
@@ -57,17 +57,11 @@ export const MainContent = ({
       details: { searchTerm: query, timestamp: new Date().toISOString() }
     });
     
-    // Only create chat history entry, don't switch to chat mode yet
-    const chatData = {
-      query,
-      messages: [],
-      timestamp: new Date()
-    };
-    onChatHistoryCreate?.(chatData);
+    // Don't create chat history until query is actually submitted
   };
 
   const handleSearch = (query: string) => {
-    console.log('MainContent: Search triggered with query:', query);
+    console.log('MainContent: Search submitted with query:', query);
     setChatQuery(query);
     setChatMessages([]); // Reset messages for new chat
 
@@ -83,12 +77,17 @@ export const MainContent = ({
       }
     });
 
-    // Now actually enter chat mode and submit
+    // NOW create the chat history when query is actually submitted
     const chatData = {
       query,
       messages: [],
       timestamp: new Date()
     };
+    
+    // Create chat history first
+    onChatHistoryCreate?.(chatData);
+    
+    // Then enter chat mode
     onChatModeChange?.(true, chatData);
   };
   const handleBackToSearch = () => {

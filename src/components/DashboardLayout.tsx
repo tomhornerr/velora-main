@@ -41,56 +41,37 @@ const DashboardLayoutContent = ({
   };
 
   const handleChatHistoryCreate = React.useCallback((chatData: any) => {
-    // Create chat history without switching to chat mode
+    // Create chat history when query is submitted
     if (chatData && chatData.query) {
       setPreviousChatData(chatData);
       
-      // Only create a new chat if we don't already have one for this session
-      if (!currentChatId) {
-        const newChatId = addChatToHistory({
-          title: '',
-          timestamp: new Date().toISOString(),
-          preview: chatData.query,
-          messages: chatData.messages || []
-        });
-        setCurrentChatId(newChatId);
-      } else {
-        // Update existing chat
-        updateChatInHistory(currentChatId, chatData.messages || []);
-      }
+      // Always create a new chat when submitting a query (like ChatGPT)
+      const newChatId = addChatToHistory({
+        title: '',
+        timestamp: new Date().toISOString(),
+        preview: chatData.query,
+        messages: chatData.messages || []
+      });
+      setCurrentChatId(newChatId);
     }
-  }, [currentChatId, addChatToHistory, updateChatInHistory, setPreviousChatData]);
+  }, [addChatToHistory, setPreviousChatData]);
 
   const handleChatModeChange = (inChatMode: boolean, chatData?: any) => {
     if (inChatMode) {
       setIsInChatMode(true);
       if (chatData) {
         setCurrentChatData(chatData);
-        // Always store the latest chat data for potential notification
         setPreviousChatData(chatData);
         setHasPerformedSearch(true);
         
-        // Only create new chat if we don't already have one for this session AND there's actual content
-        if (chatData.query && chatData.query.trim()) {
-          if (currentChatId) {
-            // Update existing chat
-            updateChatInHistory(currentChatId, chatData.messages || []);
-          } else {
-            // Create new chat only if no current chat exists
-            const newChatId = addChatToHistory({
-              title: '', // Will be auto-generated from first message
-              timestamp: new Date().toISOString(),
-              preview: chatData.query || (chatData.messages && chatData.messages.length > 0 ? chatData.messages[0].content : ''),
-              messages: chatData.messages || []
-            });
-            setCurrentChatId(newChatId);
-          }
+        // Update existing chat with new messages (don't create new chat here)
+        if (currentChatId && chatData.messages && chatData.messages.length > 0) {
+          updateChatInHistory(currentChatId, chatData.messages);
         }
       }
     } else {
       // Exiting chat mode
       if (chatData) {
-        // Store the final chat data before exiting
         setPreviousChatData(chatData);
       }
       
@@ -125,11 +106,10 @@ const DashboardLayoutContent = ({
   }, [getChatById]);
 
   const handleNewChat = React.useCallback(() => {
-    console.log('Starting new chat - clearing all state');
     setCurrentChatId(null);
     setCurrentChatData(null);
-    setHasPerformedSearch(false); // Reset search state
-    setIsInChatMode(true); // Show blank chat interface
+    setHasPerformedSearch(false);
+    setIsInChatMode(true);
     setCurrentView('search');
     setIsChatPanelOpen(false);
     
