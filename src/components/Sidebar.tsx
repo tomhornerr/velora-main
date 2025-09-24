@@ -137,9 +137,9 @@ export const Sidebar = ({
         x: -8
       }} 
       transition={{
-        duration: 0.3,
+        duration: 0.1,
         ease: [0.4, 0, 0.2, 1]
-      }} 
+      }}
       className={`${isCollapsed ? 'w-2' : 'w-10 lg:w-14'} flex flex-col items-center py-6 fixed left-0 top-0 h-full z-50 transition-all duration-300 ${className || ''}`} 
       style={{ background: isCollapsed ? 'transparent' : 'var(--sidebar-background)' }}
     >
