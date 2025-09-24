@@ -2,59 +2,55 @@
 
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, useLocation } from "react-router-dom";
 import { Bell, User, BarChart3, Upload, Search, Home, PanelLeft, Settings } from "lucide-react";
-
 const sidebarItems = [{
   icon: Home,
   id: 'home',
-  label: 'Home',
-  path: '/home'
+  label: 'Home'
 }, {
   icon: Search,
   id: 'search',
-  label: 'Search',
-  path: '/search'
+  label: 'Search'
 }, {
   icon: Upload,
   id: 'upload',
-  label: 'Upload',
-  path: '/upload'
+  label: 'Upload'
 }, {
   icon: BarChart3,
   id: 'analytics',
-  label: 'Analytics',
-  path: '/analytics'
+  label: 'Analytics'
 }, {
   icon: Bell,
   id: 'notifications',
-  label: 'Notifications',
-  path: '/notifications'
+  label: 'Notifications'
 }, {
   icon: Settings,
   id: 'settings',
-  label: 'Settings',
-  path: '/settings'
+  label: 'Settings'
 }, {
   icon: User,
   id: 'profile',
-  label: 'Profile',
-  path: '/profile'
+  label: 'Profile'
 }] as any[];
-
 export interface SidebarProps {
   className?: string;
+  onItemClick?: (itemId: string) => void;
   onChatToggle?: () => void;
   isChatPanelOpen?: boolean;
+  activeItem?: string;
 }
-
 export const Sidebar = ({
   className,
+  onItemClick,
   onChatToggle,
-  isChatPanelOpen = false
+  isChatPanelOpen = false,
+  activeItem = 'search'
 }: SidebarProps) => {
-  const location = useLocation();
+  console.log('Sidebar rendering with props:', { className, isChatPanelOpen, activeItem });
   
+  const handleItemClick = (itemId: string) => {
+    onItemClick?.(itemId);
+  };
   return <motion.div layout initial={{
     opacity: 0,
     x: -8
@@ -127,41 +123,40 @@ export const Sidebar = ({
       <div className="flex flex-col space-y-2">
         {sidebarItems.map((item, index) => {
         const Icon = item.icon;
-        const isActive = location.pathname === item.path || (location.pathname === '/' && item.id === 'search');
-        return <Link 
-          key={item.id}
-          to={item.path}
-          className="block"
-        >
-          <motion.div 
-            initial={{
-              opacity: 0,
-              y: 8,
-              scale: 0.95
-            }} animate={{
-              opacity: 1,
-              y: 0,
-              scale: 1
-            }} transition={{
-              duration: 0.12,
-              ease: [0.4, 0, 0.2, 1],
-              delay: index * 0.02 + 0.04
-            }} whileHover={{
-              scale: 1.02,
-              transition: {
-                duration: 0.08,
-                ease: [0.4, 0, 0.2, 1]
-              }
-            }} whileTap={{
-              scale: 0.98,
-              transition: {
-                duration: 0.05
-              }
-            }} className="w-11 h-11 lg:w-13 lg:h-13 flex items-center justify-center transition-all duration-300 ease-out group" aria-label={item.label}>
-                {/* Icon */}
-                <Icon className={`w-4 h-4 lg:w-5 lg:h-5 transition-all duration-300 ease-out drop-shadow-sm ${isActive ? 'text-sidebar-active scale-105' : 'text-white hover:scale-102'}`} strokeWidth={1.8} />
-              </motion.div>
-            </Link>;
+        const isActive = activeItem === item.id;
+        return <motion.button key={item.id} initial={{
+          opacity: 0,
+          y: 8,
+          scale: 0.95
+        }} animate={{
+          opacity: 1,
+          y: 0,
+          scale: 1
+        }} transition={{
+          duration: 0.12,
+          ease: [0.4, 0, 0.2, 1],
+          delay: index * 0.02 + 0.04
+        }} whileHover={{
+          scale: 1.02,
+          transition: {
+            duration: 0.08,
+            ease: [0.4, 0, 0.2, 1]
+          }
+        }} whileTap={{
+          scale: 0.98,
+          transition: {
+            duration: 0.05
+          }
+        }} onClick={() => {
+          // Navigate to search page when search icon is clicked
+          if (item.id === 'search') {
+            console.log('Navigating to search page');
+          }
+          handleItemClick(item.id);
+        }} className="w-11 h-11 lg:w-13 lg:h-13 flex items-center justify-center transition-all duration-300 ease-out group" aria-label={item.label}>
+              {/* Icon */}
+              <Icon className={`w-4 h-4 lg:w-5 lg:h-5 transition-all duration-300 ease-out drop-shadow-sm ${isActive ? 'text-sidebar-active scale-105' : 'text-white hover:scale-102'}`} strokeWidth={1.8} />
+            </motion.button>;
       })}
       </div>
     </motion.div>;
