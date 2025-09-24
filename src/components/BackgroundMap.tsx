@@ -232,23 +232,24 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
           transition={{ duration: 0.6 }}
           className="fixed inset-0 z-10"
           style={{ 
-            pointerEvents: 'auto', 
-            left: 0, 
-            right: 0, 
-            top: 0, 
-            bottom: 0,
-            width: '100vw',
-            height: '100vh'
+            pointerEvents: 'none', // Let clicks pass through to map
+            touchAction: 'none' // Prevent default touch behaviors
           }}
         >
           <div 
             ref={mapContainer} 
-            className="w-full h-full" 
+            className="absolute inset-0 w-full h-full" 
             style={{ 
-              pointerEvents: 'auto',
-              width: '100%',
-              height: '100%'
-            }} 
+              pointerEvents: 'auto', // Enable map interactions
+              touchAction: 'auto', // Enable touch interactions
+              cursor: 'grab'
+            }}
+            onMouseDown={(e) => {
+              e.currentTarget.style.cursor = 'grabbing';
+            }}
+            onMouseUp={(e) => {
+              e.currentTarget.style.cursor = 'grab';
+            }}
           />
           
           {/* Map overlay with search info - no blur effects */}
