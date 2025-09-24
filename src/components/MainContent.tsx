@@ -172,11 +172,12 @@ export const MainContent = ({
     }
   };
 
-  // Reset chat mode when currentView changes (sidebar navigation)
+  // Reset chat mode and map visibility when currentView changes (sidebar navigation)
   React.useEffect(() => {
     if (currentView !== 'search' && currentView !== 'home') {
       setChatQuery("");
       setChatMessages([]);
+      setIsMapVisible(false); // Hide map when navigating away from search
       // Let the parent handle chat mode changes
       onChatModeChange?.(false);
     }
