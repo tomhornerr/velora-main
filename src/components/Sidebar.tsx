@@ -236,13 +236,13 @@ export const Sidebar = ({
       )}
     </motion.div>
 
-    {/* Smart Hide/Show Glassmorphism Toggle */}
+    {/* Smart Hide/Show Adaptive Contrast Toggle */}
     <AnimatePresence>
       {(!shouldHideToggle || isCollapsed) && (
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ 
-            opacity: 0.6,
+            opacity: 0.8,
             scale: 1
           }}
           exit={{ 
@@ -250,7 +250,7 @@ export const Sidebar = ({
             scale: 0.8
           }}
           whileHover={{ 
-            opacity: 0.9,
+            opacity: 1,
             scale: 1.05
           }}
           transition={{
@@ -258,13 +258,21 @@ export const Sidebar = ({
             ease: [0.4, 0, 0.2, 1]
           }}
           onClick={onToggle}
-          className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} top-1/2 -translate-y-1/2 z-50 w-5 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-r-lg shadow-sm flex items-center justify-center transition-all duration-300 hover:bg-white/15 hover:border-white/30`}
+          className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} top-1/2 -translate-y-1/2 z-50 w-5 h-10 
+            bg-black/40 backdrop-blur-md border border-white/30 rounded-r-lg shadow-lg
+            hover:bg-black/50 hover:border-white/40
+            [background:linear-gradient(135deg,rgba(0,0,0,0.4),rgba(0,0,0,0.2))]
+            hover:[background:linear-gradient(135deg,rgba(0,0,0,0.5),rgba(0,0,0,0.3))]
+            flex items-center justify-center transition-all duration-300`}
+          style={{
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1)'
+          }}
           aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
         >
           <motion.div
             animate={{ rotate: isCollapsed ? 0 : 180 }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            className="w-1.5 h-1.5 border-r border-b border-white/60 rotate-45 transform"
+            className="w-1.5 h-1.5 border-r-[1.5px] border-b-[1.5px] border-white rotate-45 transform drop-shadow-sm"
           />
         </motion.button>
       )}
