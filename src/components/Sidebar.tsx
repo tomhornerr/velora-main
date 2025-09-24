@@ -76,7 +76,7 @@ export const Sidebar = ({
         duration: 0.05,
         ease: [0.4, 0, 0.2, 1]
       }}
-      className={`${isCollapsed ? 'w-2' : 'w-10 lg:w-14'} flex flex-col items-center py-6 fixed left-0 top-0 h-full z-50 transition-all duration-300 ${className || ''}`} 
+      className={`${isCollapsed ? 'w-2' : 'w-10 lg:w-14'} flex flex-col items-center py-6 fixed left-0 top-0 h-full ${className?.includes('z-[150]') ? 'z-[150]' : 'z-50'} transition-all duration-300 ${className || ''}`} 
       style={{ background: isCollapsed ? 'transparent' : 'var(--sidebar-background)' }}
     >
       {!isCollapsed && (
@@ -173,7 +173,7 @@ export const Sidebar = ({
         ease: [0.4, 0, 0.2, 1]
       }}
       onClick={onToggle}
-      className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} ${isCollapsed ? 'top-[47%]' : 'top-[55%]'} -translate-y-1/2 z-50 w-5 h-10
+      className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} ${isCollapsed ? 'top-[47%]' : 'top-[55%]'} -translate-y-1/2 ${className?.includes('z-[150]') ? 'z-[150]' : 'z-50'} w-5 h-10
         bg-black/40 backdrop-blur-md border border-white/30 rounded-r-lg shadow-lg
         hover:bg-black/50 hover:border-white/40
         [background:linear-gradient(135deg,rgba(0,0,0,0.4),rgba(0,0,0,0.2))]

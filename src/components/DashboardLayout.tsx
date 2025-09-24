@@ -192,7 +192,7 @@ const DashboardLayoutContent = ({
         showChatHistory={true}
       />
       
-      {/* Sidebar */}
+      {/* Sidebar - with higher z-index when map is visible */}
       <Sidebar 
         onItemClick={handleViewChange} 
         onChatToggle={handleChatPanelToggle} 
@@ -200,9 +200,10 @@ const DashboardLayoutContent = ({
         activeItem={currentView}
         isCollapsed={isSidebarCollapsed}
         onToggle={handleSidebarToggle}
+        className={isMapVisible ? "z-[150]" : ""}
       />
       
-      {/* Main Content */}
+      {/* Main Content - with higher z-index when map is visible */}
       <MainContent 
         currentView={currentView} 
         onChatModeChange={handleChatModeChange}
@@ -212,6 +213,7 @@ const DashboardLayoutContent = ({
         resetTrigger={resetTrigger}
         onMapVisibilityChange={handleMapVisibilityChange}
         mapRef={mapRef}
+        className={isMapVisible ? "z-[150]" : ""}
       />
     </motion.div>
   );
