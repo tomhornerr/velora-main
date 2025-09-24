@@ -370,7 +370,7 @@ export const MainContent = ({
       ) : null}
       
       {/* Content container - no blur effects */}
-      <div className={`relative z-20 h-full flex flex-col ${
+      <div className={`relative h-full flex flex-col ${
         isInChatMode 
           ? 'bg-transparent' 
           : currentView === 'upload' 
@@ -378,7 +378,7 @@ export const MainContent = ({
             : currentView === 'analytics'
               ? 'bg-white/95'
               : isMapVisible 
-                ? 'bg-transparent'
+                ? 'bg-transparent pointer-events-none'
                 : 'bg-white/20'
       } ${currentView === 'upload' ? 'p-8' : currentView === 'analytics' ? 'p-4' : isMapVisible ? 'p-0' : 'p-8 lg:p-16'}`}>
         <div className={`relative w-full ${
@@ -386,7 +386,9 @@ export const MainContent = ({
             ? 'h-full w-full' 
             : currentView === 'upload' ? 'h-full' 
             : currentView === 'analytics' ? 'h-full overflow-hidden'
-            : 'max-w-5xl mx-auto'
+            : isMapVisible 
+              ? 'pointer-events-none'
+              : 'max-w-5xl mx-auto'
         } flex-1 flex flex-col`}>
           <motion.div initial={{
           opacity: 1,
@@ -398,7 +400,9 @@ export const MainContent = ({
           duration: 0.6,
           ease: [0.23, 1, 0.32, 1],
           delay: 0.1
-        }} className="relative flex-1 flex flex-col overflow-hidden">{renderViewContent()}
+        }} className={`relative flex-1 flex flex-col overflow-hidden ${
+          isMapVisible ? 'pointer-events-none' : ''
+        }`}>{renderViewContent()}
           </motion.div>
         </div>
       </div>
