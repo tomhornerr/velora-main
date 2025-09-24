@@ -363,7 +363,7 @@ export const MainContent = ({
       ) : null}
       
       {/* Content container with glass effect */}
-      <div className={`relative z-10 h-full flex flex-col ${
+      <div className={`relative z-10 h-full flex flex-col ${isMapVisible ? 'overflow-visible' : 'overflow-hidden'} ${
         isInChatMode 
           ? 'bg-transparent' 
           : currentView === 'upload' 
@@ -389,8 +389,7 @@ export const MainContent = ({
           duration: 0.6,
           ease: [0.23, 1, 0.32, 1],
           delay: 0.1
-        }} className="relative flex-1 flex flex-col overflow-hidden">
-            {renderViewContent()}
+        }} className="relative flex-1 flex flex-col ${isMapVisible ? 'overflow-visible' : 'overflow-hidden'}">{renderViewContent()}
           </motion.div>
         </div>
       </div>

@@ -80,12 +80,14 @@ export const SearchBar = ({
   }, []);
   const handleMapToggle = () => {
     console.log('Map toggle clicked. Current isMapOpen:', isMapOpen);
+    console.log('SearchBar visibility before toggle:', !isMapOpen ? 'normal position' : 'fixed position');
     setIsMapIconClicked(true);
     setTimeout(() => setIsMapIconClicked(false), 200); // Green flash duration
     
     setTimeout(() => {
       const newMapState = !isMapOpen;
       console.log('Setting map state to:', newMapState);
+      console.log('SearchBar will render as:', newMapState ? 'fixed bottom position' : 'centered position');
       setIsMapOpen(newMapState);
       onMapToggle?.(newMapState);
     }, 100); // Delay before position change
