@@ -139,12 +139,9 @@ const buildingTypes = [
           transition={{ duration: 2 }}
         />
 
-        {/* Main tower */}
-        <motion.rect
-          x="700"
-          y="200"
-          width="200"
-          height="800"
+        {/* Main tower with architectural details */}
+        <motion.path
+          d="M700 200 L700 1000 L900 1000 L900 200 L850 150 L750 150 Z"
           stroke="white"
           strokeWidth="2.5"
           fill="none"
@@ -153,26 +150,31 @@ const buildingTypes = [
           transition={{ delay: 0.5, duration: 2.5 }}
         />
 
-        {/* Mid-rise building */}
-        <motion.rect
-          x="920"
-          y="500"
-          width="150"
-          height="500"
+        {/* Tower crown/spire */}
+        <motion.path
+          d="M750 150 L800 100 L850 150"
           stroke="white"
           strokeWidth="2"
+          fill="none"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ delay: 2.8, duration: 1 }}
+        />
+
+        {/* Mid-rise building with stepped design */}
+        <motion.path
+          d="M920 500 L920 1000 L1070 1000 L1070 400 L1050 380 L940 380 L940 500 Z"
+          stroke="white"
+          strokeWidth="2.2"
           fill="none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
           transition={{ delay: 1, duration: 2 }}
         />
 
-        {/* Low-rise townhomes */}
-        <motion.rect
-          x="500"
-          y="750"
-          width="180"
-          height="250"
+        {/* Low-rise townhomes with varied heights */}
+        <motion.path
+          d="M500 750 L500 1000 L560 1000 L560 780 L580 760 L640 760 L640 1000 L680 1000 L680 750 Z"
           stroke="white"
           strokeWidth="2"
           fill="none"
@@ -181,24 +183,40 @@ const buildingTypes = [
           transition={{ delay: 1.5, duration: 1.5 }}
         />
 
-        {/* Tower windows grid */}
-        {Array.from({ length: 30 }, (_, i) => {
-          const floor = Math.floor(i / 6);
-          const unit = i % 6;
+        {/* Enhanced tower windows with architectural grid */}
+        {Array.from({ length: 32 }, (_, i) => {
+          const floor = Math.floor(i / 4);
+          const unit = i % 4;
+          const isCorner = unit === 0 || unit === 3;
           return (
-            <motion.rect
-              key={i}
-              x={715 + (unit % 2) * 80}
-              y={220 + floor * 50}
-              width={30}
-              height={30}
-              stroke="white"
-              strokeWidth="1"
-              fill="none"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.7 }}
-              transition={{ delay: 2.5 + i * 0.02, duration: 0.3 }}
-            />
+            <motion.g key={i}>
+              <motion.rect
+                x={715 + unit * 45}
+                y={180 + floor * 45}
+                width={isCorner ? 25 : 35}
+                height={35}
+                stroke="white"
+                strokeWidth={isCorner ? "1.5" : "1"}
+                fill="none"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isCorner ? 0.9 : 0.7 }}
+                transition={{ delay: 2.5 + i * 0.03, duration: 0.4 }}
+              />
+              {/* Window details */}
+              {unit % 2 === 0 && (
+                <motion.line
+                  x1={725 + unit * 45}
+                  y1={185 + floor * 45}
+                  x2={725 + unit * 45}
+                  y2={210 + floor * 45}
+                  stroke="white"
+                  strokeWidth="0.5"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 0.5 }}
+                  transition={{ delay: 3.5 + i * 0.02, duration: 0.3 }}
+                />
+              )}
+            </motion.g>
           );
         })}
 
@@ -256,28 +274,44 @@ const buildingTypes = [
           transition={{ duration: 2 }}
         />
 
-        {/* Main office tower */}
-        <motion.rect
-          x="750"
-          y="300"
-          width="250"
-          height="700"
+        {/* Main office tower with modern design */}
+        <motion.path
+          d="M750 300 L750 1000 L1000 1000 L1000 300 L975 275 L775 275 Z"
           stroke="white"
-          strokeWidth="2.5"
+          strokeWidth="2.8"
           fill="none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
           transition={{ delay: 0.5, duration: 2.2 }}
         />
 
-        {/* Connected office wing */}
-        <motion.rect
-          x="1020"
-          y="600"
-          width="200"
-          height="400"
+        {/* Glass facade grid */}
+        <motion.g
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.6 }}
+          transition={{ delay: 2.5, duration: 1 }}
+        >
+          {Array.from({ length: 5 }, (_, i) => (
+            <motion.line
+              key={i}
+              x1={775 + i * 50}
+              y1="300"
+              x2={775 + i * 50}
+              y2="1000"
+              stroke="white"
+              strokeWidth="1"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ delay: 3 + i * 0.1, duration: 1.5 }}
+            />
+          ))}
+        </motion.g>
+
+        {/* Connected office wing with angled design */}
+        <motion.path
+          d="M1020 600 L1020 1000 L1220 1000 L1220 580 L1200 560 L1040 580 Z"
           stroke="white"
-          strokeWidth="2"
+          strokeWidth="2.2"
           fill="none"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
@@ -703,44 +737,6 @@ export const PropertyCyclingBackground = () => {
             {buildingTypes[currentBuilding].svg}
           </motion.g>
         </AnimatePresence>
-
-        {/* Professional property type label */}
-        <motion.g
-          key={`label-${buildingTypes[currentBuilding].type}`}
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 0.8, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.1 }}
-          transition={{ duration: 1 }}
-        >
-          <motion.rect
-            x="60"
-            y="60"
-            width={buildingTypes[currentBuilding].type.length * 14 + 60}
-            height="60"
-            stroke="white"
-            strokeWidth="2"
-            fill="none"
-            className="opacity-40"
-            rx="5"
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ delay: 0.5, duration: 1 }}
-          />
-          <motion.text
-            x="90"
-            y="100"
-            fill="white"
-            fontSize="20"
-            fontFamily="Arial, sans-serif"
-            fontWeight="300"
-            className="opacity-80"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 0.8 }}
-            transition={{ delay: 1, duration: 1 }}
-          >
-            {buildingTypes[currentBuilding].type}
-          </motion.text>
-        </motion.g>
       </svg>
 
       {/* Clean overlay */}
