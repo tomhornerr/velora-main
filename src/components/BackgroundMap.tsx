@@ -219,7 +219,7 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6 }}
-          className="fixed inset-0 z-20"
+          className="fixed inset-0 z-10"
           style={{ pointerEvents: 'auto' }}
         >
           <div ref={mapContainer} className="w-full h-full" style={{ pointerEvents: 'auto' }} />

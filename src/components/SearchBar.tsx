@@ -85,6 +85,7 @@ export const SearchBar = ({
     
     const newMapState = !isMapOpen;
     console.log('Setting map state to:', newMapState);
+    console.log('About to render:', newMapState ? 'fixed top search bar' : 'centered search bar');
     setIsMapOpen(newMapState);
     onMapToggle?.(newMapState);
   };
@@ -105,6 +106,8 @@ export const SearchBar = ({
       }, 100);
     }
   };
+  console.log('SearchBar render - isMapOpen:', isMapOpen);
+  
   return (
     <>
       {/* Normal position when map is closed */}

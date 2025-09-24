@@ -364,7 +364,7 @@ export const MainContent = ({
       ) : null}
       
       {/* Content container with glass effect */}
-      <div className={`relative z-10 h-full flex flex-col ${
+      <div className={`relative z-20 h-full flex flex-col ${
         isInChatMode 
           ? 'bg-transparent' 
           : currentView === 'upload' 
