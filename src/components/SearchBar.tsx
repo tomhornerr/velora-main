@@ -79,12 +79,15 @@ export const SearchBar = ({
     }
   }, []);
   const handleMapToggle = () => {
+    console.log('Map toggle clicked. Current isMapOpen:', isMapOpen);
     setIsMapIconClicked(true);
     setTimeout(() => setIsMapIconClicked(false), 200); // Green flash duration
     
     setTimeout(() => {
-      setIsMapOpen(!isMapOpen);
-      onMapToggle?.(!isMapOpen);
+      const newMapState = !isMapOpen;
+      console.log('Setting map state to:', newMapState);
+      setIsMapOpen(newMapState);
+      onMapToggle?.(newMapState);
     }, 100); // Delay before position change
   };
 
@@ -107,9 +110,15 @@ export const SearchBar = ({
   return (
     <div className={`w-full transition-all duration-600 ease-out ${
       isMapOpen 
-        ? 'fixed bottom-12 left-6 right-6 z-30' 
+        ? 'fixed bottom-4 left-4 right-4 z-30' 
         : 'h-full flex items-center justify-center px-6'
     } ${className || ''}`}>
+      {/* Debug info */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-4 right-4 bg-red-500 text-white p-2 text-xs z-50">
+          Map Open: {isMapOpen ? 'YES' : 'NO'}
+        </div>
+      )}
       <div className="w-full max-w-2xl mx-auto">
         {/* Main Search Interface */}
         <motion.div 
