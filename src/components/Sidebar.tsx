@@ -69,24 +69,22 @@ export const Sidebar = ({
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Auto-hide toggle when sidebar is open
+  // Auto-hide toggle when sidebar is open - optimized to prevent excessive re-renders
   React.useEffect(() => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+    }
+
     if (!isCollapsed) {
-      // On search page, hide toggle immediately when sidebar is open
       if (activeItem === 'search') {
         setShouldHideToggle(true);
       } else {
-        // Hide toggle after 1 second when sidebar is open on other pages
         hideTimeoutRef.current = setTimeout(() => {
           setShouldHideToggle(true);
         }, 1000);
       }
     } else {
-      // Show toggle immediately when sidebar is collapsed
       setShouldHideToggle(false);
-      if (hideTimeoutRef.current) {
-        clearTimeout(hideTimeoutRef.current);
-      }
     }
 
     return () => {
@@ -96,60 +94,55 @@ export const Sidebar = ({
     };
   }, [isCollapsed, activeItem]);
 
-  // Show toggle when mouse is near
+  // Show toggle when mouse is near - throttled to prevent excessive updates
   React.useEffect(() => {
-    if (shouldHideToggle) {
-      const toggleX = isCollapsed ? 8 : (window.innerWidth >= 1024 ? 56 : 40); // Approximate toggle position
-      const toggleY = window.innerHeight / 2; // Center of screen
-      
-      const distance = Math.sqrt(
-        Math.pow(mousePosition.x - toggleX, 2) + 
-        Math.pow(mousePosition.y - toggleY, 2)
-      );
+    if (!shouldHideToggle) return;
+    
+    const toggleX = isCollapsed ? 8 : (window.innerWidth >= 1024 ? 56 : 40);
+    const toggleY = window.innerHeight / 2;
+    
+    const distance = Math.sqrt(
+      Math.pow(mousePosition.x - toggleX, 2) + 
+      Math.pow(mousePosition.y - toggleY, 2)
+    );
 
-      // Show toggle when mouse is within 100px
-      if (distance < 100) {
-        setShouldHideToggle(false);
-        // Reset the hide timer
-        if (hideTimeoutRef.current) {
-          clearTimeout(hideTimeoutRef.current);
-        }
-        if (!isCollapsed) {
-          hideTimeoutRef.current = setTimeout(() => {
-            setShouldHideToggle(true);
-          }, 1000);
-        }
+    if (distance < 100) {
+      setShouldHideToggle(false);
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+      if (!isCollapsed) {
+        hideTimeoutRef.current = setTimeout(() => {
+          setShouldHideToggle(true);
+        }, 1000);
       }
     }
-  }, [mousePosition, shouldHideToggle, isCollapsed]);
+  }, [mousePosition.x, mousePosition.y, shouldHideToggle, isCollapsed]);
 
   const handleItemClick = (itemId: string) => {
     onItemClick?.(itemId);
   };
   return <>
-    <motion.div layout initial={{
-      opacity: 0,
-      x: -8
-    }} animate={{
-      opacity: 1,
-      x: isCollapsed ? -40 : 0
-    }} exit={{
-      opacity: 0,
-      x: -8
-    }} transition={{
-      layout: {
+    <motion.div 
+      initial={{
+        opacity: 0,
+        x: -8
+      }} 
+      animate={{
+        opacity: 1,
+        x: isCollapsed ? -40 : 0
+      }} 
+      exit={{
+        opacity: 0,
+        x: -8
+      }} 
+      transition={{
         duration: 0.3,
         ease: [0.4, 0, 0.2, 1]
-      },
-      opacity: {
-        duration: 0.2,
-        ease: [0.4, 0, 0.2, 1]
-      },
-      x: {
-        duration: 0.3,
-        ease: [0.4, 0, 0.2, 1]
-      }
-    }} className={`${isCollapsed ? 'w-2' : 'w-10 lg:w-14'} flex flex-col items-center py-6 fixed left-0 top-0 h-full z-50 transition-all duration-300 ${className || ''}`} style={{ background: isCollapsed ? 'transparent' : 'var(--sidebar-background)' }}>
+      }} 
+      className={`${isCollapsed ? 'w-2' : 'w-10 lg:w-14'} flex flex-col items-center py-6 fixed left-0 top-0 h-full z-50 transition-all duration-300 ${className || ''}`} 
+      style={{ background: isCollapsed ? 'transparent' : 'var(--sidebar-background)' }}
+    >
       {!isCollapsed && (
         <>
       {/* Chat Toggle Button */}
