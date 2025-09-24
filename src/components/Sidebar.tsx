@@ -3,6 +3,7 @@
 import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, User, BarChart3, Upload, Search, Home, PanelLeft, Settings } from "lucide-react";
+
 const sidebarItems = [{
   icon: Home,
   id: 'home',
@@ -32,6 +33,7 @@ const sidebarItems = [{
   id: 'profile',
   label: 'Profile'
 }] as any[];
+
 export interface SidebarProps {
   className?: string;
   onItemClick?: (itemId: string) => void;
@@ -41,6 +43,7 @@ export interface SidebarProps {
   isCollapsed?: boolean;
   onToggle?: () => void;
 }
+
 export const Sidebar = ({
   className,
   onItemClick,
@@ -50,8 +53,71 @@ export const Sidebar = ({
   isCollapsed = false,
   onToggle
 }: SidebarProps) => {
+  const [shouldHideToggle, setShouldHideToggle] = React.useState(false);
+  const [mousePosition, setMousePosition] = React.useState({ x: 0, y: 0 });
+  const hideTimeoutRef = React.useRef<NodeJS.Timeout>();
+
   console.log('Sidebar rendering with props:', { className, isChatPanelOpen, activeItem });
-  
+
+  // Handle mouse movement for proximity detection
+  React.useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
+  // Auto-hide toggle when sidebar is open
+  React.useEffect(() => {
+    if (!isCollapsed) {
+      // Hide toggle after 3 seconds when sidebar is open
+      hideTimeoutRef.current = setTimeout(() => {
+        setShouldHideToggle(true);
+      }, 3000);
+    } else {
+      // Show toggle immediately when sidebar is collapsed
+      setShouldHideToggle(false);
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+    }
+
+    return () => {
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+    };
+  }, [isCollapsed]);
+
+  // Show toggle when mouse is near
+  React.useEffect(() => {
+    if (shouldHideToggle) {
+      const toggleX = isCollapsed ? 8 : (window.innerWidth >= 1024 ? 56 : 40); // Approximate toggle position
+      const toggleY = window.innerHeight / 2; // Center of screen
+      
+      const distance = Math.sqrt(
+        Math.pow(mousePosition.x - toggleX, 2) + 
+        Math.pow(mousePosition.y - toggleY, 2)
+      );
+
+      // Show toggle when mouse is within 100px
+      if (distance < 100) {
+        setShouldHideToggle(false);
+        // Reset the hide timer
+        if (hideTimeoutRef.current) {
+          clearTimeout(hideTimeoutRef.current);
+        }
+        if (!isCollapsed) {
+          hideTimeoutRef.current = setTimeout(() => {
+            setShouldHideToggle(true);
+          }, 3000);
+        }
+      }
+    }
+  }, [mousePosition, shouldHideToggle, isCollapsed]);
+
   const handleItemClick = (itemId: string) => {
     onItemClick?.(itemId);
   };
@@ -170,29 +236,38 @@ export const Sidebar = ({
       )}
     </motion.div>
 
-    {/* Glassmorphism Toggle */}
-    <motion.button
-      initial={{ opacity: 0 }}
-      animate={{ 
-        opacity: 0.6
-      }}
-      whileHover={{ 
-        opacity: 0.9,
-        scale: 1.05
-      }}
-      transition={{
-        duration: 0.2,
-        ease: [0.4, 0, 0.2, 1]
-      }}
-      onClick={onToggle}
-      className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} top-1/2 -translate-y-1/2 z-50 w-5 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-r-lg shadow-sm flex items-center justify-center transition-all duration-300 hover:bg-white/15 hover:border-white/30`}
-      aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-    >
-      <motion.div
-        animate={{ rotate: isCollapsed ? 0 : 180 }}
-        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-        className="w-1.5 h-1.5 border-r border-b border-white/60 rotate-45 transform"
-      />
-    </motion.button>
+    {/* Smart Hide/Show Glassmorphism Toggle */}
+    <AnimatePresence>
+      {(!shouldHideToggle || isCollapsed) && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ 
+            opacity: 0.6,
+            scale: 1
+          }}
+          exit={{ 
+            opacity: 0,
+            scale: 0.8
+          }}
+          whileHover={{ 
+            opacity: 0.9,
+            scale: 1.05
+          }}
+          transition={{
+            duration: 0.2,
+            ease: [0.4, 0, 0.2, 1]
+          }}
+          onClick={onToggle}
+          className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} top-1/2 -translate-y-1/2 z-50 w-5 h-10 bg-white/10 backdrop-blur-md border border-white/20 rounded-r-lg shadow-sm flex items-center justify-center transition-all duration-300 hover:bg-white/15 hover:border-white/30`}
+          aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+        >
+          <motion.div
+            animate={{ rotate: isCollapsed ? 0 : 180 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            className="w-1.5 h-1.5 border-r border-b border-white/60 rotate-45 transform"
+          />
+        </motion.button>
+      )}
+    </AnimatePresence>
   </>;
 };
