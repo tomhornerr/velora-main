@@ -131,42 +131,8 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
       dragPan: true,
       keyboard: true,
       touchZoomRotate: true,
-      attributionControl: false // We'll add custom attribution
+      attributionControl: false // Remove attribution control
     });
-
-    // Add minimal custom attribution
-    map.current.addControl(
-      new mapboxgl.AttributionControl({
-        compact: true,
-        customAttribution: ''
-      }),
-      'bottom-right'
-    );
-
-    // Add navigation controls
-    map.current.addControl(
-      new mapboxgl.NavigationControl({
-        visualizePitch: true,
-        showCompass: true,
-        showZoom: true
-      }),
-      'top-right'
-    );
-
-    // Add fullscreen control
-    map.current.addControl(new mapboxgl.FullscreenControl(), 'top-right');
-
-    // Add geolocate control
-    map.current.addControl(
-      new mapboxgl.GeolocateControl({
-        positionOptions: {
-          enableHighAccuracy: true
-        },
-        trackUserLocation: true,
-        showUserHeading: true
-      }),
-      'top-right'
-    );
 
     // Add click event for interactive location selection
     map.current.on('click', async (e) => {
