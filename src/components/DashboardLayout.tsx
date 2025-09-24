@@ -8,7 +8,7 @@ import { ChatPanel } from './ChatPanel';
 import { SearchBar } from './SearchBar';
 import { ChatHistoryProvider, useChatHistory } from './ChatHistoryContext';
 import { ChatReturnNotification } from './ChatReturnNotification';
-import { Background3DGlobe, MapRef } from './Background3DGlobe';
+import { BackgroundMap, MapRef } from './BackgroundMap';
 
 export interface DashboardLayoutProps {
   className?: string;
@@ -167,8 +167,8 @@ const DashboardLayoutContent = ({
       transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }} 
       className={`flex h-screen w-full overflow-hidden relative ${className || ''}`}
     >
-      {/* Background 3D Globe - Always rendered at top level */}
-      <Background3DGlobe 
+      {/* Background Map - Always rendered at top level */}
+      <BackgroundMap 
         ref={mapRef}
         isVisible={isMapVisible} 
         searchQuery={isMapVisible ? currentLocation : undefined}
