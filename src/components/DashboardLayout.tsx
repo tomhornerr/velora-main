@@ -66,6 +66,7 @@ const DashboardLayoutContent = ({
   const handleChatModeChange = (inChatMode: boolean, chatData?: any) => {
     if (inChatMode) {
       setIsInChatMode(true);
+      setIsSidebarCollapsed(true); // Auto-collapse sidebar when entering chat mode
       if (chatData) {
         setCurrentChatData(chatData);
         setPreviousChatData(chatData);
@@ -109,6 +110,7 @@ const DashboardLayoutContent = ({
       setIsInChatMode(true);
       setCurrentView('search');
       setIsChatPanelOpen(false);
+      setIsSidebarCollapsed(true); // Auto-collapse sidebar when entering chat
     }
   }, [getChatById]);
 
