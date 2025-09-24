@@ -2,130 +2,46 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
+import { Outlet } from "react-router-dom";
 import { Sidebar } from './Sidebar';
-import { MainContent } from './MainContent';
 import { ChatPanel } from './ChatPanel';
 import { ChatHistoryProvider, useChatHistory } from './ChatHistoryContext';
 import { ChatReturnNotification } from './ChatReturnNotification';
 
 export interface DashboardLayoutProps {
   className?: string;
+  children?: React.ReactNode;
 }
 
 const DashboardLayoutContent = ({
-  className
+  className,
+  children
 }: DashboardLayoutProps) => {
-  const [currentView, setCurrentView] = React.useState<string>('search');
   const [isChatPanelOpen, setIsChatPanelOpen] = React.useState<boolean>(false);
-  const [isInChatMode, setIsInChatMode] = React.useState<boolean>(false);
-  const [currentChatData, setCurrentChatData] = React.useState<any>(null);
-  const [currentChatId, setCurrentChatId] = React.useState<string | null>(null);
-  const [hasPerformedSearch, setHasPerformedSearch] = React.useState(false);
   const [showChatNotification, setShowChatNotification] = React.useState(false);
   const [previousChatData, setPreviousChatData] = React.useState<any>(null);
-  const [resetTrigger, setResetTrigger] = React.useState<number>(0);
-  const { addChatToHistory, updateChatInHistory, getChatById } = useChatHistory();
-
-  const handleViewChange = (viewId: string) => {
-    // Show notification if we have any previous chat data and we're navigating away from search/home
-    if (previousChatData && (viewId !== 'search' && viewId !== 'home')) {
-      setShowChatNotification(true);
-    }
-    
-    // Always close chat panel when navigating to a different view
-    setIsChatPanelOpen(false);
-    
-    // Always exit chat mode when navigating to a different view
-    setCurrentView(viewId);
-    setIsInChatMode(false);
-    setCurrentChatData(null);
-  };
-
-  const handleChatHistoryCreate = React.useCallback((chatData: any) => {
-    // Create chat history when query is submitted
-    if (chatData && chatData.query) {
-      setPreviousChatData(chatData);
-      
-      // Always create a new chat when submitting a query (like ChatGPT)
-      const newChatId = addChatToHistory({
-        title: '',
-        timestamp: new Date().toISOString(),
-        preview: chatData.query,
-        messages: chatData.messages || []
-      });
-      setCurrentChatId(newChatId);
-    }
-  }, [addChatToHistory, setPreviousChatData]);
-
-  const handleChatModeChange = (inChatMode: boolean, chatData?: any) => {
-    if (inChatMode) {
-      setIsInChatMode(true);
-      if (chatData) {
-        setCurrentChatData(chatData);
-        setPreviousChatData(chatData);
-        setHasPerformedSearch(true);
-        
-        // Update existing chat with new messages (don't create new chat here)
-        if (currentChatId && chatData.messages && chatData.messages.length > 0) {
-          updateChatInHistory(currentChatId, chatData.messages);
-        }
-      }
-    } else {
-      // Exiting chat mode
-      if (chatData) {
-        setPreviousChatData(chatData);
-      }
-      
-      // Show notification if we have chat data to store
-      if (chatData && (chatData.query || chatData.messages?.length > 0)) {
-        setShowChatNotification(true);
-      }
-      
-      setIsInChatMode(false);
-      setCurrentChatData(null);
-    }
-  };
+  const { addChatToHistory, getChatById } = useChatHistory();
 
   const handleChatPanelToggle = React.useCallback(() => {
-    console.log('Toggling chat panel. Current state:', { isChatPanelOpen, hasPerformedSearch });
     setIsChatPanelOpen(prev => !prev);
-  }, [isChatPanelOpen, hasPerformedSearch]);
+  }, []);
 
   const handleChatSelect = React.useCallback((chatId: string) => {
     console.log('Selecting chat:', chatId);
     const chat = getChatById(chatId);
     if (chat) {
-      setCurrentChatId(chatId);
-      setCurrentChatData({
-        query: chat.preview,
-        messages: chat.messages
-      });
-      setIsInChatMode(true);
-      setCurrentView('search');
+      // TODO: Navigate to search page and load chat
       setIsChatPanelOpen(false);
     }
   }, [getChatById]);
 
   const handleNewChat = React.useCallback(() => {
-    setCurrentChatId(null);
-    setCurrentChatData(null);
-    setHasPerformedSearch(false);
-    setIsInChatMode(true);
-    setCurrentView('search');
+    // TODO: Navigate to search page and start new chat
     setIsChatPanelOpen(false);
-    
-    // Trigger reset in SearchBar
-    setResetTrigger(prev => prev + 1);
-    
-    // Force clear all chat state immediately
-    handleChatModeChange(true, { query: "", messages: [], timestamp: new Date() });
-  }, [handleChatModeChange]);
+  }, []);
 
   const handleReturnToChat = React.useCallback(() => {
     if (previousChatData) {
-      setCurrentChatData(previousChatData);
-      setIsInChatMode(true);
-      setCurrentView('search');
       setShowChatNotification(false);
     }
   }, [previousChatData]);
@@ -161,21 +77,14 @@ const DashboardLayoutContent = ({
       
       {/* Sidebar */}
       <Sidebar 
-        onItemClick={handleViewChange} 
         onChatToggle={handleChatPanelToggle} 
         isChatPanelOpen={isChatPanelOpen} 
-        activeItem={currentView} 
       />
       
       {/* Main Content */}
-      <MainContent 
-        currentView={currentView} 
-        onChatModeChange={handleChatModeChange}
-        onChatHistoryCreate={handleChatHistoryCreate}
-        currentChatData={currentChatData}
-        isInChatMode={isInChatMode}
-        resetTrigger={resetTrigger}
-      />
+      <div className="flex-1 overflow-hidden">
+        {children || <Outlet />}
+      </div>
     </motion.div>
   );
 };
