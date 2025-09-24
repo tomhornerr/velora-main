@@ -107,7 +107,7 @@ export const SearchBar = ({
   return (
     <div className={`w-full transition-all duration-600 ease-out ${
       isMapOpen 
-        ? 'fixed bottom-12 left-6 right-6 z-50' 
+        ? 'fixed bottom-12 left-6 right-6 z-30' 
         : 'h-full flex items-center justify-center px-6'
     } ${className || ''}`}>
       <div className="w-full max-w-2xl mx-auto">
