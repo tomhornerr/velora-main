@@ -120,25 +120,41 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
     // Initialize map
     mapboxgl.accessToken = mapboxToken;
     
+    console.log('Initializing Mapbox map...');
+    
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/satellite-streets-v12',
       center: [-2.5879, 51.4545], // Bristol center
       zoom: 11,
-      minZoom: 2,
-      maxZoom: 20,
+      minZoom: 1,
+      maxZoom: 22,
       antialias: true,
-      scrollZoom: {
-        around: 'center' // Smooth zoom behavior
-      },
+      scrollZoom: true, // Enable scroll zoom
       doubleClickZoom: true,
       dragPan: true,
-      dragRotate: true,
+      dragRotate: false, // Disable rotation for better UX
       keyboard: true,
       touchZoomRotate: true,
-      touchPitch: true,
+      touchPitch: false,
       attributionControl: false,
-      logoPosition: 'bottom-left'
+      logoPosition: 'bottom-left',
+      interactive: true // Ensure map is interactive
+    });
+    
+    console.log('Map initialized:', map.current);
+    
+    // Add event listeners to debug interactions
+    map.current.on('load', () => {
+      console.log('Map loaded successfully');
+    });
+    
+    map.current.on('zoom', () => {
+      console.log('Map zoom changed to:', map.current?.getZoom());
+    });
+    
+    map.current.on('move', () => {
+      console.log('Map moved to:', map.current?.getCenter());
     });
 
     // Hide Mapbox logo with CSS
@@ -231,25 +247,10 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6 }}
           className="fixed inset-0 z-10"
-          style={{ 
-            pointerEvents: 'none', // Let clicks pass through to map
-            touchAction: 'none' // Prevent default touch behaviors
-          }}
         >
           <div 
             ref={mapContainer} 
-            className="absolute inset-0 w-full h-full" 
-            style={{ 
-              pointerEvents: 'auto', // Enable map interactions
-              touchAction: 'auto', // Enable touch interactions
-              cursor: 'grab'
-            }}
-            onMouseDown={(e) => {
-              e.currentTarget.style.cursor = 'grabbing';
-            }}
-            onMouseUp={(e) => {
-              e.currentTarget.style.cursor = 'grab';
-            }}
+            className="w-full h-full"
           />
           
           {/* Map overlay with search info - no blur effects */}
