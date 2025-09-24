@@ -131,55 +131,47 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
     try {
       map.current = new mapboxgl.Map({
         container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v12', // Try simpler style first
+        style: 'mapbox://styles/mapbox/streets-v12',
         center: [-2.5879, 51.4545], // Bristol center
         zoom: 11,
-        minZoom: 1,
-        maxZoom: 22,
+        minZoom: 0,
+        maxZoom: 24,
         scrollZoom: true,
         doubleClickZoom: true,
         dragPan: true,
-        dragRotate: false,
+        dragRotate: true,
         keyboard: true,
         touchZoomRotate: true,
-        interactive: true
+        touchPitch: true,
+        interactive: true,
+        attributionControl: false
       });
       
       console.log('Map instance created:', map.current);
       
-      // Add comprehensive event listeners
+      // Wait for map to load before adding event listeners
       map.current.on('load', () => {
         console.log('✅ Map loaded successfully');
         console.log('Map zoom level:', map.current?.getZoom());
         console.log('Map center:', map.current?.getCenter());
+        
+        // Force map to resize to container
+        if (map.current) {
+          map.current.resize();
+        }
+      });
+      
+      // Add interaction event listeners
+      map.current.on('zoom', () => {
+        console.log('🔍 Zoom changed to:', map.current?.getZoom());
+      });
+      
+      map.current.on('moveend', () => {
+        console.log('🏃 Move ended at:', map.current?.getCenter());
       });
       
       map.current.on('error', (e) => {
         console.error('❌ Map error:', e);
-      });
-      
-      map.current.on('zoom', (e) => {
-        console.log('🔍 Zoom event:', map.current?.getZoom());
-      });
-      
-      map.current.on('move', (e) => {
-        console.log('🏃 Move event:', map.current?.getCenter());
-      });
-      
-      map.current.on('drag', (e) => {
-        console.log('🖱️ Drag event');
-      });
-      
-      map.current.on('wheel', (e) => {
-        console.log('🎢 Wheel event');
-      });
-      
-      map.current.on('mousedown', (e) => {
-        console.log('🖱️ Mouse down event');
-      });
-      
-      map.current.on('touchstart', (e) => {
-        console.log('👆 Touch start event');
       });
       
     } catch (error) {
@@ -277,24 +269,13 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6 }}
           className="fixed inset-0 z-10"
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            width: '100vw',
-            height: '100vh'
-          }}
         >
           <div 
             ref={mapContainer} 
             className="w-full h-full"
             style={{
               width: '100%',
-              height: '100%',
-              position: 'relative',
-              zIndex: 1
+              height: '100%'
             }}
           />
           
