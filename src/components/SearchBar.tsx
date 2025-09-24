@@ -9,22 +9,26 @@ export interface SearchBarProps {
   onSearch?: (query: string) => void;
   onQueryStart?: (query: string) => void;
   onMapToggle?: (isMapOpen: boolean) => void;
-  resetTrigger?: number; // Add reset trigger prop
+  resetTrigger?: number;
+  isMapVisible?: boolean; // Add prop to control visibility externally
 }
 export const SearchBar = ({
   className,
   onSearch,
   onQueryStart,
   onMapToggle,
-  resetTrigger
+  resetTrigger,
+  isMapVisible = false
 }: SearchBarProps) => {
   const [searchValue, setSearchValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [hasStartedTyping, setHasStartedTyping] = useState(false);
-  const [isMapOpen, setIsMapOpen] = useState(false);
   const [isMapIconClicked, setIsMapIconClicked] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  
+  // Use external map visibility prop instead of internal state
+  const isMapOpen = isMapVisible;
   
   // Auto-focus on any keypress for search bar
   useEffect(() => {
@@ -79,16 +83,14 @@ export const SearchBar = ({
     }
   }, []);
   const handleMapToggle = () => {
-    console.log('Map toggle clicked. Current isMapOpen:', isMapOpen);
+    console.log('Map toggle clicked. Current isMapVisible:', isMapVisible);
     setIsMapIconClicked(true);
     setTimeout(() => setIsMapIconClicked(false), 200); // Green flash duration
     
-    setTimeout(() => {
-      const newMapState = !isMapOpen;
-      console.log('Setting map state to:', newMapState);
-      setIsMapOpen(newMapState);
-      onMapToggle?.(newMapState);
-    }, 100); // Delay before position change
+    // Toggle the map and immediately call the callback
+    const newMapState = !isMapVisible;
+    console.log('Toggling map to:', newMapState);
+    onMapToggle?.(newMapState);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
