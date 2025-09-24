@@ -151,7 +151,6 @@ export const SearchBar = ({
                     if (value.trim() && !hasStartedTyping) {
                       console.log('SearchBar: First character typed, creating chat history');
                       setHasStartedTyping(true);
-                      console.log('SearchBar: Calling onQueryStart with:', value.trim());
                       onQueryStart?.(value.trim());
                     }
                   }}
