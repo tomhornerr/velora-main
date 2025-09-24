@@ -12,7 +12,7 @@ import DotGrid from './DotGrid';
 import { PropertyOutlineBackground } from './PropertyOutlineBackground';
 import { Property3DBackground } from './Property3DBackground';
 import { PropertyCyclingBackground } from './PropertyCyclingBackground';
-import { MapRef } from './BackgroundMap';
+import { BackgroundMap, MapRef } from './BackgroundMap';
 import { useSystem } from '@/contexts/SystemContext';
 export interface MainContentProps {
   className?: string;
@@ -362,6 +362,13 @@ export const MainContent = ({
     }
   };
   return <div className={`flex-1 relative ${className || ''}`}>
+      {/* Interactive Map Layer */}
+      <BackgroundMap 
+        ref={mapRef}
+        isVisible={isMapVisible}
+        onLocationUpdate={handleLocationUpdate}
+      />
+      
       {/* Background based on current view */}
       {!isMapVisible && (currentView === 'search' || currentView === 'home') && !isInChatMode ? (
         <PropertyCyclingBackground />
@@ -377,8 +384,10 @@ export const MainContent = ({
             ? 'bg-white/95' 
             : currentView === 'analytics'
               ? 'bg-white/95'
-              : 'bg-white/20'
-      } ${currentView === 'upload' ? 'p-8' : currentView === 'analytics' ? 'p-4' : 'p-8 lg:p-16'}`}>
+              : isMapVisible 
+                ? 'bg-transparent'
+                : 'bg-white/20'
+      } ${currentView === 'upload' ? 'p-8' : currentView === 'analytics' ? 'p-4' : isMapVisible ? 'p-0' : 'p-8 lg:p-16'}`}>
         <div className={`relative w-full ${
           isInChatMode 
             ? 'h-full w-full' 
