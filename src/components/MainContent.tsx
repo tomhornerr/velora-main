@@ -246,7 +246,6 @@ export const MainContent = ({
                     onQueryStart={handleQueryStart} 
                     onMapToggle={handleMapToggle} 
                     resetTrigger={resetTrigger}
-                    isMapVisible={isMapVisible}
                   />
                 </div>
               </motion.div>}
@@ -341,7 +340,6 @@ export const MainContent = ({
                 onQueryStart={handleQueryStart} 
                 onMapToggle={handleMapToggle} 
                 resetTrigger={resetTrigger}
-                isMapVisible={isMapVisible}
               />
             </div>
           </div>;
