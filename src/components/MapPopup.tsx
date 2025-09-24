@@ -29,8 +29,17 @@ export const MapPopup: React.FC<MapPopupProps> = ({ isOpen, onClose, propertyAdd
   useEffect(() => {
     if (!isOpen || !mapContainer.current) return;
 
+    console.log('MapPopup: Initializing map for address:', propertyAddress);
+
     // Get property coordinates
     const propertyCoords = getPropertyCoordinates(propertyAddress || '');
+    console.log('MapPopup: Property coordinates:', propertyCoords);
+
+    // Clean up any existing map first
+    if (map.current) {
+      map.current.remove();
+      map.current = null;
+    }
 
     // Initialize map
     mapboxgl.accessToken = mapboxToken;
@@ -42,6 +51,8 @@ export const MapPopup: React.FC<MapPopupProps> = ({ isOpen, onClose, propertyAdd
       zoom: 15,
       antialias: true
     });
+
+    console.log('MapPopup: Map created with light style');
 
     // Add navigation controls
     map.current.addControl(
@@ -56,9 +67,13 @@ export const MapPopup: React.FC<MapPopupProps> = ({ isOpen, onClose, propertyAdd
       .setLngLat(propertyCoords)
       .addTo(map.current);
 
+    console.log('MapPopup: Marker added at coordinates:', propertyCoords);
+
     // Cleanup
     return () => {
+      console.log('MapPopup: Cleaning up map');
       map.current?.remove();
+      map.current = null;
     };
   }, [isOpen, propertyAddress]);
 
