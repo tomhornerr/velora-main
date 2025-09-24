@@ -12,7 +12,7 @@ import DotGrid from './DotGrid';
 import { PropertyOutlineBackground } from './PropertyOutlineBackground';
 import { Property3DBackground } from './Property3DBackground';
 import { PropertyCyclingBackground } from './PropertyCyclingBackground';
-import { BackgroundMap } from './BackgroundMap';
+import { BackgroundMap, MapRef } from './BackgroundMap';
 import { useSystem } from '@/contexts/SystemContext';
 export interface MainContentProps {
   className?: string;
@@ -42,6 +42,8 @@ export const MainContent = ({
   const [chatMessages, setChatMessages] = React.useState<any[]>([]);
   const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
   const [resetTrigger, setResetTrigger] = React.useState<number>(0);
+  const [currentLocation, setCurrentLocation] = React.useState<string>("");
+  const mapRef = React.useRef<MapRef>(null);
   
   // Use the prop value for chat mode
   const isInChatMode = inChatMode;
@@ -63,10 +65,40 @@ export const MainContent = ({
     // Don't create chat history until query is actually submitted
   };
 
+  const handleLocationUpdate = (location: { lat: number; lng: number; address: string }) => {
+    console.log('Location updated:', location);
+    setCurrentLocation(location.address);
+    
+    // Track location activity
+    addActivity({
+      action: `Location selected: ${location.address}`,
+      documents: [],
+      type: 'search',
+      details: { 
+        latitude: location.lat,
+        longitude: location.lng,
+        address: location.address,
+        searchType: 'location-based',
+        timestamp: new Date().toISOString() 
+      }
+    });
+  };
+
   const handleSearch = (query: string) => {
     console.log('MainContent: Search submitted with query:', query);
     setChatQuery(query);
     setChatMessages([]); // Reset messages for new chat
+
+    // Check if query contains location-related keywords
+    const locationKeywords = ['near', 'in', 'around', 'at', 'properties in', 'houses in', 'homes in'];
+    const isLocationQuery = locationKeywords.some(keyword => 
+      query.toLowerCase().includes(keyword.toLowerCase())
+    );
+
+    if (isLocationQuery) {
+      // Extract location from query and update map
+      mapRef.current?.updateLocation(query);
+    }
 
     // Track detailed search activity
     addActivity({
@@ -76,6 +108,7 @@ export const MainContent = ({
       details: { 
         searchQuery: query, 
         analysisType: 'comprehensive',
+        isLocationBased: isLocationQuery,
         timestamp: new Date().toISOString() 
       }
     });
@@ -313,8 +346,13 @@ export const MainContent = ({
     }
   };
   return <div className={`flex-1 relative ${className || ''}`}>
-      {/* Background Map */}
-      <BackgroundMap isVisible={isMapVisible} />
+      {/* Background Map with location search */}
+      <BackgroundMap 
+        ref={mapRef}
+        isVisible={isMapVisible} 
+        searchQuery={isMapVisible ? currentLocation || chatQuery : undefined}
+        onLocationUpdate={handleLocationUpdate}
+      />
       
       {/* Background based on current view */}
       {!isMapVisible && (currentView === 'search' || currentView === 'home') && !isInChatMode ? (
