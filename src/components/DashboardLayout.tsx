@@ -66,7 +66,10 @@ const DashboardLayoutContent = ({
   const handleChatModeChange = (inChatMode: boolean, chatData?: any) => {
     if (inChatMode) {
       setIsInChatMode(true);
-      setIsSidebarCollapsed(true); // Auto-collapse sidebar when entering chat mode
+      // Don't auto-collapse sidebar in upload view
+      if (currentView !== 'upload') {
+        setIsSidebarCollapsed(true); // Auto-collapse sidebar when entering chat mode
+      }
       if (chatData) {
         setCurrentChatData(chatData);
         setPreviousChatData(chatData);
@@ -110,17 +113,20 @@ const DashboardLayoutContent = ({
       setIsInChatMode(true);
       setCurrentView('search');
       setIsChatPanelOpen(false);
-      setIsSidebarCollapsed(true); // Auto-collapse sidebar when entering chat
+      // Don't auto-collapse sidebar in upload view
+      if (currentView !== 'upload') {
+        setIsSidebarCollapsed(true); // Auto-collapse sidebar when entering chat
+      }
     }
   }, [getChatById]);
 
   const handleMapVisibilityChange = React.useCallback((isVisible: boolean) => {
     setIsMapVisible(isVisible);
-    // Auto-collapse sidebar when map is visible
-    if (isVisible) {
+    // Auto-collapse sidebar when map is visible, but not in upload view
+    if (isVisible && currentView !== 'upload') {
       setIsSidebarCollapsed(true);
     }
-  }, []);
+  }, [currentView]);
 
   const handleLocationUpdate = React.useCallback((location: { lat: number; lng: number; address: string }) => {
     console.log('Location updated:', location);
