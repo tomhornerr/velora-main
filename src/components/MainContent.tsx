@@ -363,15 +363,15 @@ export const MainContent = ({
         <FlowBackground />
       ) : null}
       
-      {/* Content container with glass effect */}
+      {/* Content container - no blur effects */}
       <div className={`relative z-20 h-full flex flex-col ${
         isInChatMode 
           ? 'bg-transparent' 
           : currentView === 'upload' 
-            ? 'bg-white/95 backdrop-blur-sm' 
+            ? 'bg-white/95' 
             : currentView === 'analytics'
-              ? 'bg-white/95 backdrop-blur-sm'
-              : 'bg-white/20 backdrop-blur-sm'
+              ? 'bg-white/95'
+              : 'bg-white/20'
       } ${currentView === 'upload' ? 'p-8' : currentView === 'analytics' ? 'p-4' : 'p-8 lg:p-16'}`}>
         <div className={`relative w-full ${
           isInChatMode 
