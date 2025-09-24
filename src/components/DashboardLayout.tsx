@@ -45,9 +45,8 @@ const DashboardLayoutContent = ({
     if (chatData && chatData.query) {
       setPreviousChatData(chatData);
       
-      if (currentChatId) {
-        updateChatInHistory(currentChatId, chatData.messages || []);
-      } else {
+      // Only create a new chat if we don't already have one for this session
+      if (!currentChatId) {
         const newChatId = addChatToHistory({
           title: '',
           timestamp: new Date().toISOString(),
@@ -55,6 +54,9 @@ const DashboardLayoutContent = ({
           messages: chatData.messages || []
         });
         setCurrentChatId(newChatId);
+      } else {
+        // Update existing chat
+        updateChatInHistory(currentChatId, chatData.messages || []);
       }
     }
   }, [currentChatId, addChatToHistory, updateChatInHistory, setPreviousChatData]);
@@ -68,12 +70,12 @@ const DashboardLayoutContent = ({
         setPreviousChatData(chatData);
         setHasPerformedSearch(true);
         
-        // Instantly create/update chat history when any query or message is entered
+        // Only create new chat if we don't already have one for this session
         if (currentChatId) {
           // Update existing chat
           updateChatInHistory(currentChatId, chatData.messages || []);
         } else {
-          // Create new chat instantly - happens as soon as user enters text
+          // Create new chat only if no current chat exists
           const newChatId = addChatToHistory({
             title: '', // Will be auto-generated from first message
             timestamp: new Date().toISOString(),

@@ -222,8 +222,7 @@ export const ChatPanel = ({
               <AnimatePresence mode="popLayout">
                 {displayedChats.map((chat) => {
             const isEditing = editingChatId === chat.id;
-            const uniqueKey = `${chat.id}-${chat.archived ? 'archived' : 'active'}`;
-            return <motion.div key={uniqueKey} layout initial={{
+            return <motion.div key={chat.id} layout initial={{
               opacity: 0,
               x: -20,
               scale: 1

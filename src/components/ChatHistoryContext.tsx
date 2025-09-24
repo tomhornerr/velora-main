@@ -102,7 +102,7 @@ export function ChatHistoryProvider({
   const addChatToHistory = React.useCallback((chat: Omit<ChatHistoryEntry, 'id'>) => {
     const newChat: ChatHistoryEntry = {
       ...chat,
-      id: `chat-${Date.now()}`,
+      id: `chat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       title: chat.title || generateChatTitle(chat.messages, chat.preview)
     };
     setChatHistory(prev => [newChat, ...prev]);
