@@ -27,8 +27,6 @@ export interface MainContentProps {
   } | null;
   isInChatMode?: boolean;
   resetTrigger?: number;
-  onMapToggle?: (isMapOpen: boolean) => void;
-  isMapVisible?: boolean;
 }
 export const MainContent = ({
   className,
@@ -37,29 +35,21 @@ export const MainContent = ({
   onChatHistoryCreate,
   currentChatData,
   isInChatMode: inChatMode = false,
-  resetTrigger: parentResetTrigger,
-  onMapToggle,
-  isMapVisible: propIsMapVisible = false
+  resetTrigger: parentResetTrigger
 }: MainContentProps) => {
   const { addActivity } = useSystem();
   const [chatQuery, setChatQuery] = React.useState<string>("");
   const [chatMessages, setChatMessages] = React.useState<any[]>([]);
-  const [isMapVisible, setIsMapVisible] = React.useState<boolean>(propIsMapVisible);
+  const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
   const [resetTrigger, setResetTrigger] = React.useState<number>(0);
   const [currentLocation, setCurrentLocation] = React.useState<string>("");
   const mapRef = React.useRef<MapRef>(null);
   
   // Use the prop value for chat mode
   const isInChatMode = inChatMode;
-  
-  // Sync with prop value
-  React.useEffect(() => {
-    setIsMapVisible(propIsMapVisible);
-  }, [propIsMapVisible]);
   const handleMapToggle = (isMapOpen: boolean) => {
     console.log('MainContent: Map toggle called with:', isMapOpen);
     setIsMapVisible(isMapOpen);
-    onMapToggle?.(isMapOpen);
   };
 
   const handleQueryStart = (query: string) => {
@@ -374,7 +364,7 @@ export const MainContent = ({
       ) : null}
       
       {/* Content container with glass effect */}
-      <div className={`relative z-10 h-full flex flex-col ${isMapVisible ? 'overflow-visible' : 'overflow-hidden'} ${
+      <div className={`relative z-10 h-full flex flex-col ${
         isInChatMode 
           ? 'bg-transparent' 
           : currentView === 'upload' 
@@ -400,7 +390,7 @@ export const MainContent = ({
           duration: 0.6,
           ease: [0.23, 1, 0.32, 1],
           delay: 0.1
-        }} className="relative flex-1 flex flex-col ${isMapVisible ? 'overflow-visible' : 'overflow-hidden'}">{renderViewContent()}
+        }} className="relative flex-1 flex flex-col overflow-hidden">{renderViewContent()}
           </motion.div>
         </div>
       </div>
