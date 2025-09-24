@@ -262,7 +262,7 @@ export const ChatPanel = ({
                           ease: [0.23, 1, 0.32, 1]
                         }} 
                         onClick={() => handleChatClick(chat.id)} 
-                        className="group relative px-3 py-2 rounded-md transition-all duration-50 cursor-pointer mb-0.5 transform-gpu hover:bg-blue-50/30 hover:scale-[1.01] hover:shadow-sm hover:-translate-y-0.5"
+                        className="group relative px-3 py-2 rounded-md transition-all duration-200 cursor-pointer mb-0.5 hover:bg-blue-50/30"
                       >
                         {isEditing ? (
                           <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
@@ -281,7 +281,7 @@ export const ChatPanel = ({
                           </div>
                         ) : (
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-normal truncate pr-2 transition-all duration-50 transform-gpu text-slate-600 group-hover:text-slate-800 group-hover:font-medium">
+                            <span className="text-xs font-normal truncate pr-2 transition-colors duration-200 text-slate-600 group-hover:text-slate-800 group-hover:font-medium">
                               {chat.title}
                             </span>
                             
