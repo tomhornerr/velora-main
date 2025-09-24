@@ -53,6 +53,27 @@ export const Sidebar = ({
   isCollapsed = false,
   onToggle
 }: SidebarProps) => {
+  const [mousePosition, setMousePosition] = React.useState({ x: 0, y: 0 });
+  const [showToggleButton, setShowToggleButton] = React.useState(false);
+  
+  // Mouse proximity detection
+  React.useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+      
+      // Calculate distance from left edge (where toggle button is)
+      const distanceFromLeft = e.clientX;
+      const distanceFromCenter = Math.abs(e.clientY - window.innerHeight / 2);
+      
+      // Show button if mouse is within 100px of left edge and reasonable vertical range
+      const shouldShow = distanceFromLeft < 100 && distanceFromCenter < 200;
+      setShowToggleButton(shouldShow);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   // Simplified - always show toggle
 
   const handleItemClick = (itemId: string) => {
@@ -157,38 +178,44 @@ export const Sidebar = ({
       )}
     </motion.div>
 
-    {/* Sidebar Toggle - Always Visible */}
-    <motion.button
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ 
-        opacity: isCollapsed ? 0.6 : 0.9,
-        scale: 1
-      }}
-      whileHover={{ 
-        opacity: 1,
-        scale: 1.05
-      }}
-      transition={{
-        duration: 0.2,
-        ease: [0.4, 0, 0.2, 1]
-      }}
-      onClick={onToggle}
-      className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} ${isCollapsed ? 'top-[47%]' : 'top-[55%]'} -translate-y-1/2 ${className?.includes('z-[150]') ? 'z-[150]' : 'z-50'} w-5 h-10
-        bg-black/40 backdrop-blur-md border border-white/30 rounded-r-lg shadow-lg
-        hover:bg-black/50 hover:border-white/40
-        [background:linear-gradient(135deg,rgba(0,0,0,0.4),rgba(0,0,0,0.2))]
-        hover:[background:linear-gradient(135deg,rgba(0,0,0,0.5),rgba(0,0,0,0.3))]
-        flex items-center justify-center transition-all duration-300`}
-      style={{
-        boxShadow: '0 4px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1)'
-      }}
-      aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-    >
-      <motion.div
-        animate={{ rotate: isCollapsed ? 0 : 180 }}
-        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-        className="w-1.5 h-1.5 border-r-[1.5px] border-b-[1.5px] border-white rotate-45 transform drop-shadow-sm"
-      />
-    </motion.button>
+    {/* Sidebar Toggle - Shows on mouse proximity */}
+    <AnimatePresence>
+      {showToggleButton && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0.8, x: -20 }}
+          animate={{ 
+            opacity: isCollapsed ? 0.6 : 0.9,
+            scale: 1,
+            x: 0
+          }}
+          exit={{ opacity: 0, scale: 0.8, x: -20 }}
+          whileHover={{ 
+            opacity: 1,
+            scale: 1.05
+          }}
+          transition={{
+            duration: 0.2,
+            ease: [0.4, 0, 0.2, 1]
+          }}
+          onClick={onToggle}
+          className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} ${isCollapsed ? 'top-[47%]' : 'top-[55%]'} -translate-y-1/2 ${className?.includes('z-[150]') ? 'z-[150]' : 'z-50'} w-5 h-10
+            bg-black/40 backdrop-blur-md border border-white/30 rounded-r-lg shadow-lg
+            hover:bg-black/50 hover:border-white/40
+            [background:linear-gradient(135deg,rgba(0,0,0,0.4),rgba(0,0,0,0.2))]
+            hover:[background:linear-gradient(135deg,rgba(0,0,0,0.5),rgba(0,0,0,0.3))]
+            flex items-center justify-center transition-all duration-300`}
+          style={{
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1)'
+          }}
+          aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+        >
+          <motion.div
+            animate={{ rotate: isCollapsed ? 0 : 180 }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+            className="w-1.5 h-1.5 border-r-[1.5px] border-b-[1.5px] border-white rotate-45 transform drop-shadow-sm"
+          />
+        </motion.button>
+      )}
+    </AnimatePresence>
   </>;
 };
