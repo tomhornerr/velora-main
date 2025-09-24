@@ -186,7 +186,7 @@ export const SearchBar = ({
       {/* Fixed position at bottom when map is open */}
       {isMapOpen && (
         <div 
-          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4 z-[200]"
+          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4 z-[200] pointer-events-none"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
@@ -194,7 +194,7 @@ export const SearchBar = ({
             initial={{ opacity: 0, y: -20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.3 }} 
-            className="relative"
+            className="relative pointer-events-auto"
           >
             <form onSubmit={handleSubmit} className="relative">
               <div className={`relative flex items-center bg-white border border-gray-200 rounded-full px-6 py-3 hover:border-gray-300 focus-within:border-gray-400 focus-within:shadow-sm transition-all duration-200 ease-out ${isSubmitted ? 'opacity-75' : ''}`}>
