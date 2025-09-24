@@ -130,8 +130,18 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
       doubleClickZoom: true,
       dragPan: true,
       keyboard: true,
-      touchZoomRotate: true
+      touchZoomRotate: true,
+      attributionControl: false // We'll add custom attribution
     });
+
+    // Add minimal custom attribution
+    map.current.addControl(
+      new mapboxgl.AttributionControl({
+        compact: true,
+        customAttribution: ''
+      }),
+      'bottom-right'
+    );
 
     // Add navigation controls
     map.current.addControl(
