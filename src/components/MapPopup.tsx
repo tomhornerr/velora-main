@@ -37,7 +37,7 @@ export const MapPopup: React.FC<MapPopupProps> = ({ isOpen, onClose, propertyAdd
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/satellite-streets-v12',
+      style: 'mapbox://styles/mapbox/light-v11',
       center: propertyCoords,
       zoom: 15,
       antialias: true
