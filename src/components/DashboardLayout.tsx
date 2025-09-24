@@ -41,23 +41,30 @@ const DashboardLayoutContent = ({
   };
 
   const handleChatHistoryCreate = React.useCallback((chatData: any) => {
+    console.log('DashboardLayout: handleChatHistoryCreate called with:', chatData);
     // Create chat history without switching to chat mode
     if (chatData && chatData.query) {
+      console.log('DashboardLayout: Query exists, proceeding with chat creation');
       setPreviousChatData(chatData);
       
       // Only create a new chat if we don't already have one for this session
       if (!currentChatId) {
+        console.log('DashboardLayout: No current chat ID, creating new chat');
         const newChatId = addChatToHistory({
           title: '',
           timestamp: new Date().toISOString(),
           preview: chatData.query,
           messages: chatData.messages || []
         });
+        console.log('DashboardLayout: Created new chat with ID:', newChatId);
         setCurrentChatId(newChatId);
       } else {
+        console.log('DashboardLayout: Updating existing chat with ID:', currentChatId);
         // Update existing chat
         updateChatInHistory(currentChatId, chatData.messages || []);
       }
+    } else {
+      console.log('DashboardLayout: No query in chatData, skipping creation');
     }
   }, [currentChatId, addChatToHistory, updateChatInHistory, setPreviousChatData]);
 

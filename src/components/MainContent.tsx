@@ -48,6 +48,7 @@ export const MainContent = ({
 
   const handleQueryStart = (query: string) => {
     console.log('MainContent: Query started with:', query);
+    console.log('MainContent: onChatHistoryCreate function exists?', !!onChatHistoryCreate);
     
     // Track search activity
     addActivity({
@@ -63,6 +64,7 @@ export const MainContent = ({
       messages: [],
       timestamp: new Date()
     };
+    console.log('MainContent: Calling onChatHistoryCreate with:', chatData);
     onChatHistoryCreate?.(chatData);
   };
 
