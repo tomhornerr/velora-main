@@ -147,7 +147,7 @@ export const SearchBar = ({
                   className={`w-5 h-5 transition-colors duration-200 ${
                     isMapIconClicked 
                       ? 'text-green-400' 
-                      : 'text-black'
+                      : 'text-black hover:text-green-500'
                   }`} 
                   strokeWidth={1.5} 
                 />
