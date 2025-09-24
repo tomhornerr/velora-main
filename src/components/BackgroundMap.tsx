@@ -195,10 +195,26 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6 }}
-          className="absolute inset-0 z-10"
-          style={{ pointerEvents: 'auto', width: '100%', height: '100%' }}
+          className="fixed inset-0 z-10"
+          style={{ 
+            pointerEvents: 'auto', 
+            left: 0, 
+            right: 0, 
+            top: 0, 
+            bottom: 0,
+            width: '100vw',
+            height: '100vh'
+          }}
         >
-          <div ref={mapContainer} className="w-full h-full" style={{ pointerEvents: 'auto' }} />
+          <div 
+            ref={mapContainer} 
+            className="w-full h-full" 
+            style={{ 
+              pointerEvents: 'auto',
+              width: '100%',
+              height: '100%'
+            }} 
+          />
           
           {/* Map overlay with search info - no blur effects */}
           {searchQuery && (
