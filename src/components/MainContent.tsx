@@ -44,14 +44,17 @@ export const MainContent = ({
   const { addActivity } = useSystem();
   const [chatQuery, setChatQuery] = React.useState<string>("");
   const [chatMessages, setChatMessages] = React.useState<any[]>([]);
+  const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
   const [resetTrigger, setResetTrigger] = React.useState<number>(0);
   const [currentLocation, setCurrentLocation] = React.useState<string>("");
   
-  // Use the prop value for chat mode  
+  // Use the prop value for chat mode
   const isInChatMode = inChatMode;
-  
-  // Always show map in search mode, hide in chat mode
-  const isMapVisible = !isInChatMode && (currentView === 'search' || currentView === 'home');
+  const handleMapToggle = (isMapOpen: boolean) => {
+    console.log('MainContent: Map toggle called with:', isMapOpen);
+    setIsMapVisible(isMapOpen);
+    onMapVisibilityChange?.(isMapOpen);
+  };
 
   const handleMapSearch = (query: string) => {
     console.log('MainContent: Map search called with:', query);
@@ -182,16 +185,12 @@ export const MainContent = ({
     }
   };
 
-  // Update map visibility when state changes
-  React.useEffect(() => {
-    onMapVisibilityChange?.(isMapVisible);
-  }, [isMapVisible, onMapVisibilityChange]);
-
-  // Reset chat mode when currentView changes (sidebar navigation)
+  // Reset chat mode and map visibility when currentView changes (sidebar navigation)
   React.useEffect(() => {
     if (currentView !== 'search' && currentView !== 'home') {
       setChatQuery("");
       setChatMessages([]);
+      setIsMapVisible(false); // Hide map when navigating away from search
       // Let the parent handle chat mode changes
       onChatModeChange?.(false);
     }
@@ -259,9 +258,9 @@ export const MainContent = ({
                   <SearchBar 
                     onSearch={handleSearch} 
                     onQueryStart={handleQueryStart} 
+                    onMapToggle={handleMapToggle} 
                     onMapSearch={handleMapSearch}
                     resetTrigger={resetTrigger}
-                    isMapVisible={isMapVisible}
                   />
                 </div>
               </motion.div>}
@@ -354,9 +353,9 @@ export const MainContent = ({
               <SearchBar 
                 onSearch={handleSearch} 
                 onQueryStart={handleQueryStart} 
+                onMapToggle={handleMapToggle} 
                 onMapSearch={handleMapSearch}
                 resetTrigger={resetTrigger}
-                isMapVisible={isMapVisible}
               />
             </div>
           </div>;
