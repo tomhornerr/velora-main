@@ -125,14 +125,20 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
       style: 'mapbox://styles/mapbox/satellite-streets-v12',
       center: [-2.5879, 51.4545], // Bristol center
       zoom: 11,
+      minZoom: 2,
+      maxZoom: 20,
       antialias: true,
-      scrollZoom: true, // Enable scroll zoom for interactivity
+      scrollZoom: {
+        around: 'center' // Smooth zoom behavior
+      },
       doubleClickZoom: true,
       dragPan: true,
+      dragRotate: true,
       keyboard: true,
       touchZoomRotate: true,
-      attributionControl: false, // Remove attribution control
-      logoPosition: 'bottom-left' // This will be hidden with CSS
+      touchPitch: true,
+      attributionControl: false,
+      logoPosition: 'bottom-left'
     });
 
     // Hide Mapbox logo with CSS
@@ -144,10 +150,24 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
       .mapboxgl-ctrl-attrib {
         display: none !important;
       }
+      .mapboxgl-canvas-container {
+        cursor: grab;
+      }
+      .mapboxgl-canvas-container:active {
+        cursor: grabbing;
+      }
     `;
     document.head.appendChild(style);
 
-    // Navigation controls removed for cleaner interface
+    // Add navigation controls for better user experience
+    map.current.addControl(new mapboxgl.NavigationControl({
+      visualizePitch: true,
+      showCompass: true,
+      showZoom: true
+    }), 'top-right');
+
+    // Add fullscreen control
+    map.current.addControl(new mapboxgl.FullscreenControl(), 'top-right');
 
     // Add click event for interactive location selection
     map.current.on('click', async (e) => {
