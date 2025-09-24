@@ -56,6 +56,14 @@ export const MainContent = ({
     onMapVisibilityChange?.(isMapOpen);
   };
 
+  const handleMapSearch = (query: string) => {
+    console.log('MainContent: Map search called with:', query);
+    // Use the map ref to update the location
+    if (mapRef?.current) {
+      mapRef.current.updateLocation(query);
+    }
+  };
+
   const handleQueryStart = (query: string) => {
     console.log('MainContent: Query started with:', query);
     
@@ -251,6 +259,7 @@ export const MainContent = ({
                     onSearch={handleSearch} 
                     onQueryStart={handleQueryStart} 
                     onMapToggle={handleMapToggle} 
+                    onMapSearch={handleMapSearch}
                     resetTrigger={resetTrigger}
                   />
                 </div>
@@ -345,6 +354,7 @@ export const MainContent = ({
                 onSearch={handleSearch} 
                 onQueryStart={handleQueryStart} 
                 onMapToggle={handleMapToggle} 
+                onMapSearch={handleMapSearch}
                 resetTrigger={resetTrigger}
               />
             </div>

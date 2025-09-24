@@ -9,13 +9,15 @@ export interface SearchBarProps {
   onSearch?: (query: string) => void;
   onQueryStart?: (query: string) => void;
   onMapToggle?: (isMapOpen: boolean) => void;
-  resetTrigger?: number; // Add reset trigger prop
+  onMapSearch?: (query: string) => void; // New prop for map-specific searches
+  resetTrigger?: number;
 }
 export const SearchBar = ({
   className,
   onSearch,
   onQueryStart,
   onMapToggle,
+  onMapSearch,
   resetTrigger
 }: SearchBarProps) => {
   const [searchValue, setSearchValue] = useState('');
@@ -95,15 +97,24 @@ export const SearchBar = ({
     if (searchValue.trim() && !isSubmitted) {
       console.log('SearchBar: Submitting search with value:', searchValue.trim());
       setIsSubmitted(true);
-      // Instantly trigger search and chat history creation
-      onSearch?.(searchValue.trim());
       
-      // Reset the search bar state after submission
-      setTimeout(() => {
-        setSearchValue('');
+      // If map is open, search on the map instead of triggering chat
+      if (isMapOpen) {
+        console.log('Searching on map:', searchValue.trim());
+        onMapSearch?.(searchValue.trim());
+        // Don't reset search value for map searches so user can see what they searched
         setIsSubmitted(false);
-        setHasStartedTyping(false);
-      }, 100);
+      } else {
+        // Normal search behavior for chat
+        onSearch?.(searchValue.trim());
+        
+        // Reset the search bar state after submission
+        setTimeout(() => {
+          setSearchValue('');
+          setIsSubmitted(false);
+          setHasStartedTyping(false);
+        }, 100);
+      }
     }
   };
   console.log('SearchBar render - isMapOpen:', isMapOpen);
@@ -142,7 +153,7 @@ export const SearchBar = ({
                       onFocus={() => setIsFocused(true)} 
                       onBlur={() => setIsFocused(false)} 
                       onKeyDown={e => { if (e.key === 'Enter') handleSubmit(e); }} 
-                      placeholder="What can I help you find today?" 
+                      placeholder={isMapOpen ? "Search for a location..." : "What can I help you find today?"}
                       className="w-full bg-transparent focus:outline-none text-base font-normal text-black placeholder:text-gray-500"
                       autoComplete="off" 
                       disabled={isSubmitted} 
@@ -196,7 +207,7 @@ export const SearchBar = ({
                     onFocus={() => setIsFocused(true)} 
                     onBlur={() => setIsFocused(false)} 
                     onKeyDown={e => { if (e.key === 'Enter') handleSubmit(e); }} 
-                    placeholder="What can I help you find today?" 
+                    placeholder={isMapOpen ? "Search for a location..." : "What can I help you find today?"} 
                     className="w-full bg-transparent focus:outline-none text-base font-normal text-black placeholder:text-gray-500"
                     autoComplete="off" 
                     disabled={isSubmitted} 
