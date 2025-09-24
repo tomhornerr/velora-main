@@ -268,7 +268,7 @@ export const ChatPanel = ({
                           <div className="relative">
                             <button
                               onClick={(e) => handleMenuToggle(e, chat.id)}
-                              className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md hover:bg-slate-200 transition-all duration-50 transform hover:scale-125 hover:rotate-90 active:scale-95"
+                              className="opacity-0 group-hover:opacity-100 p-1.5 rounded-md hover:bg-slate-200 transition-all duration-50 transform hover:scale-125 active:scale-95"
                             >
                               <MoreVertical className="w-3.5 h-3.5 text-slate-400 hover:text-slate-700 transition-all duration-50" />
                             </button>
