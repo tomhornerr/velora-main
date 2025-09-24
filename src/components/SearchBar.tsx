@@ -8,16 +8,20 @@ export interface SearchBarProps {
   className?: string;
   onSearch?: (query: string) => void;
   onQueryStart?: (query: string) => void;
+  onMapToggle?: (isMapOpen: boolean) => void;
 }
 export const SearchBar = ({
   className,
   onSearch,
-  onQueryStart
+  onQueryStart,
+  onMapToggle
 }: SearchBarProps) => {
   const [searchValue, setSearchValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [hasStartedTyping, setHasStartedTyping] = useState(false);
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  const [isMapIconClicked, setIsMapIconClicked] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   
   // Auto-focus on any keypress for search bar
@@ -65,6 +69,16 @@ export const SearchBar = ({
       inputRef.current.focus();
     }
   }, []);
+  const handleMapToggle = () => {
+    setIsMapIconClicked(true);
+    setTimeout(() => setIsMapIconClicked(false), 200); // Green flash duration
+    
+    setTimeout(() => {
+      setIsMapOpen(!isMapOpen);
+      onMapToggle?.(!isMapOpen);
+    }, 100); // Delay before position change
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchValue.trim() && !isSubmitted) {
@@ -74,19 +88,26 @@ export const SearchBar = ({
       onSearch?.(searchValue.trim());
     }
   };
-  return <div className={`w-full h-full flex items-center justify-center px-6 ${className || ''}`}>
+  return <div className={`w-full h-full flex items-center justify-center px-6 ${className || ''} ${
+    isMapOpen ? 'fixed bottom-0 left-0 right-0 pb-6 z-50' : ''
+  }`}>
       <div className="w-full max-w-2xl mx-auto">
         {/* Main Search Interface */}
-        <motion.div initial={{
-        opacity: 1,
-        y: 20
-      }} animate={{
-        opacity: 1,
-        y: 0
-      }} transition={{
-        duration: 0.4,
-        ease: [0.25, 0.1, 0.25, 1]
-      }} className="relative">
+        <motion.div 
+          initial={{
+            opacity: 1,
+            y: 20
+          }} 
+          animate={{
+            opacity: 1,
+            y: isMapOpen ? 0 : 0
+          }} 
+          transition={{
+            duration: 0.6,
+            ease: [0.25, 0.1, 0.25, 1]
+          }} 
+          className="relative"
+        >
           <form onSubmit={handleSubmit} className="relative">
             {/* Main search container - Dark Elegant Glassmorphism */}
             <div className={`
@@ -100,10 +121,19 @@ export const SearchBar = ({
               transition-all duration-300 ease-out
               ${isSubmitted ? 'opacity-75' : ''}
             `}>
-              {/* Upload indicator */}
-              <div className="flex-shrink-0 mr-4">
-                <Map className="w-5 h-5 text-white" strokeWidth={1.5} />
-              </div>
+              {/* Map toggle button */}
+              <button 
+                type="button"
+                onClick={handleMapToggle}
+                className="flex-shrink-0 mr-4 transition-colors duration-200"
+              >
+                <Map 
+                  className={`w-5 h-5 transition-colors duration-200 ${
+                    isMapIconClicked ? 'text-green-400' : 'text-white'
+                  }`} 
+                  strokeWidth={1.5} 
+                />
+              </button>
               
               {/* Search input */}
               <div className="flex-1 relative">

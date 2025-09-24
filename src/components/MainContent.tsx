@@ -12,6 +12,7 @@ import DotGrid from './DotGrid';
 import { PropertyOutlineBackground } from './PropertyOutlineBackground';
 import { Property3DBackground } from './Property3DBackground';
 import { PropertyCyclingBackground } from './PropertyCyclingBackground';
+import { BackgroundMap } from './BackgroundMap';
 import { useSystem } from '@/contexts/SystemContext';
 export interface MainContentProps {
   className?: string;
@@ -37,9 +38,14 @@ export const MainContent = ({
   const { addActivity } = useSystem();
   const [chatQuery, setChatQuery] = React.useState<string>("");
   const [chatMessages, setChatMessages] = React.useState<any[]>([]);
+  const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
   
   // Use the prop value for chat mode
   const isInChatMode = inChatMode;
+  const handleMapToggle = (isMapOpen: boolean) => {
+    setIsMapVisible(isMapOpen);
+  };
+
   const handleQueryStart = (query: string) => {
     console.log('MainContent: Query started with:', query);
     
@@ -186,7 +192,11 @@ export const MainContent = ({
                 
                 {/* Search Bar with elevated z-index */}
                 <div className="relative z-10 w-full">
-                  <SearchBar onSearch={handleSearch} onQueryStart={handleQueryStart} />
+                  <SearchBar 
+                    onSearch={handleSearch} 
+                    onQueryStart={handleQueryStart} 
+                    onMapToggle={handleMapToggle} 
+                  />
                 </div>
               </motion.div>}
           </AnimatePresence>;
@@ -275,16 +285,23 @@ export const MainContent = ({
             
             {/* Search Bar with elevated z-index */}
             <div className="relative z-10 w-full">
-              <SearchBar onSearch={handleSearch} onQueryStart={handleQueryStart} />
+              <SearchBar 
+                onSearch={handleSearch} 
+                onQueryStart={handleQueryStart} 
+                onMapToggle={handleMapToggle} 
+              />
             </div>
           </div>;
     }
   };
   return <div className={`flex-1 relative ${className || ''}`}>
+      {/* Background Map */}
+      <BackgroundMap isVisible={isMapVisible} />
+      
       {/* Background based on current view */}
-      {(currentView === 'search' || currentView === 'home') && !isInChatMode ? (
+      {!isMapVisible && (currentView === 'search' || currentView === 'home') && !isInChatMode ? (
         <PropertyCyclingBackground />
-      ) : currentView !== 'upload' ? (
+      ) : !isMapVisible && currentView !== 'upload' ? (
         <FlowBackground />
       ) : null}
       
