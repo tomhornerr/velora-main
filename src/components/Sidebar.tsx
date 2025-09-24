@@ -258,7 +258,7 @@ export const Sidebar = ({
             ease: [0.4, 0, 0.2, 1]
           }}
           onClick={onToggle}
-          className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} ${isCollapsed ? 'top-[40%]' : 'top-[65%]'} -translate-y-1/2 z-50 w-5 h-10
+          className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} ${isCollapsed ? 'top-[40%]' : 'top-[55%]'} -translate-y-1/2 z-50 w-5 h-10
             bg-black/40 backdrop-blur-md border border-white/30 rounded-r-lg shadow-lg
             hover:bg-black/50 hover:border-white/40
             [background:linear-gradient(135deg,rgba(0,0,0,0.4),rgba(0,0,0,0.2))]
