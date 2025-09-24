@@ -50,8 +50,8 @@ export const MainContent = ({
   // Use the prop value for chat mode  
   const isInChatMode = inChatMode;
   
-  // Always show map in search mode, hide in chat mode
-  const isMapVisible = !isInChatMode && (currentView === 'search' || currentView === 'home');
+  // Show map when in search mode and not in chat mode
+  const shouldShowMap = !isInChatMode && (currentView === 'search' || currentView === 'home');
 
   const handleMapSearch = (query: string) => {
     console.log('MainContent: Map search called with:', query);
@@ -184,8 +184,8 @@ export const MainContent = ({
 
   // Update map visibility when state changes
   React.useEffect(() => {
-    onMapVisibilityChange?.(isMapVisible);
-  }, [isMapVisible, onMapVisibilityChange]);
+    onMapVisibilityChange?.(shouldShowMap);
+  }, [shouldShowMap, onMapVisibilityChange]);
 
   // Reset chat mode when currentView changes (sidebar navigation)
   React.useEffect(() => {
@@ -261,7 +261,7 @@ export const MainContent = ({
                     onQueryStart={handleQueryStart} 
                     onMapSearch={handleMapSearch}
                     resetTrigger={resetTrigger}
-                    isMapVisible={isMapVisible}
+                    isMapVisible={shouldShowMap}
                   />
                 </div>
               </motion.div>}
@@ -356,7 +356,7 @@ export const MainContent = ({
                 onQueryStart={handleQueryStart} 
                 onMapSearch={handleMapSearch}
                 resetTrigger={resetTrigger}
-                isMapVisible={isMapVisible}
+                isMapVisible={shouldShowMap}
               />
             </div>
           </div>;
@@ -364,9 +364,9 @@ export const MainContent = ({
   };
   return <div className={`flex-1 relative ${className || ''}`}>
       {/* Background based on current view */}
-      {!isMapVisible && (currentView === 'search' || currentView === 'home') && !isInChatMode ? (
+      {!shouldShowMap && (currentView === 'search' || currentView === 'home') && !isInChatMode ? (
         <PropertyCyclingBackground />
-      ) : !isMapVisible && currentView !== 'upload' ? (
+      ) : !shouldShowMap && currentView !== 'upload' ? (
         <FlowBackground />
       ) : null}
       
