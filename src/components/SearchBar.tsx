@@ -162,7 +162,7 @@ export const SearchBar = ({
                     }
                   }} 
                   placeholder="What can I help you find today?" 
-                  className="w-full bg-transparent focus:outline-none text-base font-medium text-black placeholder:text-gray-500"
+                  className="w-full bg-transparent focus:outline-none text-base font-normal text-black placeholder:text-gray-500"
                   autoComplete="off" 
                   disabled={isSubmitted} 
                 />
