@@ -60,8 +60,6 @@ export const BackgroundMap: React.FC<BackgroundMapProps> = ({ isVisible }) => {
           className="fixed inset-0 z-0"
         >
           <div ref={mapContainer} className="w-full h-full" />
-          {/* Overlay gradient for better text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent pointer-events-none" />
         </motion.div>
       )}
     </AnimatePresence>

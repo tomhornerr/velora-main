@@ -88,9 +88,12 @@ export const SearchBar = ({
       onSearch?.(searchValue.trim());
     }
   };
-  return <div className={`w-full h-full flex items-center justify-center px-6 ${className || ''} ${
-    isMapOpen ? 'fixed bottom-0 left-0 right-0 pb-6 z-50' : ''
-  }`}>
+  return (
+    <div className={`w-full transition-all duration-600 ease-out ${
+      isMapOpen 
+        ? 'fixed bottom-6 left-6 right-6 z-50' 
+        : 'h-full flex items-center justify-center px-6'
+    } ${className || ''}`}>
       <div className="w-full max-w-2xl mx-auto">
         {/* Main Search Interface */}
         <motion.div 
@@ -100,7 +103,7 @@ export const SearchBar = ({
           }} 
           animate={{
             opacity: 1,
-            y: isMapOpen ? 0 : 0
+            y: 0
           }} 
           transition={{
             duration: 0.6,
@@ -192,5 +195,6 @@ export const SearchBar = ({
           </form>
         </motion.div>
       </div>
-    </div>;
+    </div>
+  );
 };
