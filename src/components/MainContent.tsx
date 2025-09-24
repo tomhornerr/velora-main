@@ -240,7 +240,7 @@ export const MainContent = ({
                 
                 
                 {/* Search Bar with elevated z-index */}
-                <div className="relative z-10 w-full">
+                <div className={`relative w-full ${isMapVisible ? 'z-20' : 'z-10'}`}>
                   <SearchBar 
                     onSearch={handleSearch} 
                     onQueryStart={handleQueryStart} 
@@ -334,7 +334,7 @@ export const MainContent = ({
             
             
             {/* Search Bar with elevated z-index */}
-            <div className="relative z-10 w-full">
+            <div className={`relative w-full ${isMapVisible ? 'z-20' : 'z-10'}`}>
               <SearchBar 
                 onSearch={handleSearch} 
                 onQueryStart={handleQueryStart} 
