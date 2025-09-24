@@ -131,8 +131,21 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
       dragPan: true,
       keyboard: true,
       touchZoomRotate: true,
-      attributionControl: false // Remove attribution control
+      attributionControl: false, // Remove attribution control
+      logoPosition: 'bottom-left' // This will be hidden with CSS
     });
+
+    // Hide Mapbox logo with CSS
+    const style = document.createElement('style');
+    style.textContent = `
+      .mapboxgl-ctrl-logo {
+        display: none !important;
+      }
+      .mapboxgl-ctrl-attrib {
+        display: none !important;
+      }
+    `;
+    document.head.appendChild(style);
 
     // Navigation controls removed for cleaner interface
 
