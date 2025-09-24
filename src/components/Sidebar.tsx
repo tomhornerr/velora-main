@@ -72,10 +72,15 @@ export const Sidebar = ({
   // Auto-hide toggle when sidebar is open
   React.useEffect(() => {
     if (!isCollapsed) {
-      // Hide toggle after 1 second when sidebar is open
-      hideTimeoutRef.current = setTimeout(() => {
+      // On search page, hide toggle immediately when sidebar is open
+      if (activeItem === 'search') {
         setShouldHideToggle(true);
-      }, 1000);
+      } else {
+        // Hide toggle after 1 second when sidebar is open on other pages
+        hideTimeoutRef.current = setTimeout(() => {
+          setShouldHideToggle(true);
+        }, 1000);
+      }
     } else {
       // Show toggle immediately when sidebar is collapsed
       setShouldHideToggle(false);
@@ -89,7 +94,7 @@ export const Sidebar = ({
         clearTimeout(hideTimeoutRef.current);
       }
     };
-  }, [isCollapsed]);
+  }, [isCollapsed, activeItem]);
 
   // Show toggle when mouse is near
   React.useEffect(() => {
