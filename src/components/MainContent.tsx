@@ -29,10 +29,6 @@ export interface MainContentProps {
   resetTrigger?: number;
   onMapToggle?: (isMapOpen: boolean) => void;
   isMapVisible?: boolean;
-  onSearchHandlers?: (handlers: {
-    onSearch?: (query: string) => void;
-    onQueryStart?: (query: string) => void;
-  }) => void;
 }
 export const MainContent = ({
   className,
@@ -43,8 +39,7 @@ export const MainContent = ({
   isInChatMode: inChatMode = false,
   resetTrigger: parentResetTrigger,
   onMapToggle,
-  isMapVisible: propIsMapVisible = false,
-  onSearchHandlers
+  isMapVisible: propIsMapVisible = false
 }: MainContentProps) => {
   const { addActivity } = useSystem();
   const [chatQuery, setChatQuery] = React.useState<string>("");
@@ -57,16 +52,10 @@ export const MainContent = ({
   // Use the prop value for chat mode
   const isInChatMode = inChatMode;
   
-  // Sync with prop value and register search handlers
+  // Sync with prop value
   React.useEffect(() => {
     setIsMapVisible(propIsMapVisible);
-    
-    // Register search handlers with parent
-    onSearchHandlers?.({
-      onSearch: handleSearch,
-      onQueryStart: handleQueryStart
-    });
-  }, [propIsMapVisible, onSearchHandlers]);
+  }, [propIsMapVisible]);
   const handleMapToggle = (isMapOpen: boolean) => {
     console.log('MainContent: Map toggle called with:', isMapOpen);
     setIsMapVisible(isMapOpen);
@@ -262,18 +251,15 @@ export const MainContent = ({
                 {/* No background needed here as it's handled globally */}
                 
                 
-                {/* Search Bar with elevated z-index - only render if map is not visible */}
-                {!isMapVisible && (
-                  <div className={`relative w-full z-10`}>
-                    <SearchBar 
-                      onSearch={handleSearch} 
-                      onQueryStart={handleQueryStart} 
-                      onMapToggle={handleMapToggle} 
-                      resetTrigger={resetTrigger}
-                      isMapOpen={isMapVisible}
-                    />
-                  </div>
-                )}
+                {/* Search Bar with elevated z-index */}
+                <div className={`relative w-full z-10`}>
+                  <SearchBar 
+                    onSearch={handleSearch} 
+                    onQueryStart={handleQueryStart} 
+                    onMapToggle={handleMapToggle} 
+                    resetTrigger={resetTrigger}
+                  />
+                </div>
               </motion.div>}
           </AnimatePresence>;
       case 'notifications':
@@ -359,18 +345,15 @@ export const MainContent = ({
             {/* No background needed here as it's handled globally */}
             
             
-            {/* Search Bar with elevated z-index - only render if map is not visible */}
-            {!isMapVisible && (
-              <div className={`relative w-full z-10`}>
-                <SearchBar 
-                  onSearch={handleSearch} 
-                  onQueryStart={handleQueryStart} 
-                  onMapToggle={handleMapToggle} 
-                  resetTrigger={resetTrigger}
-                  isMapOpen={isMapVisible}
-                />
-              </div>
-            )}
+            {/* Search Bar with elevated z-index */}
+            <div className={`relative w-full z-10`}>
+              <SearchBar 
+                onSearch={handleSearch} 
+                onQueryStart={handleQueryStart} 
+                onMapToggle={handleMapToggle} 
+                resetTrigger={resetTrigger}
+              />
+            </div>
           </div>;
     }
   };
