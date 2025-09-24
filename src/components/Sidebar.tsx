@@ -170,12 +170,11 @@ export const Sidebar = ({
       )}
     </motion.div>
 
-    {/* Sleek Sidebar Edge Toggle */}
+    {/* Always Visible Toggle */}
     <motion.button
       initial={{ opacity: 0 }}
       animate={{ 
-        opacity: 1,
-        x: isCollapsed ? 8 : 0
+        opacity: 1
       }}
       whileHover={{ 
         scale: 1.1
@@ -185,7 +184,7 @@ export const Sidebar = ({
         ease: [0.4, 0, 0.2, 1]
       }}
       onClick={onToggle}
-      className={`absolute -right-3 top-1/2 -translate-y-1/2 z-50 w-6 h-12 bg-sidebar-background/90 backdrop-blur-sm border border-white/10 rounded-r-md shadow-lg flex items-center justify-center transition-all duration-300 hover:bg-sidebar-background`}
+      className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} top-1/2 -translate-y-1/2 z-50 w-6 h-12 bg-sidebar-background/90 backdrop-blur-sm border border-white/10 rounded-r-md shadow-lg flex items-center justify-center transition-all duration-300 hover:bg-sidebar-background`}
       aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
     >
       <motion.div
