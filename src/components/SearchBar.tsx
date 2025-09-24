@@ -113,12 +113,6 @@ export const SearchBar = ({
         ? 'fixed bottom-4 left-4 right-4 z-30' 
         : 'h-full flex items-center justify-center px-6'
     } ${className || ''}`}>
-      {/* Debug info */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-4 right-4 bg-red-500 text-white p-2 text-xs z-50">
-          Map Open: {isMapOpen ? 'YES' : 'NO'}
-        </div>
-      )}
       <div className="w-full max-w-2xl mx-auto">
         {/* Main Search Interface */}
         <motion.div 
