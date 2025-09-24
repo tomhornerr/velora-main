@@ -522,7 +522,7 @@ export default function ChatInterface({
         {/* Chat Input at Bottom of White Container */}
         <div className="absolute bottom-6 left-6 right-6 z-50">
           <form onSubmit={handleSendMessage} className="relative">
-            <div className="relative flex items-center bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200/50 rounded-full px-5 py-2.5 shadow-lg hover:shadow-xl focus-within:shadow-xl focus-within:border-blue-300/70 transition-all duration-300 max-w-xl mx-auto">
+            <div className="relative flex items-center bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200/50 rounded-full px-5 py-1.5 shadow-lg hover:shadow-xl focus-within:shadow-xl focus-within:border-blue-300/70 transition-all duration-300 max-w-2xl mx-auto">
               <input 
                 ref={inputRef} 
                 type="text" 
