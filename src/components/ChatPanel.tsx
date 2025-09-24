@@ -242,7 +242,7 @@ export const ChatPanel = ({
                duration: 0.2,
                delay: 0.02,
                ease: [0.23, 1, 0.32, 1]
-            }} onClick={() => handleChatClick(chat.id)} className={`group relative px-3 py-2 rounded-md transition-all duration-50 cursor-pointer mb-0.5 transform-gpu hover:bg-gradient-to-r hover:from-slate-100 hover:to-slate-50 hover:scale-[1.01] hover:shadow-sm hover:-translate-y-0.5`}>
+            }} onClick={() => handleChatClick(chat.id)} className={`group relative px-3 py-2 rounded-md transition-all duration-50 cursor-pointer mb-0.5 transform-gpu hover:bg-blue-50/30 hover:scale-[1.01] hover:shadow-sm hover:-translate-y-0.5`}>
                       
                       {isEditing ? (
                         <div className="flex items-center space-x-2" onClick={(e) => e.stopPropagation()}>
