@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Mic, ChevronRight, Upload } from "lucide-react";
+import { Sparkles, Mic, ChevronRight, Map } from "lucide-react";
 export interface SearchBarProps {
   className?: string;
   onSearch?: (query: string) => void;
@@ -102,7 +102,7 @@ export const SearchBar = ({
             `}>
               {/* Upload indicator */}
               <div className="flex-shrink-0 mr-4">
-                <Upload className="w-5 h-5 text-white" strokeWidth={1.5} />
+                <Map className="w-5 h-5 text-white" strokeWidth={1.5} />
               </div>
               
               {/* Search input */}
