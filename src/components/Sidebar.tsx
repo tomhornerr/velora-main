@@ -182,12 +182,6 @@ export const Sidebar = ({
     <AnimatePresence>
       {showToggleButton && (
         <motion.button
-          initial={{ opacity: 0, scale: 0.8, x: -20 }}
-          animate={{ 
-            opacity: isCollapsed ? 0.6 : 0.9,
-            scale: 1,
-            x: 0
-          }}
           exit={{ opacity: 0, scale: 0.8, x: -20 }}
           whileHover={{ 
             opacity: 1,
@@ -205,6 +199,7 @@ export const Sidebar = ({
             hover:[background:linear-gradient(135deg,rgba(0,0,0,0.5),rgba(0,0,0,0.3))]
             flex items-center justify-center transition-all duration-300`}
           style={{
+            opacity: isCollapsed ? 0.6 : 0.9,
             boxShadow: '0 4px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1)'
           }}
           aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
