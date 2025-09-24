@@ -12,7 +12,7 @@ import DotGrid from './DotGrid';
 import { PropertyOutlineBackground } from './PropertyOutlineBackground';
 import { Property3DBackground } from './Property3DBackground';
 import { PropertyCyclingBackground } from './PropertyCyclingBackground';
-import { BackgroundMap, MapRef } from './BackgroundMap';
+import { MapRef } from './BackgroundMap';
 import { useSystem } from '@/contexts/SystemContext';
 export interface MainContentProps {
   className?: string;
@@ -28,6 +28,7 @@ export interface MainContentProps {
   isInChatMode?: boolean;
   resetTrigger?: number;
   onMapVisibilityChange?: (isVisible: boolean) => void;
+  mapRef?: React.RefObject<MapRef>;
 }
 export const MainContent = ({
   className,
@@ -37,7 +38,8 @@ export const MainContent = ({
   currentChatData,
   isInChatMode: inChatMode = false,
   resetTrigger: parentResetTrigger,
-  onMapVisibilityChange
+  onMapVisibilityChange,
+  mapRef
 }: MainContentProps) => {
   const { addActivity } = useSystem();
   const [chatQuery, setChatQuery] = React.useState<string>("");
@@ -45,7 +47,6 @@ export const MainContent = ({
   const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
   const [resetTrigger, setResetTrigger] = React.useState<number>(0);
   const [currentLocation, setCurrentLocation] = React.useState<string>("");
-  const mapRef = React.useRef<MapRef>(null);
   
   // Use the prop value for chat mode
   const isInChatMode = inChatMode;
@@ -101,7 +102,7 @@ export const MainContent = ({
 
     if (isLocationQuery) {
       // Extract location from query and update map
-      mapRef.current?.updateLocation(query);
+      mapRef?.current?.updateLocation(query);
     }
 
     // Track detailed search activity
@@ -351,14 +352,6 @@ export const MainContent = ({
     }
   };
   return <div className={`flex-1 relative ${className || ''}`}>
-      {/* Background Map with location search */}
-      <BackgroundMap 
-        ref={mapRef}
-        isVisible={isMapVisible} 
-        searchQuery={isMapVisible ? currentLocation || chatQuery : undefined}
-        onLocationUpdate={handleLocationUpdate}
-      />
-      
       {/* Background based on current view */}
       {!isMapVisible && (currentView === 'search' || currentView === 'home') && !isInChatMode ? (
         <PropertyCyclingBackground />

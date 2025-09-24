@@ -8,6 +8,7 @@ import { ChatPanel } from './ChatPanel';
 import { SearchBar } from './SearchBar';
 import { ChatHistoryProvider, useChatHistory } from './ChatHistoryContext';
 import { ChatReturnNotification } from './ChatReturnNotification';
+import { BackgroundMap, MapRef } from './BackgroundMap';
 
 export interface DashboardLayoutProps {
   className?: string;
@@ -27,6 +28,8 @@ const DashboardLayoutContent = ({
   const [resetTrigger, setResetTrigger] = React.useState<number>(0);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState<boolean>(false);
   const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
+  const [currentLocation, setCurrentLocation] = React.useState<string>("");
+  const mapRef = React.useRef<MapRef>(null);
   const { addChatToHistory, updateChatInHistory, getChatById } = useChatHistory();
 
   const handleViewChange = (viewId: string) => {
@@ -117,6 +120,11 @@ const DashboardLayoutContent = ({
     }
   }, []);
 
+  const handleLocationUpdate = React.useCallback((location: { lat: number; lng: number; address: string }) => {
+    console.log('Location updated:', location);
+    setCurrentLocation(location.address);
+  }, []);
+
   const handleSidebarToggle = React.useCallback(() => {
     setIsSidebarCollapsed(prev => !prev);
   }, []);
@@ -157,6 +165,14 @@ const DashboardLayoutContent = ({
       transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }} 
       className={`flex h-screen w-full overflow-hidden relative ${className || ''}`}
     >
+      {/* Background Map - Always rendered at top level */}
+      <BackgroundMap 
+        ref={mapRef}
+        isVisible={isMapVisible} 
+        searchQuery={isMapVisible ? currentLocation : undefined}
+        onLocationUpdate={handleLocationUpdate}
+      />
+
       {/* Chat Return Notification */}
       <ChatReturnNotification
         isVisible={showChatNotification}
@@ -193,6 +209,7 @@ const DashboardLayoutContent = ({
         isInChatMode={isInChatMode}
         resetTrigger={resetTrigger}
         onMapVisibilityChange={handleMapVisibilityChange}
+        mapRef={mapRef}
       />
     </motion.div>
   );
