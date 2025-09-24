@@ -80,17 +80,13 @@ export const SearchBar = ({
   }, []);
   const handleMapToggle = () => {
     console.log('Map toggle clicked. Current isMapOpen:', isMapOpen);
-    console.log('SearchBar visibility before toggle:', !isMapOpen ? 'normal position' : 'fixed position');
     setIsMapIconClicked(true);
-    setTimeout(() => setIsMapIconClicked(false), 200); // Green flash duration
+    setTimeout(() => setIsMapIconClicked(false), 200);
     
-    setTimeout(() => {
-      const newMapState = !isMapOpen;
-      console.log('Setting map state to:', newMapState);
-      console.log('SearchBar will render as:', newMapState ? 'fixed bottom position' : 'centered position');
-      setIsMapOpen(newMapState);
-      onMapToggle?.(newMapState);
-    }, 100); // Delay before position change
+    const newMapState = !isMapOpen;
+    console.log('Setting map state to:', newMapState);
+    setIsMapOpen(newMapState);
+    onMapToggle?.(newMapState);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -168,7 +164,7 @@ export const SearchBar = ({
 
       {/* Fixed position on top when map is open */}
       {isMapOpen && (
-        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4 z-50">
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4 z-[9999]">
           <motion.div 
             initial={{ opacity: 0, y: -20 }} 
             animate={{ opacity: 1, y: 0 }} 
