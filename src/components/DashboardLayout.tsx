@@ -24,7 +24,13 @@ const DashboardLayoutContent = ({
   const [showChatNotification, setShowChatNotification] = React.useState(false);
   const [previousChatData, setPreviousChatData] = React.useState<any>(null);
   const [resetTrigger, setResetTrigger] = React.useState<number>(0);
+  const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
   const { addChatToHistory, updateChatInHistory, getChatById } = useChatHistory();
+
+  const handleMapToggle = React.useCallback((isMapOpen: boolean) => {
+    console.log('Dashboard: Map toggle received:', isMapOpen);
+    setIsMapVisible(isMapOpen);
+  }, []);
 
   const handleViewChange = (viewId: string) => {
     // Show notification if we have any previous chat data and we're navigating away from search/home
@@ -34,6 +40,11 @@ const DashboardLayoutContent = ({
     
     // Always close chat panel when navigating to a different view
     setIsChatPanelOpen(false);
+    
+    // Hide map when navigating away from search
+    if (viewId !== 'search' && viewId !== 'home') {
+      setIsMapVisible(false);
+    }
     
     // Always exit chat mode when navigating to a different view
     setCurrentView(viewId);
@@ -175,7 +186,26 @@ const DashboardLayoutContent = ({
         currentChatData={currentChatData}
         isInChatMode={isInChatMode}
         resetTrigger={resetTrigger}
+        onMapToggle={handleMapToggle}
+        isMapVisible={isMapVisible}
       />
+      
+      {/* Floating Search Bar for Map Mode - renders at top level with z-50 */}
+      {isMapVisible && currentView === 'search' && !isInChatMode && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
+          <div className="pointer-events-auto">
+            <div className="w-full max-w-2xl mx-auto px-4">
+              <div className="bg-white border border-gray-200 rounded-full px-6 py-3 shadow-lg">
+                <input 
+                  type="text" 
+                  placeholder="Search on map..." 
+                  className="w-full bg-transparent focus:outline-none text-base font-normal text-black placeholder:text-gray-500"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 };

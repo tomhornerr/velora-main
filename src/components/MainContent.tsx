@@ -27,6 +27,8 @@ export interface MainContentProps {
   } | null;
   isInChatMode?: boolean;
   resetTrigger?: number;
+  onMapToggle?: (isMapOpen: boolean) => void;
+  isMapVisible?: boolean;
 }
 export const MainContent = ({
   className,
@@ -35,20 +37,29 @@ export const MainContent = ({
   onChatHistoryCreate,
   currentChatData,
   isInChatMode: inChatMode = false,
-  resetTrigger: parentResetTrigger
+  resetTrigger: parentResetTrigger,
+  onMapToggle,
+  isMapVisible: propIsMapVisible = false
 }: MainContentProps) => {
   const { addActivity } = useSystem();
   const [chatQuery, setChatQuery] = React.useState<string>("");
   const [chatMessages, setChatMessages] = React.useState<any[]>([]);
-  const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
+  const [isMapVisible, setIsMapVisible] = React.useState<boolean>(propIsMapVisible);
   const [resetTrigger, setResetTrigger] = React.useState<number>(0);
   const [currentLocation, setCurrentLocation] = React.useState<string>("");
   const mapRef = React.useRef<MapRef>(null);
   
   // Use the prop value for chat mode
   const isInChatMode = inChatMode;
+  
+  // Sync with prop value
+  React.useEffect(() => {
+    setIsMapVisible(propIsMapVisible);
+  }, [propIsMapVisible]);
   const handleMapToggle = (isMapOpen: boolean) => {
+    console.log('MainContent: Map toggle called with:', isMapOpen);
     setIsMapVisible(isMapOpen);
+    onMapToggle?.(isMapOpen);
   };
 
   const handleQueryStart = (query: string) => {
