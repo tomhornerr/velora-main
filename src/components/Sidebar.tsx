@@ -57,16 +57,24 @@ export const Sidebar = ({
   const [mousePosition, setMousePosition] = React.useState({ x: 0, y: 0 });
   const hideTimeoutRef = React.useRef<NodeJS.Timeout>();
 
-  console.log('Sidebar rendering with props:', { className, isChatPanelOpen, activeItem });
-
-  // Handle mouse movement for proximity detection
+  // Handle mouse movement for proximity detection - throttled
   React.useEffect(() => {
+    let throttleTimeout: NodeJS.Timeout;
+    
     const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
+      if (throttleTimeout) return;
+      
+      throttleTimeout = setTimeout(() => {
+        setMousePosition({ x: e.clientX, y: e.clientY });
+        throttleTimeout = null as any;
+      }, 16); // ~60fps throttling
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (throttleTimeout) clearTimeout(throttleTimeout);
+    };
   }, []);
 
   // Auto-hide toggle when sidebar is open - optimized to prevent excessive re-renders
@@ -94,7 +102,7 @@ export const Sidebar = ({
     };
   }, [isCollapsed, activeItem]);
 
-  // Show toggle when mouse is near - throttled to prevent excessive updates
+  // Show toggle when mouse is near - throttled and memoized
   React.useEffect(() => {
     if (!shouldHideToggle) return;
     
@@ -117,7 +125,7 @@ export const Sidebar = ({
         }, 1000);
       }
     }
-  }, [mousePosition.x, mousePosition.y, shouldHideToggle, isCollapsed]);
+  }, [mousePosition, shouldHideToggle, isCollapsed]);
 
   const handleItemClick = (itemId: string) => {
     onItemClick?.(itemId);
