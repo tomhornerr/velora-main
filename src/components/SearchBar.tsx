@@ -167,7 +167,7 @@ export const SearchBar = ({
 
       {/* Fixed position at bottom when map is open */}
       {isMapOpen && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4 z-[9999]">
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4 z-[200]">
           <motion.div 
             initial={{ opacity: 0, y: -20 }} 
             animate={{ opacity: 1, y: 0 }} 

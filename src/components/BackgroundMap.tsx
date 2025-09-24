@@ -268,24 +268,28 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6 }}
-          className="fixed inset-0 z-10"
+          className="fixed inset-0"
+          style={{ zIndex: 100 }}
         >
           <div 
             ref={mapContainer} 
             className="w-full h-full"
             style={{
-              width: '100%',
-              height: '100%'
+              width: '100vw',
+              height: '100vh',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              pointerEvents: 'auto'
             }}
           />
           
-          {/* Map overlay with search info - no blur effects */}
+          {/* Map overlay with search info - positioned to not block interactions */}
           {searchQuery && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="absolute top-4 left-4 bg-white/95 rounded-lg px-4 py-2 shadow-lg z-40"
-              style={{ pointerEvents: 'none' }}
+              className="absolute top-4 left-4 bg-white/95 rounded-lg px-4 py-2 shadow-lg z-[150] pointer-events-none"
             >
               <p className="text-sm font-medium text-gray-700">
                 Searching: <span className="text-green-600">{searchQuery}</span>
