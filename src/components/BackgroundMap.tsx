@@ -269,7 +269,16 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6 }}
           className="fixed inset-0"
-          style={{ zIndex: 100 }}
+          style={{ 
+            zIndex: 100,
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh'
+          }}
         >
           <div 
             ref={mapContainer} 
