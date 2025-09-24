@@ -72,10 +72,10 @@ export const Sidebar = ({
   // Auto-hide toggle when sidebar is open
   React.useEffect(() => {
     if (!isCollapsed) {
-      // Hide toggle after 3 seconds when sidebar is open
+      // Hide toggle after 1 second when sidebar is open
       hideTimeoutRef.current = setTimeout(() => {
         setShouldHideToggle(true);
-      }, 3000);
+      }, 1000);
     } else {
       // Show toggle immediately when sidebar is collapsed
       setShouldHideToggle(false);
@@ -112,7 +112,7 @@ export const Sidebar = ({
         if (!isCollapsed) {
           hideTimeoutRef.current = setTimeout(() => {
             setShouldHideToggle(true);
-          }, 3000);
+          }, 1000);
         }
       }
     }
