@@ -116,16 +116,16 @@ export const SearchBar = ({
             <div className={`
               relative flex items-center 
               ${isMapOpen 
-                ? 'bg-white/10 backdrop-blur-3xl border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.1)]' 
+                ? 'bg-white/20 backdrop-blur-3xl border-white/30 shadow-[0_8px_32px_rgba(0,0,0,0.2)]' 
                 : 'bg-slate-950/40 backdrop-blur-2xl border-slate-700/30 shadow-[0_8px_32px_rgba(2,6,23,0.6),0_1px_1px_rgba(255,255,255,0.03)_inset]'
               }
               border rounded-full px-6 py-3 
               ${isMapOpen
-                ? 'hover:bg-white/15 hover:border-white/30'
+                ? 'hover:bg-white/25 hover:border-white/40'
                 : 'hover:bg-slate-900/45 hover:border-slate-600/35 hover:shadow-[0_12px_40px_rgba(2,6,23,0.7)]'
               }
               ${isMapOpen
-                ? 'focus-within:bg-white/15 focus-within:border-white/30 focus-within:ring-1 focus-within:ring-white/20'
+                ? 'focus-within:bg-white/25 focus-within:border-white/40 focus-within:ring-1 focus-within:ring-white/30'
                 : 'focus-within:bg-slate-900/45 focus-within:border-slate-600/40 focus-within:ring-1 focus-within:ring-slate-500/20'
               }
               transition-all duration-300 ease-out
@@ -139,7 +139,11 @@ export const SearchBar = ({
               >
                 <Map 
                   className={`w-5 h-5 transition-colors duration-200 ${
-                    isMapIconClicked ? 'text-green-400' : 'text-white'
+                    isMapIconClicked 
+                      ? 'text-green-400' 
+                      : isMapOpen
+                        ? 'text-slate-800'
+                        : 'text-white'
                   }`} 
                   strokeWidth={1.5} 
                 />
@@ -170,7 +174,11 @@ export const SearchBar = ({
                     }
                   }} 
                   placeholder="What can I help you find today?" 
-                  className="w-full bg-transparent text-white placeholder:text-white/60 focus:outline-none text-base font-medium" 
+                  className={`w-full bg-transparent focus:outline-none text-base font-medium ${
+                    isMapOpen 
+                      ? 'text-slate-800 placeholder:text-slate-600' 
+                      : 'text-white placeholder:text-white/60'
+                  }`}
                   autoComplete="off" 
                   disabled={isSubmitted} 
                 />
@@ -178,7 +186,11 @@ export const SearchBar = ({
               
               {/* Action buttons */}
               <div className="flex items-center space-x-3 ml-4">
-                <button type="button" className="w-8 h-8 flex items-center justify-center text-white/80 hover:text-white hover:scale-110 active:scale-95 transition-all duration-200">
+                <button type="button" className={`w-8 h-8 flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-200 ${
+                  isMapOpen 
+                    ? 'text-slate-700 hover:text-slate-800' 
+                    : 'text-white/80 hover:text-white'
+                }`}>
                   <Mic className="w-5 h-5" strokeWidth={1.5} />
                 </button>
                 
@@ -192,8 +204,12 @@ export const SearchBar = ({
                 }
               }} className={`w-8 h-8 flex items-center justify-center transition-all duration-200 ${
                 searchValue.trim() && !isSubmitted 
-                  ? 'text-white hover:text-white hover:scale-110 active:scale-95' 
-                  : 'text-white/40 cursor-not-allowed'
+                  ? isMapOpen 
+                    ? 'text-slate-800 hover:text-slate-900 hover:scale-110 active:scale-95' 
+                    : 'text-white hover:text-white hover:scale-110 active:scale-95'
+                  : isMapOpen
+                    ? 'text-slate-400 cursor-not-allowed'
+                    : 'text-white/40 cursor-not-allowed'
               }`} disabled={isSubmitted || !searchValue.trim()}>
                   <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
                 </button>
