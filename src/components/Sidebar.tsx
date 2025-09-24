@@ -182,14 +182,12 @@ export const Sidebar = ({
     <AnimatePresence>
       {showToggleButton && (
         <motion.button
-          exit={{ opacity: 0, scale: 0.8, x: -20 }}
+          exit={{ opacity: 0 }}
           whileHover={{ 
-            opacity: 1,
-            scale: 1.05
+            opacity: 1
           }}
           transition={{
-            duration: 0.2,
-            ease: [0.4, 0, 0.2, 1]
+            duration: 0.1
           }}
           onClick={onToggle}
           className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} ${isCollapsed ? 'top-[47%]' : 'top-[55%]'} -translate-y-1/2 ${className?.includes('z-[150]') ? 'z-[150]' : 'z-50'} w-5 h-10
@@ -197,7 +195,7 @@ export const Sidebar = ({
             hover:bg-black/50 hover:border-white/40
             [background:linear-gradient(135deg,rgba(0,0,0,0.4),rgba(0,0,0,0.2))]
             hover:[background:linear-gradient(135deg,rgba(0,0,0,0.5),rgba(0,0,0,0.3))]
-            flex items-center justify-center transition-all duration-300`}
+            flex items-center justify-center transition-none`}
           style={{
             opacity: isCollapsed ? 0.6 : 0.9,
             boxShadow: '0 4px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1)'
