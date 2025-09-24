@@ -134,8 +134,7 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
       attributionControl: false // Remove attribution control
     });
 
-    // Add navigation controls for easier interaction
-    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+    // Navigation controls removed for cleaner interface
 
     // Add click event for interactive location selection
     map.current.on('click', async (e) => {
