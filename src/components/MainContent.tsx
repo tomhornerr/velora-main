@@ -12,7 +12,7 @@ import DotGrid from './DotGrid';
 import { PropertyOutlineBackground } from './PropertyOutlineBackground';
 import { Property3DBackground } from './Property3DBackground';
 import { PropertyCyclingBackground } from './PropertyCyclingBackground';
-import { MapRef } from './BackgroundMap';
+import { BackgroundMap, MapRef } from './BackgroundMap';
 import { useSystem } from '@/contexts/SystemContext';
 export interface MainContentProps {
   className?: string;
@@ -44,7 +44,7 @@ export const MainContent = ({
   const { addActivity } = useSystem();
   const [chatQuery, setChatQuery] = React.useState<string>("");
   const [chatMessages, setChatMessages] = React.useState<any[]>([]);
-  const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
+  const [isMapVisible, setIsMapVisible] = React.useState<boolean>(true); // Show map by default
   const [resetTrigger, setResetTrigger] = React.useState<number>(0);
   const [currentLocation, setCurrentLocation] = React.useState<string>("");
   
@@ -253,13 +253,10 @@ export const MainContent = ({
                 {/* No background needed here as it's handled globally */}
                 
                 
-                {/* Search Bar with elevated z-index */}
                 <div className={`relative w-full z-10`}>
                   <SearchBar 
                     onSearch={handleSearch} 
                     onQueryStart={handleQueryStart} 
-                    onMapToggle={handleMapToggle} 
-                    onMapSearch={handleMapSearch}
                     resetTrigger={resetTrigger}
                   />
                 </div>
@@ -348,13 +345,10 @@ export const MainContent = ({
             {/* No background needed here as it's handled globally */}
             
             
-            {/* Search Bar with elevated z-index */}
             <div className={`relative w-full z-10`}>
               <SearchBar 
                 onSearch={handleSearch} 
                 onQueryStart={handleQueryStart} 
-                onMapToggle={handleMapToggle} 
-                onMapSearch={handleMapSearch}
                 resetTrigger={resetTrigger}
               />
             </div>
@@ -362,43 +356,70 @@ export const MainContent = ({
     }
   };
   return <div className={`flex-1 relative ${className || ''}`}>
-      {/* Background based on current view */}
+      {/* Background based on current view - only show when map is not visible */}
       {!isMapVisible && (currentView === 'search' || currentView === 'home') && !isInChatMode ? (
         <PropertyCyclingBackground />
       ) : !isMapVisible && currentView !== 'upload' ? (
         <FlowBackground />
       ) : null}
       
-      {/* Content container - no blur effects */}
-      <div className={`relative z-20 h-full flex flex-col ${
-        isInChatMode 
-          ? 'bg-transparent' 
-          : currentView === 'upload' 
-            ? 'bg-white/95' 
-            : currentView === 'analytics'
-              ? 'bg-white/95'
-              : 'bg-white/20'
-      } ${currentView === 'upload' ? 'p-8' : currentView === 'analytics' ? 'p-4' : 'p-8 lg:p-16'}`}>
-        <div className={`relative w-full ${
-          isInChatMode 
-            ? 'h-full w-full' 
-            : currentView === 'upload' ? 'h-full' 
-            : currentView === 'analytics' ? 'h-full overflow-hidden'
-            : 'max-w-5xl mx-auto'
-        } flex-1 flex flex-col`}>
-          <motion.div initial={{
-          opacity: 1,
-          y: 20
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          duration: 0.6,
-          ease: [0.23, 1, 0.32, 1],
-          delay: 0.1
-        }} className="relative flex-1 flex flex-col overflow-hidden">{renderViewContent()}
-          </motion.div>
+      {/* Map Search Zone - Full screen when map is visible */}
+      {isMapVisible ? (
+        <div className="relative w-full h-full">
+          {/* Map Background */}
+          <BackgroundMap 
+            ref={mapRef}
+            isVisible={true}
+            searchQuery={currentLocation}
+            onLocationUpdate={handleLocationUpdate}
+          />
+          
+          {/* Search Bar Overlay for Map */}
+          <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4 z-[150]">
+            <SearchBar 
+              onMapSearch={handleMapSearch}
+              isMapMode={true}
+              className="pointer-events-auto"
+            />
+          </div>
+          
+          {/* Map Interaction Hints */}
+          <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-sm text-white px-3 py-2 rounded-lg text-sm z-[140] pointer-events-none">
+            🖱️ Click & drag to move • 🔍 Scroll to zoom
+          </div>
         </div>
-      </div>
+      ) : (
+        /* Normal Content container when map is not visible */
+        <div className={`relative z-20 h-full flex flex-col ${
+          isInChatMode 
+            ? 'bg-transparent' 
+            : currentView === 'upload' 
+              ? 'bg-white/95' 
+              : currentView === 'analytics'
+                ? 'bg-white/95'
+                : 'bg-white/20'
+        } ${currentView === 'upload' ? 'p-8' : currentView === 'analytics' ? 'p-4' : 'p-8 lg:p-16'}`}>
+          <div className={`relative w-full ${
+            isInChatMode 
+              ? 'h-full w-full' 
+              : currentView === 'upload' ? 'h-full' 
+              : currentView === 'analytics' ? 'h-full overflow-hidden'
+              : 'max-w-5xl mx-auto'
+          } flex-1 flex flex-col`}>
+            <motion.div initial={{
+              opacity: 1,
+              y: 20
+            }} animate={{
+              opacity: 1,
+              y: 0
+            }} transition={{
+              duration: 0.6,
+              ease: [0.23, 1, 0.32, 1],
+              delay: 0.1
+            }} className="relative flex-1 flex flex-col overflow-hidden">{renderViewContent()}
+            </motion.div>
+          </div>
+        </div>
+      )}
     </div>;
 };
