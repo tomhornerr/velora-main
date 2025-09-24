@@ -242,7 +242,7 @@ export const Sidebar = ({
         <motion.button
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ 
-            opacity: 0.8,
+            opacity: isCollapsed ? 0.5 : 0.8,
             scale: 1
           }}
           exit={{ 
