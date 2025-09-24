@@ -26,6 +26,7 @@ export interface MainContentProps {
     isFromHistory?: boolean;
   } | null;
   isInChatMode?: boolean;
+  resetTrigger?: number;
 }
 export const MainContent = ({
   className,
@@ -33,12 +34,14 @@ export const MainContent = ({
   onChatModeChange,
   onChatHistoryCreate,
   currentChatData,
-  isInChatMode: inChatMode = false
+  isInChatMode: inChatMode = false,
+  resetTrigger: parentResetTrigger
 }: MainContentProps) => {
   const { addActivity } = useSystem();
   const [chatQuery, setChatQuery] = React.useState<string>("");
   const [chatMessages, setChatMessages] = React.useState<any[]>([]);
   const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
+  const [resetTrigger, setResetTrigger] = React.useState<number>(0);
   
   // Use the prop value for chat mode
   const isInChatMode = inChatMode;
@@ -145,6 +148,20 @@ export const MainContent = ({
       onChatModeChange?.(false);
     }
   }, [currentView, onChatModeChange]);
+
+  // Reset SearchBar when switching to chat mode or creating new chat
+  React.useEffect(() => {
+    if (isInChatMode && currentChatData?.query) {
+      setResetTrigger(prev => prev + 1);
+    }
+  }, [isInChatMode, currentChatData]);
+
+  // Reset from parent trigger (new chat created)
+  React.useEffect(() => {
+    if (parentResetTrigger !== undefined) {
+      setResetTrigger(prev => prev + 1);
+    }
+  }, [parentResetTrigger]);
   const renderViewContent = () => {
     switch (currentView) {
       case 'home':
@@ -195,6 +212,7 @@ export const MainContent = ({
                     onSearch={handleSearch} 
                     onQueryStart={handleQueryStart} 
                     onMapToggle={handleMapToggle} 
+                    resetTrigger={resetTrigger}
                   />
                 </div>
               </motion.div>}
@@ -288,6 +306,7 @@ export const MainContent = ({
                 onSearch={handleSearch} 
                 onQueryStart={handleQueryStart} 
                 onMapToggle={handleMapToggle} 
+                resetTrigger={resetTrigger}
               />
             </div>
           </div>;

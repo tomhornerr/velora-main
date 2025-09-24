@@ -9,12 +9,14 @@ export interface SearchBarProps {
   onSearch?: (query: string) => void;
   onQueryStart?: (query: string) => void;
   onMapToggle?: (isMapOpen: boolean) => void;
+  resetTrigger?: number; // Add reset trigger prop
 }
 export const SearchBar = ({
   className,
   onSearch,
   onQueryStart,
-  onMapToggle
+  onMapToggle,
+  resetTrigger
 }: SearchBarProps) => {
   const [searchValue, setSearchValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
@@ -48,10 +50,8 @@ export const SearchBar = ({
       // Focus input and let the character through for normal typing
       if (e.key.length === 1 && inputRef.current) {
         console.log('SearchBar: Focusing input for typing');
-        e.preventDefault(); // Prevent default to avoid duplicate input
+        // Don't prevent default or add characters - let the normal input handle it
         inputRef.current.focus();
-        // Set the value directly
-        setSearchValue(prev => prev + e.key);
       }
     };
 
@@ -61,6 +61,15 @@ export const SearchBar = ({
       window.removeEventListener('keydown', handleGlobalKeyDown);
     };
   }, []);
+
+  // Reset SearchBar when resetTrigger changes (new chat created)
+  useEffect(() => {
+    if (resetTrigger !== undefined) {
+      setSearchValue('');
+      setIsSubmitted(false);
+      setHasStartedTyping(false);
+    }
+  }, [resetTrigger]);
 
   // Auto-focus on mount
   useEffect(() => {
@@ -86,6 +95,13 @@ export const SearchBar = ({
       setIsSubmitted(true);
       // Instantly trigger search and chat history creation
       onSearch?.(searchValue.trim());
+      
+      // Reset the search bar state after submission
+      setTimeout(() => {
+        setSearchValue('');
+        setIsSubmitted(false);
+        setHasStartedTyping(false);
+      }, 100);
     }
   };
   return (
@@ -181,6 +197,13 @@ export const SearchBar = ({
                   setIsSubmitted(true);
                   // Instantly trigger search and chat history creation
                   onSearch?.(searchValue.trim());
+                  
+                  // Reset the search bar state after submission
+                  setTimeout(() => {
+                    setSearchValue('');
+                    setIsSubmitted(false);
+                    setHasStartedTyping(false);
+                  }, 100);
                 }
               }} className={`w-8 h-8 flex items-center justify-center transition-all duration-200 ${
                 searchValue.trim() && !isSubmitted 

@@ -23,6 +23,7 @@ const DashboardLayoutContent = ({
   const [hasPerformedSearch, setHasPerformedSearch] = React.useState(false);
   const [showChatNotification, setShowChatNotification] = React.useState(false);
   const [previousChatData, setPreviousChatData] = React.useState<any>(null);
+  const [resetTrigger, setResetTrigger] = React.useState<number>(0);
   const { addChatToHistory, updateChatInHistory, getChatById } = useChatHistory();
 
   const handleViewChange = (viewId: string) => {
@@ -113,6 +114,9 @@ const DashboardLayoutContent = ({
     setCurrentView('search');
     setIsChatPanelOpen(false);
     
+    // Trigger reset in SearchBar
+    setResetTrigger(prev => prev + 1);
+    
     // Force clear all chat state immediately
     handleChatModeChange(true, { query: "", messages: [], timestamp: new Date() });
   }, [handleChatModeChange]);
@@ -170,6 +174,7 @@ const DashboardLayoutContent = ({
         onChatHistoryCreate={handleChatHistoryCreate}
         currentChatData={currentChatData}
         isInChatMode={isInChatMode}
+        resetTrigger={resetTrigger}
       />
     </motion.div>
   );
