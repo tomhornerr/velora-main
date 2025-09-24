@@ -10,19 +10,20 @@ export interface SearchBarProps {
   onQueryStart?: (query: string) => void;
   onMapToggle?: (isMapOpen: boolean) => void;
   resetTrigger?: number; // Add reset trigger prop
+  isMapOpen?: boolean; // Add controlled map state
 }
 export const SearchBar = ({
   className,
   onSearch,
   onQueryStart,
   onMapToggle,
-  resetTrigger
+  resetTrigger,
+  isMapOpen = false
 }: SearchBarProps) => {
   const [searchValue, setSearchValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [hasStartedTyping, setHasStartedTyping] = useState(false);
-  const [isMapOpen, setIsMapOpen] = useState(false);
   const [isMapIconClicked, setIsMapIconClicked] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -88,7 +89,6 @@ export const SearchBar = ({
       const newMapState = !isMapOpen;
       console.log('Setting map state to:', newMapState);
       console.log('SearchBar will render as:', newMapState ? 'fixed bottom position' : 'centered position');
-      setIsMapOpen(newMapState);
       onMapToggle?.(newMapState);
     }, 100); // Delay before position change
   };

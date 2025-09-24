@@ -212,6 +212,7 @@ const DashboardLayoutContent = ({
             onMapToggle={handleMapToggle}
             resetTrigger={resetTrigger}
             className="w-full max-w-2xl px-4"
+            isMapOpen={isMapVisible}
           />
         </div>
       )}
