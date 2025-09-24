@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Sidebar } from './Sidebar';
 import { MainContent } from './MainContent';
 import { ChatPanel } from './ChatPanel';
+import { SearchBar } from './SearchBar';
 import { ChatHistoryProvider, useChatHistory } from './ChatHistoryContext';
 import { ChatReturnNotification } from './ChatReturnNotification';
 
@@ -25,11 +26,22 @@ const DashboardLayoutContent = ({
   const [previousChatData, setPreviousChatData] = React.useState<any>(null);
   const [resetTrigger, setResetTrigger] = React.useState<number>(0);
   const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
+  const [searchHandlers, setSearchHandlers] = React.useState<{
+    onSearch?: (query: string) => void;
+    onQueryStart?: (query: string) => void;
+  }>({});
   const { addChatToHistory, updateChatInHistory, getChatById } = useChatHistory();
 
   const handleMapToggle = React.useCallback((isMapOpen: boolean) => {
     console.log('Dashboard: Map toggle received:', isMapOpen);
     setIsMapVisible(isMapOpen);
+  }, []);
+
+  const handleSearchHandlers = React.useCallback((handlers: {
+    onSearch?: (query: string) => void;
+    onQueryStart?: (query: string) => void;
+  }) => {
+    setSearchHandlers(handlers);
   }, []);
 
   const handleViewChange = (viewId: string) => {
@@ -188,22 +200,19 @@ const DashboardLayoutContent = ({
         resetTrigger={resetTrigger}
         onMapToggle={handleMapToggle}
         isMapVisible={isMapVisible}
+        onSearchHandlers={handleSearchHandlers}
       />
       
-      {/* Floating Search Bar for Map Mode - renders at top level with z-50 */}
+      {/* Floating Search Bar for Map Mode - renders at top level with existing SearchBar component */}
       {isMapVisible && currentView === 'search' && !isInChatMode && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none">
-          <div className="pointer-events-auto">
-            <div className="w-full max-w-2xl mx-auto px-4">
-              <div className="bg-white border border-gray-200 rounded-full px-6 py-3 shadow-lg">
-                <input 
-                  type="text" 
-                  placeholder="Search on map..." 
-                  className="w-full bg-transparent focus:outline-none text-base font-normal text-black placeholder:text-gray-500"
-                />
-              </div>
-            </div>
-          </div>
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 pointer-events-auto">
+          <SearchBar 
+            onSearch={searchHandlers.onSearch || (() => {})}
+            onQueryStart={searchHandlers.onQueryStart || (() => {})}
+            onMapToggle={handleMapToggle}
+            resetTrigger={resetTrigger}
+            className="w-full max-w-2xl px-4"
+          />
         </div>
       )}
     </motion.div>
