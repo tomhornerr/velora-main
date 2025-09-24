@@ -110,118 +110,114 @@ export const SearchBar = ({
     }
   };
   return (
-    <div className={`w-full transition-all duration-600 ease-out ${
-      isMapOpen 
-        ? 'fixed bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4 z-50' 
-        : 'h-full flex items-center justify-center px-6'
-    } ${className || ''}`}>
-      <div className="w-full max-w-2xl mx-auto">
-        {/* Main Search Interface */}
-        <motion.div 
-          initial={{
-            opacity: 1,
-            y: 20
-          }} 
-          animate={{
-            opacity: 1,
-            y: 0
-          }} 
-          transition={{
-            duration: 0.6,
-            ease: [0.25, 0.1, 0.25, 1]
-          }} 
-          className="relative"
-        >
-          <form onSubmit={handleSubmit} className="relative">
-            {/* Main search container - Clean ChatGPT-style design */}
-            <div className={`
-              relative flex items-center 
-              bg-white border border-gray-200 rounded-full px-6 py-3
-              hover:border-gray-300
-              focus-within:border-gray-400 focus-within:shadow-sm
-              transition-all duration-200 ease-out
-              ${isSubmitted ? 'opacity-75' : ''}
-            `}>
-              {/* Map toggle button */}
-              <button 
-                type="button"
-                onClick={handleMapToggle}
-                className="flex-shrink-0 mr-4 transition-colors duration-200"
-              >
-                <Map 
-                  className={`w-5 h-5 transition-colors duration-200 ${
-                    isMapIconClicked 
-                      ? 'text-green-400' 
-                      : 'text-black hover:text-green-500'
-                  }`} 
-                  strokeWidth={1.5} 
-                />
-              </button>
-              
-              {/* Search input */}
-              <div className="flex-1 relative">
-                <input 
-                  ref={inputRef}
-                  type="text" 
-                  value={searchValue} 
-                  onChange={e => {
-                    const value = e.target.value;
-                    setSearchValue(value);
+    <>
+      {/* Normal position when map is closed */}
+      {!isMapOpen && (
+        <div className={`w-full h-full flex items-center justify-center px-6 ${className || ''}`}>
+          <div className="w-full max-w-2xl mx-auto">
+            <motion.div 
+              initial={{ opacity: 1, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }} 
+              className="relative"
+            >
+              <form onSubmit={handleSubmit} className="relative">
+                <div className={`relative flex items-center bg-white border border-gray-200 rounded-full px-6 py-3 hover:border-gray-300 focus-within:border-gray-400 focus-within:shadow-sm transition-all duration-200 ease-out ${isSubmitted ? 'opacity-75' : ''}`}>
+                  <button type="button" onClick={handleMapToggle} className="flex-shrink-0 mr-4 transition-colors duration-200">
+                    <Map className={`w-5 h-5 transition-colors duration-200 ${isMapIconClicked ? 'text-green-400' : 'text-black hover:text-green-500'}`} strokeWidth={1.5} />
+                  </button>
+                  
+                  <div className="flex-1 relative">
+                    <input 
+                      ref={inputRef}
+                      type="text" 
+                      value={searchValue} 
+                      onChange={e => {
+                        const value = e.target.value;
+                        setSearchValue(value);
+                        if (value.trim() && !hasStartedTyping) {
+                          setHasStartedTyping(true);
+                          onQueryStart?.(value.trim());
+                        }
+                      }}
+                      onFocus={() => setIsFocused(true)} 
+                      onBlur={() => setIsFocused(false)} 
+                      onKeyDown={e => { if (e.key === 'Enter') handleSubmit(e); }} 
+                      placeholder="What can I help you find today?" 
+                      className="w-full bg-transparent focus:outline-none text-base font-normal text-black placeholder:text-gray-500"
+                      autoComplete="off" 
+                      disabled={isSubmitted} 
+                    />
+                  </div>
+                  
+                  <div className="flex items-center space-x-3 ml-4">
+                    <button type="button" className="w-8 h-8 flex items-center justify-center text-black hover:text-gray-700 hover:scale-110 active:scale-95 transition-all duration-200">
+                      <Mic className="w-5 h-5" strokeWidth={1.5} />
+                    </button>
                     
-                    // Create chat history the moment user starts typing
-                    if (value.trim() && !hasStartedTyping) {
-                      console.log('SearchBar: First character typed, creating chat history');
-                      setHasStartedTyping(true);
-                      onQueryStart?.(value.trim());
-                    }
-                  }}
-                  onFocus={() => setIsFocused(true)} 
-                  onBlur={() => setIsFocused(false)} 
-                  onKeyDown={e => {
-                    if (e.key === 'Enter') {
-                      handleSubmit(e);
-                    }
-                  }} 
-                  placeholder="What can I help you find today?" 
-                  className="w-full bg-transparent focus:outline-none text-base font-normal text-black placeholder:text-gray-500"
-                  autoComplete="off" 
-                  disabled={isSubmitted} 
-                />
-              </div>
-              
-              {/* Action buttons */}
-              <div className="flex items-center space-x-3 ml-4">
-                <button type="button" className="w-8 h-8 flex items-center justify-center text-black hover:text-gray-700 hover:scale-110 active:scale-95 transition-all duration-200">
-                  <Mic className="w-5 h-5" strokeWidth={1.5} />
+                    <button type="submit" onClick={handleSubmit} className={`w-8 h-8 flex items-center justify-center transition-all duration-200 ${searchValue.trim() && !isSubmitted ? 'text-black hover:text-gray-700 hover:scale-110 active:scale-95' : 'text-gray-400 cursor-not-allowed'}`} disabled={isSubmitted || !searchValue.trim()}>
+                      <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        </div>
+      )}
+
+      {/* Fixed position on top when map is open */}
+      {isMapOpen && (
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4 z-50">
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ duration: 0.3 }} 
+            className="relative"
+          >
+            <form onSubmit={handleSubmit} className="relative">
+              <div className={`relative flex items-center bg-white border border-gray-200 rounded-full px-6 py-3 hover:border-gray-300 focus-within:border-gray-400 focus-within:shadow-sm transition-all duration-200 ease-out ${isSubmitted ? 'opacity-75' : ''}`}>
+                <button type="button" onClick={handleMapToggle} className="flex-shrink-0 mr-4 transition-colors duration-200">
+                  <Map className={`w-5 h-5 transition-colors duration-200 ${isMapIconClicked ? 'text-green-400' : 'text-black hover:text-green-500'}`} strokeWidth={1.5} />
                 </button>
                 
-                <button type="submit" onClick={e => {
-                e.preventDefault();
-                if (searchValue.trim() && !isSubmitted) {
-                  console.log('SearchBar: Button clicked, submitting search with value:', searchValue.trim());
-                  setIsSubmitted(true);
-                  // Instantly trigger search and chat history creation
-                  onSearch?.(searchValue.trim());
+                <div className="flex-1 relative">
+                  <input 
+                    ref={inputRef}
+                    type="text" 
+                    value={searchValue} 
+                    onChange={e => {
+                      const value = e.target.value;
+                      setSearchValue(value);
+                      if (value.trim() && !hasStartedTyping) {
+                        setHasStartedTyping(true);
+                        onQueryStart?.(value.trim());
+                      }
+                    }}
+                    onFocus={() => setIsFocused(true)} 
+                    onBlur={() => setIsFocused(false)} 
+                    onKeyDown={e => { if (e.key === 'Enter') handleSubmit(e); }} 
+                    placeholder="What can I help you find today?" 
+                    className="w-full bg-transparent focus:outline-none text-base font-normal text-black placeholder:text-gray-500"
+                    autoComplete="off" 
+                    disabled={isSubmitted} 
+                  />
+                </div>
+                
+                <div className="flex items-center space-x-3 ml-4">
+                  <button type="button" className="w-8 h-8 flex items-center justify-center text-black hover:text-gray-700 hover:scale-110 active:scale-95 transition-all duration-200">
+                    <Mic className="w-5 h-5" strokeWidth={1.5} />
+                  </button>
                   
-                  // Reset the search bar state after submission
-                  setTimeout(() => {
-                    setSearchValue('');
-                    setIsSubmitted(false);
-                    setHasStartedTyping(false);
-                  }, 100);
-                }
-              }} className={`w-8 h-8 flex items-center justify-center transition-all duration-200 ${
-                searchValue.trim() && !isSubmitted 
-                  ? 'text-black hover:text-gray-700 hover:scale-110 active:scale-95' 
-                  : 'text-gray-400 cursor-not-allowed'
-              }`} disabled={isSubmitted || !searchValue.trim()}>
-                  <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
-                </button>
+                  <button type="submit" onClick={handleSubmit} className={`w-8 h-8 flex items-center justify-center transition-all duration-200 ${searchValue.trim() && !isSubmitted ? 'text-black hover:text-gray-700 hover:scale-110 active:scale-95' : 'text-gray-400 cursor-not-allowed'}`} disabled={isSubmitted || !searchValue.trim()}>
+                    <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
+                  </button>
+                </div>
               </div>
-            </div>
-          </form>
-        </motion.div>
-      </div>
-    </div>
+            </form>
+          </motion.div>
+        </div>
+      )}
+    </>
   );
 };
