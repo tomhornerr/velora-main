@@ -109,7 +109,10 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
   }));
 
   useEffect(() => {
+    console.log('BackgroundMap useEffect triggered - isVisible:', isVisible);
+    
     if (!isVisible || !mapContainer.current) {
+      console.log('Map not visible or container not ready');
       if (map.current) {
         map.current.remove();
         map.current = null;
@@ -117,45 +120,72 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
       return;
     }
 
+    console.log('Mapbox token check:', mapboxToken ? 'Token exists' : 'No token');
+    
     // Initialize map
     mapboxgl.accessToken = mapboxToken;
     
     console.log('Initializing Mapbox map...');
+    console.log('Container element:', mapContainer.current);
     
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/satellite-streets-v12',
-      center: [-2.5879, 51.4545], // Bristol center
-      zoom: 11,
-      minZoom: 1,
-      maxZoom: 22,
-      antialias: true,
-      scrollZoom: true, // Enable scroll zoom
-      doubleClickZoom: true,
-      dragPan: true,
-      dragRotate: false, // Disable rotation for better UX
-      keyboard: true,
-      touchZoomRotate: true,
-      touchPitch: false,
-      attributionControl: false,
-      logoPosition: 'bottom-left',
-      interactive: true // Ensure map is interactive
-    });
-    
-    console.log('Map initialized:', map.current);
-    
-    // Add event listeners to debug interactions
-    map.current.on('load', () => {
-      console.log('Map loaded successfully');
-    });
-    
-    map.current.on('zoom', () => {
-      console.log('Map zoom changed to:', map.current?.getZoom());
-    });
-    
-    map.current.on('move', () => {
-      console.log('Map moved to:', map.current?.getCenter());
-    });
+    try {
+      map.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/streets-v12', // Try simpler style first
+        center: [-2.5879, 51.4545], // Bristol center
+        zoom: 11,
+        minZoom: 1,
+        maxZoom: 22,
+        scrollZoom: true,
+        doubleClickZoom: true,
+        dragPan: true,
+        dragRotate: false,
+        keyboard: true,
+        touchZoomRotate: true,
+        interactive: true
+      });
+      
+      console.log('Map instance created:', map.current);
+      
+      // Add comprehensive event listeners
+      map.current.on('load', () => {
+        console.log('✅ Map loaded successfully');
+        console.log('Map zoom level:', map.current?.getZoom());
+        console.log('Map center:', map.current?.getCenter());
+      });
+      
+      map.current.on('error', (e) => {
+        console.error('❌ Map error:', e);
+      });
+      
+      map.current.on('zoom', (e) => {
+        console.log('🔍 Zoom event:', map.current?.getZoom());
+      });
+      
+      map.current.on('move', (e) => {
+        console.log('🏃 Move event:', map.current?.getCenter());
+      });
+      
+      map.current.on('drag', (e) => {
+        console.log('🖱️ Drag event');
+      });
+      
+      map.current.on('wheel', (e) => {
+        console.log('🎢 Wheel event');
+      });
+      
+      map.current.on('mousedown', (e) => {
+        console.log('🖱️ Mouse down event');
+      });
+      
+      map.current.on('touchstart', (e) => {
+        console.log('👆 Touch start event');
+      });
+      
+    } catch (error) {
+      console.error('Failed to initialize map:', error);
+      return;
+    }
 
     // Hide Mapbox logo with CSS
     const style = document.createElement('style');
@@ -247,10 +277,25 @@ export const BackgroundMap = forwardRef<MapRef, BackgroundMapProps>(({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.6 }}
           className="fixed inset-0 z-10"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            height: '100vh'
+          }}
         >
           <div 
             ref={mapContainer} 
             className="w-full h-full"
+            style={{
+              width: '100%',
+              height: '100%',
+              position: 'relative',
+              zIndex: 1
+            }}
           />
           
           {/* Map overlay with search info - no blur effects */}
