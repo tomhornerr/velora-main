@@ -2,8 +2,8 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Outlet, useLocation } from "react-router-dom";
 import { Sidebar } from './Sidebar';
+import { MainContent } from './MainContent';
 import { ChatPanel } from './ChatPanel';
 import { ChatHistoryProvider, useChatHistory } from './ChatHistoryContext';
 import { ChatReturnNotification } from './ChatReturnNotification';
@@ -15,7 +15,7 @@ export interface DashboardLayoutProps {
 const DashboardLayoutContent = ({
   className
 }: DashboardLayoutProps) => {
-  const location = useLocation();
+  const [currentView, setCurrentView] = React.useState<string>('search');
   const [isChatPanelOpen, setIsChatPanelOpen] = React.useState<boolean>(false);
   const [isInChatMode, setIsInChatMode] = React.useState<boolean>(false);
   const [currentChatData, setCurrentChatData] = React.useState<any>(null);
@@ -26,11 +26,19 @@ const DashboardLayoutContent = ({
   const [resetTrigger, setResetTrigger] = React.useState<number>(0);
   const { addChatToHistory, updateChatInHistory, getChatById } = useChatHistory();
 
-  // Get current route for active sidebar item
-  const getCurrentRoute = () => {
-    const path = location.pathname;
-    if (path === '/') return 'search';
-    return path.substring(1); // Remove leading slash
+  const handleViewChange = (viewId: string) => {
+    // Show notification if we have any previous chat data and we're navigating away from search/home
+    if (previousChatData && (viewId !== 'search' && viewId !== 'home')) {
+      setShowChatNotification(true);
+    }
+    
+    // Always close chat panel when navigating to a different view
+    setIsChatPanelOpen(false);
+    
+    // Always exit chat mode when navigating to a different view
+    setCurrentView(viewId);
+    setIsInChatMode(false);
+    setCurrentChatData(null);
   };
 
   const handleChatHistoryCreate = React.useCallback((chatData: any) => {
@@ -93,8 +101,7 @@ const DashboardLayoutContent = ({
         messages: chat.messages
       });
       setIsInChatMode(true);
-      // Navigate to search route
-      window.location.href = '/';
+      setCurrentView('search');
       setIsChatPanelOpen(false);
     }
   }, [getChatById]);
@@ -104,8 +111,7 @@ const DashboardLayoutContent = ({
     setCurrentChatData(null);
     setHasPerformedSearch(false);
     setIsInChatMode(true);
-    // Navigate to search route
-    window.location.href = '/';
+    setCurrentView('search');
     setIsChatPanelOpen(false);
     
     // Trigger reset in SearchBar
@@ -119,8 +125,7 @@ const DashboardLayoutContent = ({
     if (previousChatData) {
       setCurrentChatData(previousChatData);
       setIsInChatMode(true);
-      // Navigate to search route  
-      window.location.href = '/';
+      setCurrentView('search');
       setShowChatNotification(false);
     }
   }, [previousChatData]);
@@ -156,19 +161,29 @@ const DashboardLayoutContent = ({
       
       {/* Sidebar */}
       <Sidebar 
+        onItemClick={handleViewChange} 
         onChatToggle={handleChatPanelToggle} 
         isChatPanelOpen={isChatPanelOpen} 
-        activeItem={getCurrentRoute()} 
+        activeItem={currentView} 
       />
       
       {/* Main Content */}
-      <div className="flex-1 relative">
-        <Outlet />
-      </div>
+      <MainContent 
+        currentView={currentView} 
+        onChatModeChange={handleChatModeChange}
+        onChatHistoryCreate={handleChatHistoryCreate}
+        currentChatData={currentChatData}
+        isInChatMode={isInChatMode}
+        resetTrigger={resetTrigger}
+      />
     </motion.div>
   );
 };
 
 export const DashboardLayout = (props: DashboardLayoutProps) => {
-  return <DashboardLayoutContent {...props} />;
+  return (
+    <ChatHistoryProvider>
+      <DashboardLayoutContent {...props} />
+    </ChatHistoryProvider>
+  );
 };
