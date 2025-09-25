@@ -45,6 +45,11 @@ const DashboardLayoutContent = ({
     setCurrentView(viewId);
     setIsInChatMode(false);
     setCurrentChatData(null);
+    
+    // Ensure sidebar is not collapsed when entering upload view
+    if (viewId === 'upload') {
+      setIsSidebarCollapsed(false);
+    }
   };
 
   const handleChatHistoryCreate = React.useCallback((chatData: any) => {
