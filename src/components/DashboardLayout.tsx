@@ -46,9 +46,12 @@ const DashboardLayoutContent = ({
     setIsInChatMode(false);
     setCurrentChatData(null);
     
-    // Ensure sidebar is not collapsed when entering upload view
+    // Ensure sidebar is visible when entering upload view, collapsed for other views
     if (viewId === 'upload') {
       setIsSidebarCollapsed(false);
+    } else if (viewId !== 'search') {
+      // Keep sidebar expanded for search view, but allow collapse for other views
+      // The sidebar will be managed by other handlers (chat mode, map visibility, etc.)
     }
   };
 
@@ -123,7 +126,7 @@ const DashboardLayoutContent = ({
         setIsSidebarCollapsed(true); // Auto-collapse sidebar when entering chat
       }
     }
-  }, [getChatById]);
+  }, [getChatById, currentView]);
 
   const handleMapVisibilityChange = React.useCallback((isVisible: boolean) => {
     setIsMapVisible(isVisible);
