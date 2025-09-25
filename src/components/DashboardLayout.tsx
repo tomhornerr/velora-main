@@ -46,12 +46,9 @@ const DashboardLayoutContent = ({
     setIsInChatMode(false);
     setCurrentChatData(null);
     
-    // Ensure sidebar is visible when entering upload view, collapsed for other views
+    // Force sidebar to be visible when entering upload view
     if (viewId === 'upload') {
       setIsSidebarCollapsed(false);
-    } else if (viewId !== 'search') {
-      // Keep sidebar expanded for search view, but allow collapse for other views
-      // The sidebar will be managed by other handlers (chat mode, map visibility, etc.)
     }
   };
 
@@ -74,7 +71,7 @@ const DashboardLayoutContent = ({
   const handleChatModeChange = (inChatMode: boolean, chatData?: any) => {
     if (inChatMode) {
       setIsInChatMode(true);
-      // Don't auto-collapse sidebar in upload view
+      // Never auto-collapse sidebar in upload view
       if (currentView !== 'upload') {
         setIsSidebarCollapsed(true); // Auto-collapse sidebar when entering chat mode
       }
@@ -130,7 +127,7 @@ const DashboardLayoutContent = ({
 
   const handleMapVisibilityChange = React.useCallback((isVisible: boolean) => {
     setIsMapVisible(isVisible);
-    // Auto-collapse sidebar when map is visible, but not in upload view
+    // Never auto-collapse sidebar in upload view, even when map is visible
     if (isVisible && currentView !== 'upload') {
       setIsSidebarCollapsed(true);
     }
@@ -142,6 +139,7 @@ const DashboardLayoutContent = ({
   }, []);
 
   const handleSidebarToggle = React.useCallback(() => {
+    // Allow toggle functionality in all views, including upload
     setIsSidebarCollapsed(prev => !prev);
   }, []);
 
