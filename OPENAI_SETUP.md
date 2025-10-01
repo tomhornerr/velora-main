@@ -20,7 +20,7 @@ Create a `.env.local` file in the project root:
 
 ```bash
 # OpenAI API Configuration
-OPENAI_API_KEY= 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
+OPENAI_API_KEY=your_openai_api_key_here
 ```
 
 ### 3. Restart Development Server

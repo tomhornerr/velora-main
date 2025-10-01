@@ -29,7 +29,7 @@ export const SquareMap = forwardRef<SquareMapRef, SquareMapProps>(({
   const mapContainer = useRef<HTMLDivElement>(null);
   const map = useRef<mapboxgl.Map | null>(null);
   const currentMarker = useRef<mapboxgl.Marker | null>(null);
-  const mapboxToken = 'pk.eyJ1IjoidG9taG9ybmVyciIsImEiOiJjbWZ3bjhyczUwMTVtMmxyNHMxcnVtdm1yIn0.K8xbjDjt_mcIIDajF23M2g';
+  const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN || '';
   
   
   // Property search states
