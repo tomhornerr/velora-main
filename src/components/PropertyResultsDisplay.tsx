@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, Scan, MapPin } from "lucide-react";
 import { MapPopup } from './MapPopup';
+import { SquareMap } from './SquareMap';
 
 // Import property images
 import property1 from "@/assets/property-1.jpg";
@@ -15,59 +16,47 @@ import property4 from "@/assets/property-4.jpg";
 export interface PropertyData {
   id: number;
   address: string;
+  postcode: string;
+  property_type: string;
+  bedrooms: number;
+  bathrooms: number;
+  price: number;
+  square_feet: number;
+  days_on_market: number;
+  latitude: number;
+  longitude: number;
+  summary: string;
+  features: string;
+  condition: number;
+  similarity: number;
   image: string;
-  price: string;
-  beds: number;
-  baths: number;
-  sqft: string;
+  agent: {
+    name: string;
+    company: string;
+  };
 }
 
 export interface PropertyResultsDisplayProps {
   properties: PropertyData[];
   className?: string;
+  onMapButtonClick?: () => void;
 }
 
-const propertyData: PropertyData[] = [{
-  id: 1,
-  address: "24 Rudthorpe Rd",
-  image: property1,
-  price: "$850,000",
-  beds: 3,
-  baths: 2,
-  sqft: "1,200 sqft"
-}, {
-  id: 2,
-  address: "18 Maple Street",
-  image: property2,
-  price: "$920,000",
-  beds: 4,
-  baths: 3,
-  sqft: "1,450 sqft"
-}, {
-  id: 3,
-  address: "42 Oak Avenue", 
-  image: property3,
-  price: "$780,000",
-  beds: 3,
-  baths: 2,
-  sqft: "1,100 sqft"
-}, {
-  id: 4,
-  address: "156 Pine Boulevard",
-  image: property4,
-  price: "$1,150,000",
-  beds: 4,
-  baths: 3.5,
-  sqft: "1,800 sqft"
-}];
+// Using properties passed as props instead of hardcoded data
 export default function PropertyResultsDisplay({
-  properties = propertyData,
-  className
+  properties = [],
+  className,
+  onMapButtonClick
 }: PropertyResultsDisplayProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeScan, setActiveScan] = useState(false);
   const [activeLocation, setActiveLocation] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
+  const [showComparablesMap, setShowComparablesMap] = useState(false);
+
+  // Debug logging
+  console.log('PropertyResultsDisplay received properties:', properties);
+  console.log('Current property:', properties[currentIndex]);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isHovering, setIsHovering] = useState(false);
   const hasScrolled = useRef(false);
@@ -83,6 +72,26 @@ export default function PropertyResultsDisplay({
 
   const goToProperty = (index: number) => {
     setCurrentIndex(index);
+  };
+
+  // Convert property data to format expected by SquareMap
+  const convertPropertiesToMapFormat = (properties: PropertyData[]) => {
+    return properties.map((property, index) => ({
+      id: property.id,
+      address: property.address,
+      price: property.price,
+      bedrooms: property.bedrooms,
+      bathrooms: property.bathrooms,
+      squareFeet: property.square_feet,
+      latitude: 51.4545 + (index * 0.01), // Mock coordinates around Bristol
+      longitude: -2.5879 + (index * 0.01),
+      type: 'House',
+      condition: 'Good',
+      features: ['Garden', 'Parking'],
+      summary: `Beautiful ${property.bedrooms} bedroom property in ${property.address}`,
+      image: property.image,
+      agent: 'Velora Properties'
+    }));
   };
 
   // Navigation button controls and scroll
@@ -158,11 +167,25 @@ export default function PropertyResultsDisplay({
       }`}>
         {/* Property Image */}
         <div className="relative h-48 bg-gradient-to-br from-slate-100 to-slate-200 overflow-hidden">
-          <img 
-            src={currentProperty.image}
-            alt={currentProperty.address}
-            className="w-full h-full object-cover"
-          />
+          {currentProperty.image ? (
+            <img 
+              src={currentProperty.image}
+              alt={currentProperty.address}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                console.log('Image failed to load:', currentProperty.image);
+                // Try a fallback image
+                e.currentTarget.src = 'https://via.placeholder.com/400x300/94a3b8/ffffff?text=Property+Image';
+              }}
+              onLoad={() => {
+                console.log('Image loaded successfully:', currentProperty.image);
+              }}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
+              <div className="text-slate-400 text-sm">No image available</div>
+            </div>
+          )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
           
           {/* Address Badge */}
@@ -198,7 +221,7 @@ export default function PropertyResultsDisplay({
         <div className="p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="text-2xl font-bold text-slate-900">
-              {currentProperty.price}
+              £{currentProperty.price.toLocaleString()}
             </div>
             
             {/* Action Buttons - Integrated into details section */}
@@ -215,7 +238,7 @@ export default function PropertyResultsDisplay({
               </button>
               
               <button
-                onClick={() => setIsMapOpen(true)}
+                onClick={onMapButtonClick || (() => setShowComparablesMap(true))}
                 className="w-10 h-10 rounded-xl flex items-center justify-center bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
               >
                 <MapPin className="w-4 h-4" strokeWidth={2} />
@@ -225,15 +248,15 @@ export default function PropertyResultsDisplay({
           
           <div className="grid grid-cols-3 gap-4 text-sm">
             <div className="text-center">
-              <div className="text-xl font-semibold text-slate-800">{currentProperty.beds}</div>
+              <div className="text-xl font-semibold text-slate-800">{currentProperty.bedrooms}</div>
               <div className="text-slate-600">Bedrooms</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-semibold text-slate-800">{currentProperty.baths}</div>
+              <div className="text-xl font-semibold text-slate-800">{currentProperty.bathrooms}</div>
               <div className="text-slate-600">Bathrooms</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-semibold text-slate-800">{currentProperty.sqft}</div>
+              <div className="text-xl font-semibold text-slate-800">{currentProperty.square_feet.toLocaleString()}</div>
               <div className="text-slate-600">Square Feet</div>
             </div>
           </div>
@@ -265,7 +288,55 @@ export default function PropertyResultsDisplay({
         </div>
       </div>
 
-      {/* Map Popup */}
+      {/* Comparables Map */}
+      <AnimatePresence>
+        {showComparablesMap && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowComparablesMap(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="absolute inset-4 bg-white rounded-2xl overflow-hidden shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-center justify-between p-6 border-b border-slate-200">
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-900">Property Comparables Map</h2>
+                  <p className="text-slate-600 mt-1">Showing {properties.length} comparable properties</p>
+                </div>
+                <button
+                  onClick={() => setShowComparablesMap(false)}
+                  className="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+                >
+                  <ChevronLeft className="w-5 h-5 text-slate-600" />
+                </button>
+              </div>
+              
+              {/* Map Container */}
+              <div className="h-[calc(100%-80px)]">
+                <SquareMap
+                  isVisible={true}
+                  searchQuery=""
+                  onLocationUpdate={() => {}}
+                  onSearch={() => {}}
+                  hasPerformedSearch={true}
+                  properties={convertPropertiesToMapFormat(properties)}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Single Property Map Popup (kept for individual property view) */}
       <MapPopup 
         isOpen={isMapOpen}
         onClose={() => setIsMapOpen(false)}

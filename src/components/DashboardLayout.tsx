@@ -8,7 +8,6 @@ import { ChatPanel } from './ChatPanel';
 import { SearchBar } from './SearchBar';
 import { ChatHistoryProvider, useChatHistory } from './ChatHistoryContext';
 import { ChatReturnNotification } from './ChatReturnNotification';
-import { BackgroundMap, MapRef } from './BackgroundMap';
 
 export interface DashboardLayoutProps {
   className?: string;
@@ -22,29 +21,45 @@ const DashboardLayoutContent = ({
   const [isInChatMode, setIsInChatMode] = React.useState<boolean>(false);
   const [currentChatData, setCurrentChatData] = React.useState<any>(null);
   const [currentChatId, setCurrentChatId] = React.useState<string | null>(null);
+  const currentChatIdRef = React.useRef<string | null>(null);
   const [hasPerformedSearch, setHasPerformedSearch] = React.useState(false);
   const [showChatNotification, setShowChatNotification] = React.useState(false);
   const [previousChatData, setPreviousChatData] = React.useState<any>(null);
   const [resetTrigger, setResetTrigger] = React.useState<number>(0);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState<boolean>(false);
-  const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
-  const [currentLocation, setCurrentLocation] = React.useState<string>("");
-  const mapRef = React.useRef<MapRef>(null);
+  const [wasChatPanelOpenBeforeCollapse, setWasChatPanelOpenBeforeCollapse] = React.useState<boolean>(false);
+  const [homeClicked, setHomeClicked] = React.useState<boolean>(false);
   const { addChatToHistory, updateChatInHistory, getChatById } = useChatHistory();
 
   const handleViewChange = (viewId: string) => {
-    // Show notification if we have any previous chat data and we're navigating away from search/home
-    if (previousChatData && (viewId !== 'search' && viewId !== 'home')) {
+    // Show notification only if we're currently in chat mode and navigating away from it
+    if (isInChatMode && previousChatData && (viewId !== 'search' && viewId !== 'home')) {
       setShowChatNotification(true);
     }
     
-    // Always close chat panel when navigating to a different view
-    setIsChatPanelOpen(false);
+    // Always close chat panel when navigating to a different view, except upload
+    if (viewId !== 'upload') {
+      setIsChatPanelOpen(false);
+    }
     
     // Always exit chat mode when navigating to a different view
     setCurrentView(viewId);
     setIsInChatMode(false);
     setCurrentChatData(null);
+    
+    // Special handling for home - reset everything to default state
+    if (viewId === 'home') {
+      setCurrentChatData(null);
+      setCurrentChatId(null);
+      currentChatIdRef.current = null;
+      setPreviousChatData(null);
+      setHasPerformedSearch(false);
+      setResetTrigger(prev => prev + 1); // Trigger reset in SearchBar
+      setHomeClicked(true); // Flag that home was clicked
+      // Set view to search since home displays the search interface
+      setCurrentView('search');
+      return; // Exit early to prevent setting currentView again
+    }
     
     // Force sidebar to be visible when entering upload view
     if (viewId === 'upload') {
@@ -53,11 +68,9 @@ const DashboardLayoutContent = ({
   };
 
   const handleChatHistoryCreate = React.useCallback((chatData: any) => {
-    // Create chat history when query is submitted
-    if (chatData && chatData.query) {
+    // Create chat history only if none exists yet for this session
+    if (chatData && chatData.query && !currentChatId) {
       setPreviousChatData(chatData);
-      
-      // Always create a new chat when submitting a query (like ChatGPT)
       const newChatId = addChatToHistory({
         title: '',
         timestamp: new Date().toISOString(),
@@ -66,29 +79,45 @@ const DashboardLayoutContent = ({
       });
       setCurrentChatId(newChatId);
     }
-  }, [addChatToHistory, setPreviousChatData]);
+  }, [addChatToHistory, setPreviousChatData, currentChatId]);
 
   const handleChatModeChange = (inChatMode: boolean, chatData?: any) => {
     if (inChatMode) {
       setIsInChatMode(true);
-      // Never auto-collapse sidebar in upload view
-      if (currentView !== 'upload') {
-        setIsSidebarCollapsed(true); // Auto-collapse sidebar when entering chat mode
-      }
+      // Always auto-collapse sidebar when entering chat mode, regardless of view
+      setIsSidebarCollapsed(true);
+      // Close chat panel when entering chat mode
+      setIsChatPanelOpen(false);
       if (chatData) {
         setCurrentChatData(chatData);
-        setPreviousChatData(chatData);
         setHasPerformedSearch(true);
-        
-        // Update existing chat with new messages (don't create new chat here)
-        if (currentChatId && chatData.messages && chatData.messages.length > 0) {
-          updateChatInHistory(currentChatId, chatData.messages);
+
+        // If we don't have a chat yet, create it immediately (ChatGPT style)
+        if (!currentChatIdRef.current) {
+          const firstUserMessage = chatData.messages?.find((m: any) => m.role === 'user' || m.type === 'user');
+          const preview = chatData.query || firstUserMessage?.content || firstUserMessage?.text || '';
+          const newId = addChatToHistory({
+            title: '',
+            timestamp: new Date().toISOString(),
+            preview,
+            messages: chatData.messages || []
+          });
+          setCurrentChatId(newId);
+          currentChatIdRef.current = newId;
+          // Set previousChatData with chatId included
+          setPreviousChatData({ ...chatData, chatId: newId });
+        } else if (chatData.messages && chatData.messages.length > 0) {
+          // Update existing chat with new messages
+          updateChatInHistory(currentChatIdRef.current as string, chatData.messages);
         }
       }
     } else {
       // Exiting chat mode
       if (chatData) {
-        setPreviousChatData(chatData);
+        // Only set previousChatData if we don't already have one (preserve original chat data)
+        if (!previousChatData) {
+          setPreviousChatData({ ...chatData, chatId: currentChatIdRef.current });
+        }
       }
       
       // Show notification if we have chat data to store
@@ -125,37 +154,38 @@ const DashboardLayoutContent = ({
     }
   }, [getChatById, currentView]);
 
-  const handleMapVisibilityChange = React.useCallback((isVisible: boolean) => {
-    setIsMapVisible(isVisible);
-    // Never auto-collapse sidebar in upload view, even when map is visible
-    if (isVisible && currentView !== 'upload') {
-      setIsSidebarCollapsed(true);
-    }
-  }, [currentView]);
-
-  const handleLocationUpdate = React.useCallback((location: { lat: number; lng: number; address: string }) => {
-    console.log('Location updated:', location);
-    setCurrentLocation(location.address);
-  }, []);
 
   const handleSidebarToggle = React.useCallback(() => {
     // Allow toggle functionality in all views, including upload
-    setIsSidebarCollapsed(prev => !prev);
-  }, []);
+    setIsSidebarCollapsed(prev => {
+      const newCollapsed = !prev;
+      
+      if (newCollapsed) {
+        // Collapsing sidebar - remember chat panel state
+        setWasChatPanelOpenBeforeCollapse(isChatPanelOpen);
+        // Close chat panel when collapsing
+        setIsChatPanelOpen(false);
+      } else {
+        // Expanding sidebar - restore chat panel state
+        setIsChatPanelOpen(wasChatPanelOpenBeforeCollapse);
+      }
+      
+      return newCollapsed;
+    });
+  }, [isChatPanelOpen, wasChatPanelOpenBeforeCollapse]);
 
   const handleNewChat = React.useCallback(() => {
     setCurrentChatId(null);
+    currentChatIdRef.current = null;
     setCurrentChatData(null);
+    setPreviousChatData(null); // Clear previous chat data when starting new chat
     setHasPerformedSearch(false);
     setIsInChatMode(true);
     setCurrentView('search');
     setIsChatPanelOpen(false);
-    
     // Trigger reset in SearchBar
     setResetTrigger(prev => prev + 1);
-    
-    // Force clear all chat state immediately
-    handleChatModeChange(true, { query: "", messages: [], timestamp: new Date() });
+    // Do NOT create chat history yet; wait for first submitted query
   }, [handleChatModeChange]);
 
   const handleReturnToChat = React.useCallback(() => {
@@ -164,12 +194,17 @@ const DashboardLayoutContent = ({
       setIsInChatMode(true);
       setCurrentView('search');
       setShowChatNotification(false);
+      // Restore the currentChatId if it was stored in previousChatData
+      if (previousChatData.chatId) {
+        setCurrentChatId(previousChatData.chatId);
+        currentChatIdRef.current = previousChatData.chatId;
+      }
     }
   }, [previousChatData]);
 
   const handleDismissNotification = React.useCallback(() => {
     setShowChatNotification(false);
-    setPreviousChatData(null);
+    // Don't clear previousChatData - keep it for future returns
   }, []);
 
   return (
@@ -179,13 +214,6 @@ const DashboardLayoutContent = ({
       transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }} 
       className={`flex h-screen w-full overflow-hidden relative ${className || ''}`}
     >
-      {/* Background Map - Always rendered at top level */}
-      <BackgroundMap 
-        ref={mapRef}
-        isVisible={isMapVisible} 
-        searchQuery={isMapVisible ? currentLocation : undefined}
-        onLocationUpdate={handleLocationUpdate}
-      />
 
       {/* Chat Return Notification */}
       <ChatReturnNotification
@@ -212,7 +240,6 @@ const DashboardLayoutContent = ({
         activeItem={currentView}
         isCollapsed={isSidebarCollapsed}
         onToggle={handleSidebarToggle}
-        className={isMapVisible ? "z-[150]" : ""}
       />
       
       {/* Main Content - with higher z-index when map is visible */}
@@ -221,11 +248,12 @@ const DashboardLayoutContent = ({
         onChatModeChange={handleChatModeChange}
         onChatHistoryCreate={handleChatHistoryCreate}
         currentChatData={currentChatData}
+        currentChatId={currentChatId}
         isInChatMode={isInChatMode}
         resetTrigger={resetTrigger}
-        onMapVisibilityChange={handleMapVisibilityChange}
-        mapRef={mapRef}
-        className={isMapVisible ? "z-[150]" : ""}
+        onNavigate={handleViewChange}
+        homeClicked={homeClicked}
+        onHomeResetComplete={() => setHomeClicked(false)}
       />
     </motion.div>
   );

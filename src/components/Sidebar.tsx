@@ -74,7 +74,7 @@ export const Sidebar = ({
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Simplified - always show toggle
+  // NOTE: We'll render a full-height thin rail as the toggle so users can click anywhere on the side
 
   const handleItemClick = (itemId: string) => {
     onItemClick?.(itemId);
@@ -97,7 +97,7 @@ export const Sidebar = ({
         duration: 0.05,
         ease: [0.4, 0, 0.2, 1]
       }}
-      className={`${isCollapsed ? 'w-2' : 'w-10 lg:w-14'} flex flex-col items-center py-6 fixed left-0 top-0 h-full ${className?.includes('z-[150]') ? 'z-[150]' : 'z-50'} transition-all duration-300 ${className || ''}`} 
+      className={`${isCollapsed ? 'w-2' : 'w-10 lg:w-14'} flex flex-col items-center py-6 fixed left-0 top-0 h-full ${className?.includes('z-[150]') ? 'z-[150]' : 'z-[300]'} transition-all duration-300 ${className || ''}`} 
       style={{ background: isCollapsed ? 'transparent' : 'var(--sidebar-background)' }}
     >
       {!isCollapsed && (
@@ -138,7 +138,8 @@ export const Sidebar = ({
       <div className="flex flex-col space-y-2">
         {sidebarItems.map((item, index) => {
         const Icon = item.icon;
-        const isActive = activeItem === item.id;
+        // Home icon should never be active since it's just a navigation button
+        const isActive = activeItem === item.id && item.id !== 'home';
         return <motion.button key={item.id} initial={{
           opacity: 0,
           y: 8,
@@ -178,29 +179,43 @@ export const Sidebar = ({
       )}
     </motion.div>
 
-    {/* Sidebar Toggle - Shows on mouse proximity */}
-    <AnimatePresence>
-      {showToggleButton && (
-        <button
-          onClick={onToggle}
-          className={`fixed ${isCollapsed ? 'left-2' : 'left-10 lg:left-14'} ${isCollapsed ? 'top-[47%]' : 'top-[55%]'} -translate-y-1/2 w-5 h-10
-            bg-black/40 backdrop-blur-md border border-white/30 rounded-r-lg shadow-lg
-            hover:bg-black/50 hover:border-white/40
-            [background:linear-gradient(135deg,rgba(0,0,0,0.4),rgba(0,0,0,0.2))]
-            hover:[background:linear-gradient(135deg,rgba(0,0,0,0.5),rgba(0,0,0,0.3))]
-            flex items-center justify-center`}
-          style={{
-            opacity: isCollapsed ? 0.6 : 0.9,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.1)',
-            zIndex: 200
-          }}
-          aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-        >
-          <div
-            className={`w-1.5 h-1.5 border-r-[1.5px] border-b-[1.5px] border-white rotate-45 transform drop-shadow-sm ${isCollapsed ? '' : 'rotate-[225deg]'}`}
-          />
-        </button>
-      )}
-    </AnimatePresence>
+    {/* Sidebar Toggle Rail - full height thin clickable area */}
+    <motion.button
+      onClick={onToggle}
+      aria-label={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+      className={`fixed inset-y-0 w-4
+        bg-white/10 backdrop-blur-sm shadow-lg
+        hover:bg-white/20 active:bg-white/30
+        hover:shadow-xl`}
+      style={{ 
+        WebkitTapHighlightColor: 'transparent',
+        zIndex: 250,
+        left: isCollapsed ? '0px' : (isChatPanelOpen ? '376px' : '56px')
+      }}
+      animate={{
+        x: 0
+      }}
+      transition={{
+        duration: 0.3,
+        ease: [0.4, 0, 0.2, 1]
+      }}
+    >
+      {/* Glassmorphism arrow indicator - should point left when expanded, right when collapsed */}
+      <motion.div
+        className={`absolute top-1/2 left-1/2 w-3 h-3 flex items-center justify-center`}
+        animate={{
+          rotate: isCollapsed ? 0 : 180
+        }}
+        transition={{
+          duration: 0.3,
+          ease: [0.4, 0, 0.2, 1]
+        }}
+        style={{ 
+          transform: 'translate(-50%, -50%)'
+        }}
+      >
+        <div className={`w-0 h-0 border-l-[8px] border-l-white border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent drop-shadow-sm`} />
+      </motion.div>
+    </motion.button>
   </>;
 };

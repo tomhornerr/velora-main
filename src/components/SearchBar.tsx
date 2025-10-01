@@ -3,242 +3,278 @@
 import * as React from "react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Mic, ChevronRight, Map } from "lucide-react";
+import { ChevronRight, Map } from "lucide-react";
+import { ImageUploadButton } from './ImageUploadButton';
+
 export interface SearchBarProps {
   className?: string;
   onSearch?: (query: string) => void;
   onQueryStart?: (query: string) => void;
-  onMapToggle?: (isMapOpen: boolean) => void;
-  onMapSearch?: (query: string) => void; // New prop for map-specific searches
+  onMapToggle?: () => void;
   resetTrigger?: number;
+  // Context-aware props
+  isMapVisible?: boolean;
+  isInChatMode?: boolean;
+  currentView?: string;
+  hasPerformedSearch?: boolean;
 }
+
 export const SearchBar = ({
   className,
   onSearch,
   onQueryStart,
   onMapToggle,
-  onMapSearch,
-  resetTrigger
+  resetTrigger,
+  isMapVisible = false,
+  isInChatMode = false,
+  currentView = 'search',
+  hasPerformedSearch = false
 }: SearchBarProps) => {
   const [searchValue, setSearchValue] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [hasStartedTyping, setHasStartedTyping] = useState(false);
-  const [isMapOpen, setIsMapOpen] = useState(false);
-  const [isMapIconClicked, setIsMapIconClicked] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Context-aware configuration
+  const getContextConfig = () => {
+    if (isMapVisible) {
+      return {
+        placeholder: "Search for properties in Bristol...",
+        showMapToggle: true, // Always show map toggle
+        showMic: false,
+        position: "bottom", // Always bottom when map is visible
+        glassmorphism: true,
+        maxWidth: '100vw', // Full width for map mode
+        greenGlow: true // Add green glow for map mode
+      };
+    } else if (isInChatMode) {
+      return {
+        placeholder: "Ask anything...",
+        showMapToggle: true,
+        showMic: true,
+        position: "center", // Always center
+        glassmorphism: false,
+        maxWidth: '600px', // Narrower for chat mode
+        greenGlow: false
+      };
+    } else {
+      return {
+        placeholder: "What can I help you find today?",
+        showMapToggle: true,
+        showMic: true,
+        position: "center", // Always center
+        glassmorphism: false,
+        maxWidth: '600px', // Narrower for opening search page
+        greenGlow: false
+      };
+    }
+  };
+
+  const contextConfig = getContextConfig();
   
   // Auto-focus on any keypress for search bar - but only when hovered
   useEffect(() => {
     if (!isHovered) return; // Only add listener when search bar is hovered
     
-    console.log('SearchBar: Setting up global keydown listener');
-    
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
-      console.log('SearchBar: Global keydown triggered', {
-        key: e.key,
-        target: e.target?.constructor.name,
-        inputRef: inputRef.current ? 'exists' : 'null'
-      });
-      
       // Don't interfere with form inputs, buttons, or modifier keys
       if (e.target instanceof HTMLInputElement || 
           e.target instanceof HTMLTextAreaElement || 
           e.target instanceof HTMLButtonElement ||
           e.ctrlKey || e.metaKey || e.altKey || 
           e.key === 'Tab' || e.key === 'Escape') {
-        console.log('SearchBar: Ignoring keydown - excluded target/key');
         return;
       }
       
-      // Focus input and let the character through for normal typing
-      if (e.key.length === 1 && inputRef.current) {
-        console.log('SearchBar: Focusing input for typing');
-        // Don't prevent default or add characters - let the normal input handle it
+      // Focus the search input
+      if (inputRef.current) {
         inputRef.current.focus();
       }
     };
-
-    window.addEventListener('keydown', handleGlobalKeyDown);
-    return () => {
-      console.log('SearchBar: Cleaning up global keydown listener');
-      window.removeEventListener('keydown', handleGlobalKeyDown);
-    };
+    
+    document.addEventListener('keydown', handleGlobalKeyDown);
+    return () => document.removeEventListener('keydown', handleGlobalKeyDown);
   }, [isHovered]);
 
-  // Reset SearchBar when resetTrigger changes (new chat created)
+  // Reset when resetTrigger changes
   useEffect(() => {
     if (resetTrigger !== undefined) {
       setSearchValue('');
       setIsSubmitted(false);
       setHasStartedTyping(false);
+      setIsFocused(false);
     }
   }, [resetTrigger]);
 
   // Auto-focus on mount
   useEffect(() => {
-    console.log('SearchBar: Auto-focusing on mount');
     if (inputRef.current) {
       inputRef.current.focus();
     }
   }, []);
-  const handleMapToggle = () => {
-    console.log('Map toggle clicked. Current isMapOpen:', isMapOpen);
-    setIsMapIconClicked(true);
-    setTimeout(() => setIsMapIconClicked(false), 200);
-    
-    const newMapState = !isMapOpen;
-    console.log('Setting map state to:', newMapState);
-    console.log('About to render:', newMapState ? 'fixed top search bar' : 'centered search bar');
-    setIsMapOpen(newMapState);
-    onMapToggle?.(newMapState);
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchValue.trim() && !isSubmitted) {
-      console.log('SearchBar: Submitting search with value:', searchValue.trim());
+    const submitted = searchValue.trim();
+    if (submitted && !isSubmitted) {
       setIsSubmitted(true);
       
-      // If map is open, search on the map instead of triggering chat
-      if (isMapOpen) {
-        console.log('Searching on map:', searchValue.trim());
-        onMapSearch?.(searchValue.trim());
-        // Don't reset search value for map searches so user can see what they searched
+      onSearch?.(submitted);
+      
+      // Reset the search bar state after submission
+      setTimeout(() => {
+        setSearchValue('');
         setIsSubmitted(false);
-      } else {
-        // Normal search behavior for chat
-        onSearch?.(searchValue.trim());
-        
-        // Reset the search bar state after submission
-        setTimeout(() => {
-          setSearchValue('');
-          setIsSubmitted(false);
-          setHasStartedTyping(false);
-        }, 100);
-      }
+        setHasStartedTyping(false);
+      }, 100);
     }
   };
-  console.log('SearchBar render - isMapOpen:', isMapOpen);
   
   return (
-    <>
-      {/* Normal position when map is closed */}
-      {!isMapOpen && (
-        <div 
-          className={`w-full h-full flex items-center justify-center px-6 ${className || ''}`}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          <div className="w-full max-w-2xl mx-auto">
+    <motion.div 
+      className={`${className || ''} ${
+        contextConfig.position === "bottom" 
+          ? "fixed bottom-5 left-1/2 transform -translate-x-1/2 z-40" 
+          : "w-full h-full flex items-center justify-center px-6"
+      }`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div className="w-full mx-auto" style={{ 
+        maxWidth: contextConfig.maxWidth, 
+        minWidth: isMapVisible ? '600px' : '400px' 
+      }}>
+        <div className="relative">
+          <form onSubmit={handleSubmit} className="relative">
             <motion.div 
-              initial={{ opacity: 1, y: 20 }} 
-              animate={{ opacity: 1, y: 0 }} 
-              transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }} 
-              className="relative"
+              className={`relative flex items-center rounded-full px-6 py-2 transition-all duration-300 ease-out ${isSubmitted ? 'opacity-75' : ''}`}
+              style={{
+                background: isFocused 
+                  ? 'rgba(255, 255, 255, 0.15)' 
+                  : 'rgba(255, 255, 255, 0.1)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '9999px',
+                WebkitBackdropFilter: 'blur(20px)'
+              }}
+              animate={{
+                scale: isFocused ? 1.005 : 1,
+                boxShadow: isFocused 
+                  ? contextConfig.greenGlow 
+                    ? '0 12px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 0 2px rgba(16, 185, 129, 0.6), 0 0 24px rgba(16, 185, 129, 0.25), 0 0 48px rgba(16, 185, 129, 0.12)'
+                    : '0 20px 60px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 0 2px rgba(59, 130, 246, 0.5), 0 0 24px rgba(59, 130, 246, 0.2), 0 0 48px rgba(59, 130, 246, 0.1)'
+                  : contextConfig.greenGlow 
+                    ? '0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 1px rgba(16, 185, 129, 0.3), 0 0 16px rgba(16, 185, 129, 0.15), 0 0 32px rgba(16, 185, 129, 0.08)'
+                    : '0 25px 50px -12px rgba(0, 0, 0, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.2)'
+              }}
+              transition={{
+                duration: 0.2,
+                ease: "easeOut"
+              }}
+              whileHover={{
+                scale: 1.003,
+                boxShadow: contextConfig.greenGlow 
+                  ? '0 10px 36px rgba(0, 0, 0, 0.14), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1.5px rgba(16, 185, 129, 0.5), 0 0 20px rgba(16, 185, 129, 0.2), 0 0 40px rgba(16, 185, 129, 0.1)'
+                  : '0 30px 60px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 0 0 1.5px rgba(59, 130, 246, 0.4), 0 0 20px rgba(59, 130, 246, 0.15), 0 0 40px rgba(59, 130, 246, 0.08)'
+              }}
             >
-              <form onSubmit={handleSubmit} className="relative">
-                <div className={`relative flex items-center bg-white border border-gray-200 rounded-full px-6 py-3 hover:border-gray-300 focus-within:border-gray-400 focus-within:shadow-sm transition-all duration-200 ease-out ${isSubmitted ? 'opacity-75' : ''}`}>
-                  <button type="button" onClick={handleMapToggle} className="flex-shrink-0 mr-4 transition-colors duration-200">
-                    <Map className={`w-5 h-5 transition-colors duration-200 ${isMapIconClicked ? 'text-green-400' : 'text-black hover:text-green-500'}`} strokeWidth={1.5} />
-                  </button>
-                  
-                  <div className="flex-1 relative">
-                    <input 
-                      ref={inputRef}
-                      type="text" 
-                      value={searchValue} 
-                      onChange={e => {
-                        const value = e.target.value;
-                        setSearchValue(value);
-                        if (value.trim() && !hasStartedTyping) {
-                          setHasStartedTyping(true);
-                          onQueryStart?.(value.trim());
-                        }
-                      }}
-                      onFocus={() => setIsFocused(true)} 
-                      onBlur={() => setIsFocused(false)} 
-                      onKeyDown={e => { if (e.key === 'Enter') handleSubmit(e); }} 
-                      placeholder={isMapOpen ? "Search for a location..." : "What can I help you find today?"}
-                      className="w-full bg-transparent focus:outline-none text-base font-normal text-black placeholder:text-gray-500"
-                      autoComplete="off" 
-                      disabled={isSubmitted} 
-                    />
-                  </div>
-                  
-                  <div className="flex items-center space-x-3 ml-4">
-                    <button type="button" className="w-8 h-8 flex items-center justify-center text-black hover:text-gray-700 hover:scale-110 active:scale-95 transition-all duration-200">
-                      <Mic className="w-5 h-5" strokeWidth={1.5} />
-                    </button>
-                    
-                    <button type="submit" onClick={handleSubmit} className={`w-8 h-8 flex items-center justify-center transition-all duration-200 ${searchValue.trim() && !isSubmitted ? 'text-black hover:text-gray-700 hover:scale-110 active:scale-95' : 'text-gray-400 cursor-not-allowed'}`} disabled={isSubmitted || !searchValue.trim()}>
-                      <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
-                    </button>
-                  </div>
-                </div>
-              </form>
-            </motion.div>
-          </div>
-        </div>
-      )}
-
-      {/* Fixed position at bottom when map is open */}
-      {isMapOpen && (
-        <div 
-          className="fixed bottom-6 left-1/2 transform -translate-x-1/2 w-full max-w-2xl px-4 z-[200] pointer-events-none"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.3 }} 
-            className="relative pointer-events-auto"
-          >
-            <form onSubmit={handleSubmit} className="relative">
-              <div className={`relative flex items-center bg-white border border-gray-200 rounded-full px-6 py-3 hover:border-gray-300 focus-within:border-gray-400 focus-within:shadow-sm transition-all duration-200 ease-out ${isSubmitted ? 'opacity-75' : ''}`}>
-                <button type="button" onClick={handleMapToggle} className="flex-shrink-0 mr-4 transition-colors duration-200">
-                  <Map className={`w-5 h-5 transition-colors duration-200 ${isMapIconClicked ? 'text-green-400' : 'text-black hover:text-green-500'}`} strokeWidth={1.5} />
-                </button>
-                
-                <div className="flex-1 relative">
-                  <input 
-                    ref={inputRef}
-                    type="text" 
-                    value={searchValue} 
-                    onChange={e => {
-                      const value = e.target.value;
-                      setSearchValue(value);
-                      if (value.trim() && !hasStartedTyping) {
-                        setHasStartedTyping(true);
-                        onQueryStart?.(value.trim());
-                      }
-                    }}
-                    onFocus={() => setIsFocused(true)} 
-                    onBlur={() => setIsFocused(false)} 
-                    onKeyDown={e => { if (e.key === 'Enter') handleSubmit(e); }} 
-                    placeholder={isMapOpen ? "Search for a location..." : "What can I help you find today?"} 
-                    className="w-full bg-transparent focus:outline-none text-base font-normal text-black placeholder:text-gray-500"
-                    autoComplete="off" 
-                    disabled={isSubmitted} 
-                  />
-                </div>
-                
-                <div className="flex items-center space-x-3 ml-4">
-                  <button type="button" className="w-8 h-8 flex items-center justify-center text-black hover:text-gray-700 hover:scale-110 active:scale-95 transition-all duration-200">
-                    <Mic className="w-5 h-5" strokeWidth={1.5} />
-                  </button>
-                  
-                  <button type="submit" onClick={handleSubmit} className={`w-8 h-8 flex items-center justify-center transition-all duration-200 ${searchValue.trim() && !isSubmitted ? 'text-black hover:text-gray-700 hover:scale-110 active:scale-95' : 'text-gray-400 cursor-not-allowed'}`} disabled={isSubmitted || !searchValue.trim()}>
-                    <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
-                  </button>
-                </div>
+              {/* Map Toggle Button - always show */}
+              {contextConfig.showMapToggle && (
+                <motion.button 
+                  type="button" 
+                  onClick={onMapToggle}
+                  className={`flex-shrink-0 mr-4 transition-colors duration-200 ${
+                    isMapVisible 
+                      ? 'text-slate-500 hover:text-blue-500' // In map mode - blue hover for "back to search"
+                      : 'text-slate-500 hover:text-green-500' // In normal mode - green hover for "go to map"
+                  }`}
+                  title={isMapVisible ? "Back to search mode" : "Go to map mode"}
+                  whileHover={{ 
+                    scale: 1.05,
+                    rotate: 2
+                  }}
+                  whileTap={{ 
+                    scale: 0.95,
+                    rotate: -2
+                  }}
+                  transition={{
+                    duration: 0.15,
+                    ease: "easeOut"
+                  }}
+                >
+                    <Map className="w-6 h-6" strokeWidth={1.5} />
+                </motion.button>
+              )}
+              
+              <div className="flex-1 relative">
+                <motion.input 
+                  ref={inputRef}
+                  type="text" 
+                  value={searchValue} 
+                  onChange={e => {
+                    const value = e.target.value;
+                    setSearchValue(value);
+                    if (value.trim() && !hasStartedTyping) {
+                      setHasStartedTyping(true);
+                      onQueryStart?.(value.trim());
+                    }
+                  }}
+                  onFocus={() => setIsFocused(true)} 
+                  onBlur={() => setIsFocused(false)} 
+                  onKeyDown={e => { if (e.key === 'Enter') handleSubmit(e); }} 
+                  placeholder={contextConfig.placeholder}
+                  className="w-full bg-transparent focus:outline-none text-lg font-normal text-slate-700 placeholder:text-slate-400"
+                  autoComplete="off" 
+                  disabled={isSubmitted}
+                  animate={{
+                    scale: isFocused ? 1.01 : 1
+                  }}
+                  transition={{
+                    duration: 0.15,
+                    ease: "easeOut"
+                  }}
+                />
               </div>
-            </form>
-          </motion.div>
+              
+              <div className="flex items-center space-x-3 ml-4">
+                {/* Image Upload Button - only show when not in map mode */}
+                {contextConfig.showMic && (
+                  <ImageUploadButton
+                    onImageUpload={(query) => {
+                      setSearchValue(query);
+                      onSearch?.(query);
+                    }}
+                    size="md"
+                  />
+                )}
+                
+                <motion.button 
+                  type="submit" 
+                  onClick={handleSubmit} 
+                  className={`w-8 h-8 flex items-center justify-center transition-all duration-200 ${!isSubmitted ? 'text-slate-600 hover:text-green-500' : 'text-slate-400 cursor-not-allowed'}`} 
+                  disabled={isSubmitted}
+                  whileHover={!isSubmitted ? { 
+                    scale: 1.08,
+                    x: 1
+                  } : {}}
+                  whileTap={!isSubmitted ? { 
+                    scale: 0.9,
+                    x: -1
+                  } : {}}
+                  transition={{
+                    duration: 0.15,
+                    ease: "easeOut"
+                  }}
+                >
+                  <ChevronRight className="w-6 h-6" strokeWidth={1.5} />
+                </motion.button>
+              </div>
+            </motion.div>
+          </form>
+          
         </div>
-      )}
-    </>
+      </div>
+    </motion.div>
   );
 };

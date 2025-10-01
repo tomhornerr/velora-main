@@ -46,13 +46,15 @@ export const MapPopup: React.FC<MapPopupProps> = ({ isOpen, onClose, propertyAdd
     
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11',
+      style: 'mapbox://styles/mapbox/streets-v12',
       center: propertyCoords,
-      zoom: 15,
+      zoom: 10.5, // Match reference image zoom
+      bearing: 15, // Match reference angle
+      pitch: 45, // Match reference 3D perspective
       antialias: true
     });
 
-    console.log('MapPopup: Map created with light style');
+    console.log('MapPopup: Map created with colorful style');
 
     // Add navigation controls
     map.current.addControl(

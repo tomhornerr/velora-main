@@ -169,22 +169,25 @@ export const ChatPanel = ({
         {isOpen && (
           <motion.div 
             initial={{
-              x: -80,
-              opacity: 0
+              x: -20,
+              opacity: 0,
+              scale: 0.95
             }} 
             animate={{
               x: 0,
-              opacity: 1
+              opacity: 1,
+              scale: 1
             }} 
             exit={{
-              x: -80,
-              opacity: 0
+              x: -10,
+              opacity: 0,
+              scale: 0.98
             }} 
             transition={{
-              duration: 0.4,
-              ease: [0.23, 1, 0.32, 1]
+              duration: 0.15,
+              ease: [0.4, 0, 0.2, 1]
             }} 
-            className={`fixed left-10 lg:left-14 top-0 h-full w-80 bg-white/90 backdrop-blur-xl border-r border-slate-200/60 flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.08)] z-40 ${className || ''}`}
+            className={`fixed left-10 lg:left-14 top-0 h-full w-80 bg-white/95 backdrop-blur-xl border-r border-slate-200/60 flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.08)] z-[350] ${className || ''}`}
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-slate-200/40">
@@ -229,7 +232,7 @@ export const ChatPanel = ({
 
             {/* Chat List */}
             {showChatHistory && (
-              <div className="flex-1 overflow-y-auto px-4 py-1">
+              <div className="flex-1 overflow-y-auto px-4 py-1 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300/50 hover:scrollbar-thumb-slate-400/70">
                 <AnimatePresence mode="popLayout">
                   {displayedChats.map((chat) => {
                     const isEditing = editingChatId === chat.id;

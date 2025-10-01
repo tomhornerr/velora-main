@@ -12,7 +12,8 @@ import DotGrid from './DotGrid';
 import { PropertyOutlineBackground } from './PropertyOutlineBackground';
 import { Property3DBackground } from './Property3DBackground';
 import { PropertyCyclingBackground } from './PropertyCyclingBackground';
-import { MapRef } from './BackgroundMap';
+import { SquareMap, SquareMapRef } from './SquareMap';
+import Profile from './Profile';
 import { useSystem } from '@/contexts/SystemContext';
 export interface MainContentProps {
   className?: string;
@@ -25,10 +26,12 @@ export interface MainContentProps {
     timestamp: Date;
     isFromHistory?: boolean;
   } | null;
+  currentChatId?: string | null;
   isInChatMode?: boolean;
   resetTrigger?: number;
-  onMapVisibilityChange?: (isVisible: boolean) => void;
-  mapRef?: React.RefObject<MapRef>;
+  onNavigate?: (view: string, options?: { showMap?: boolean }) => void;
+  homeClicked?: boolean;
+  onHomeResetComplete?: () => void;
 }
 export const MainContent = ({
   className,
@@ -36,32 +39,28 @@ export const MainContent = ({
   onChatModeChange,
   onChatHistoryCreate,
   currentChatData,
+  currentChatId,
   isInChatMode: inChatMode = false,
   resetTrigger: parentResetTrigger,
-  onMapVisibilityChange,
-  mapRef
+  onNavigate,
+  homeClicked = false,
+  onHomeResetComplete
 }: MainContentProps) => {
   const { addActivity } = useSystem();
   const [chatQuery, setChatQuery] = React.useState<string>("");
   const [chatMessages, setChatMessages] = React.useState<any[]>([]);
-  const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
   const [resetTrigger, setResetTrigger] = React.useState<number>(0);
   const [currentLocation, setCurrentLocation] = React.useState<string>("");
+  const [isMapVisible, setIsMapVisible] = React.useState<boolean>(false);
+  const [mapSearchQuery, setMapSearchQuery] = React.useState<string>("");
+  const [hasPerformedSearch, setHasPerformedSearch] = React.useState<boolean>(false);
+  const mapRef = React.useRef<SquareMapRef>(null);
   
   // Use the prop value for chat mode
   const isInChatMode = inChatMode;
-  const handleMapToggle = (isMapOpen: boolean) => {
-    console.log('MainContent: Map toggle called with:', isMapOpen);
-    setIsMapVisible(isMapOpen);
-    onMapVisibilityChange?.(isMapOpen);
-  };
 
-  const handleMapSearch = (query: string) => {
-    console.log('MainContent: Map search called with:', query);
-    // Use the map ref to update the location
-    if (mapRef?.current) {
-      mapRef.current.updateLocation(query);
-    }
+  const handleMapToggle = () => {
+    setIsMapVisible(prev => !prev);
   };
 
   const handleQueryStart = (query: string) => {
@@ -97,8 +96,28 @@ export const MainContent = ({
     });
   };
 
+  const handleNavigate = (view: string, options?: { showMap?: boolean }) => {
+    if (options?.showMap) {
+      setIsMapVisible(true);
+    }
+    onNavigate?.(view, options);
+  };
+
   const handleSearch = (query: string) => {
     console.log('MainContent: Search submitted with query:', query);
+    
+    // Always update map search query
+    setMapSearchQuery(query);
+    
+    // If map is visible, only search on the map, don't enter chat
+    if (isMapVisible) {
+      console.log('Map search only - not entering chat mode');
+      // Mark that user has performed a search in map mode
+      setHasPerformedSearch(true);
+      return;
+    }
+    
+    // Normal chat search when map is not visible
     setChatQuery(query);
     setChatMessages([]); // Reset messages for new chat
 
@@ -107,11 +126,6 @@ export const MainContent = ({
     const isLocationQuery = locationKeywords.some(keyword => 
       query.toLowerCase().includes(keyword.toLowerCase())
     );
-
-    if (isLocationQuery) {
-      // Extract location from query and update map
-      mapRef?.current?.updateLocation(query);
-    }
 
     // Track detailed search activity
     addActivity({
@@ -190,11 +204,24 @@ export const MainContent = ({
     if (currentView !== 'search' && currentView !== 'home') {
       setChatQuery("");
       setChatMessages([]);
-      setIsMapVisible(false); // Hide map when navigating away from search
       // Let the parent handle chat mode changes
       onChatModeChange?.(false);
     }
   }, [currentView, onChatModeChange]);
+
+  // Special handling for home view - reset everything to default state
+  React.useEffect(() => {
+    if (homeClicked) {
+      setChatQuery("");
+      setChatMessages([]);
+      setCurrentLocation("");
+      setIsMapVisible(false);
+      setMapSearchQuery("");
+      setHasPerformedSearch(false);
+      onChatModeChange?.(false);
+      onHomeResetComplete?.(); // Notify parent that reset is complete
+    }
+  }, [homeClicked, onChatModeChange, onHomeResetComplete]);
 
   // Reset SearchBar when switching to chat mode or creating new chat
   React.useEffect(() => {
@@ -231,7 +258,7 @@ export const MainContent = ({
                  {/* Chat Interface with elevated z-index */}
                 <div className="relative z-10 w-full h-full">
                   <ChatInterface 
-                    key={`chat-${currentChatData?.query || 'new'}`}
+                    key={`chat-${currentChatId || 'new'}`}
                     initialQuery={currentChatData?.query || ""} 
                     onBack={handleBackToSearch} 
                     onMessagesUpdate={handleChatMessagesUpdate}
@@ -252,17 +279,28 @@ export const MainContent = ({
                 {/* Interactive Dot Grid Background */}
                 {/* No background needed here as it's handled globally */}
                 
+                {/* Unified Search Bar - adapts based on context */}
+                <SearchBar 
+                  onSearch={handleSearch} 
+                  onQueryStart={handleQueryStart} 
+                  onMapToggle={handleMapToggle}
+                  resetTrigger={resetTrigger}
+                  isMapVisible={isMapVisible}
+                  isInChatMode={isInChatMode}
+                  currentView={currentView}
+                  hasPerformedSearch={hasPerformedSearch}
+                />
                 
-                {/* Search Bar with elevated z-index */}
-                <div className={`relative w-full z-10`}>
-                  <SearchBar 
-                    onSearch={handleSearch} 
-                    onQueryStart={handleQueryStart} 
-                    onMapToggle={handleMapToggle} 
-                    onMapSearch={handleMapSearch}
-                    resetTrigger={resetTrigger}
-                  />
-                </div>
+                {/* Full Screen Map */}
+                <SquareMap
+                  ref={mapRef}
+                  isVisible={isMapVisible}
+                  searchQuery={mapSearchQuery}
+                  hasPerformedSearch={hasPerformedSearch}
+                  onLocationUpdate={(location) => {
+                    setCurrentLocation(location.address);
+                  }}
+                />
               </motion.div>}
           </AnimatePresence>;
       case 'notifications':
@@ -289,27 +327,8 @@ export const MainContent = ({
             </motion.div>
           </div>;
       case 'profile':
-        return <div className="text-center max-w-md mx-auto">
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.6,
-            ease: [0.23, 1, 0.32, 1]
-          }} className="bg-white/90 backdrop-blur-xl rounded-3xl p-12 border-2 border-slate-200/60 shadow-[0_8px_32px_rgba(0,0,0,0.08)]">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl flex items-center justify-center mx-auto mb-6 border-2 border-purple-100/60">
-                <span className="text-2xl">👤</span>
-              </div>
-              <h2 className="text-2xl font-semibold text-slate-800 mb-4 tracking-tight">
-                <span>Profile</span>
-              </h2>
-              <p className="text-slate-600 leading-relaxed font-medium">
-                <span>Manage your account settings and personal preferences.</span>
-              </p>
-            </motion.div>
+        return <div className="w-full max-w-none">
+            <Profile onNavigate={handleNavigate} />
           </div>;
       case 'analytics':
         return <div className="w-full max-w-none">
@@ -348,24 +367,27 @@ export const MainContent = ({
             {/* No background needed here as it's handled globally */}
             
             
-            {/* Search Bar with elevated z-index */}
-            <div className={`relative w-full z-10`}>
-              <SearchBar 
-                onSearch={handleSearch} 
-                onQueryStart={handleQueryStart} 
-                onMapToggle={handleMapToggle} 
-                onMapSearch={handleMapSearch}
-                resetTrigger={resetTrigger}
-              />
-            </div>
+            {/* Unified Search Bar - adapts based on context */}
+            <SearchBar 
+              onSearch={handleSearch} 
+              onQueryStart={handleQueryStart} 
+              onMapToggle={handleMapToggle}
+              resetTrigger={resetTrigger}
+              isMapVisible={isMapVisible}
+              isInChatMode={isInChatMode}
+              currentView={currentView}
+              hasPerformedSearch={hasPerformedSearch}
+            />
           </div>;
     }
   };
   return <div className={`flex-1 relative ${className || ''}`}>
       {/* Background based on current view */}
-      {!isMapVisible && (currentView === 'search' || currentView === 'home') && !isInChatMode ? (
+      {(currentView === 'search' || currentView === 'home') && !isInChatMode ? (
         <PropertyCyclingBackground />
-      ) : !isMapVisible && currentView !== 'upload' ? (
+      ) : currentView !== 'upload' ? (
+        <FlowBackground />
+      ) : currentView === 'upload' ? (
         <FlowBackground />
       ) : null}
       
@@ -377,18 +399,17 @@ export const MainContent = ({
             ? 'bg-white/95' 
             : currentView === 'analytics'
               ? 'bg-white/95'
-              : isMapVisible 
-                ? 'bg-transparent pointer-events-none'
+              : currentView === 'profile'
+                ? 'bg-transparent'
                 : 'bg-white/20'
-      } ${currentView === 'upload' ? 'p-8' : currentView === 'analytics' ? 'p-4' : isMapVisible ? 'p-0' : 'p-8 lg:p-16'}`}>
+      } ${isInChatMode ? 'p-0' : currentView === 'upload' ? 'p-8' : currentView === 'analytics' ? 'p-4' : currentView === 'profile' ? 'p-0' : 'p-8 lg:p-16'}`}>
         <div className={`relative w-full ${
           isInChatMode 
             ? 'h-full w-full' 
             : currentView === 'upload' ? 'h-full' 
             : currentView === 'analytics' ? 'h-full overflow-hidden'
-            : isMapVisible 
-              ? 'pointer-events-none'
-              : 'max-w-5xl mx-auto'
+            : currentView === 'profile' ? 'h-full w-full'
+            : 'max-w-5xl mx-auto'
         } flex-1 flex flex-col`}>
           <motion.div initial={{
           opacity: 1,
@@ -400,11 +421,11 @@ export const MainContent = ({
           duration: 0.6,
           ease: [0.23, 1, 0.32, 1],
           delay: 0.1
-        }} className={`relative flex-1 flex flex-col overflow-hidden ${
-          isMapVisible ? 'pointer-events-none' : ''
-        }`}>{renderViewContent()}
+        }} className={`relative flex-1 flex flex-col overflow-hidden`}>{renderViewContent()}
           </motion.div>
         </div>
       </div>
+      
+      {/* Search Bar positioning is now handled internally by the SearchBar component */}
     </div>;
-};
+  };

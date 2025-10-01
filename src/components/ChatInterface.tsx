@@ -3,8 +3,191 @@
 import * as React from "react";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUp, Copy, ThumbsUp, ThumbsDown, Check, ArrowLeft } from "lucide-react";
+import { ArrowUp, Copy, ThumbsUp, ThumbsDown, Check, ArrowLeft, X, ChevronRight } from "lucide-react";
+import { ImageUploadButton } from './ImageUploadButton';
 import PropertyResultsDisplay from './PropertyResultsDisplay';
+import { SquareMap } from './SquareMap';
+// Import the same mock data that the map view uses
+// This ensures both interfaces show the same results
+const mockPropertyData = [
+  {
+    id: 1,
+    address: "24 Runthorpe Road, Clifton, Bristol",
+    postcode: "BS8 2AB",
+    property_type: "Semi-Detached",
+    bedrooms: 3,
+    bathrooms: 2,
+    price: 450000,
+    square_feet: 1200,
+    days_on_market: 45,
+    latitude: 51.4600,
+    longitude: -2.6100,
+    summary: "Beautiful 3-bedroom semi-detached house in Clifton",
+    features: "Garden, Parking, Modern Kitchen",
+    condition: 8,
+    similarity: 95,
+    image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=300&fit=crop&crop=center&auto=format&q=80",
+    agent: {
+      name: "Jerome Bell",
+      company: "harperjamesproperty36"
+    }
+  },
+  {
+    id: 2,
+    address: "15 Clifton Park, Clifton, Bristol",
+    postcode: "BS8 3CD",
+    property_type: "Detached",
+    bedrooms: 3,
+    bathrooms: 2,
+    price: 550000,
+    square_feet: 1400,
+    days_on_market: 23,
+    latitude: 51.4610,
+    longitude: -2.6120,
+    summary: "Stunning 3-bedroom detached house with garden",
+    features: "Large Garden, Garage, En-suite",
+    condition: 9,
+    similarity: 92,
+    image: "https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=400&h=300&fit=crop&crop=center&auto=format&q=80",
+    agent: {
+      name: "Jerome Bell",
+      company: "harperjamesproperty36"
+    }
+  },
+  {
+    id: 3,
+    address: "8 Clifton Road, Clifton, Bristol",
+    postcode: "BS8 4EF",
+    property_type: "Terraced",
+    bedrooms: 3,
+    bathrooms: 1,
+    price: 380000,
+    square_feet: 1100,
+    days_on_market: 67,
+    latitude: 51.4625,
+    longitude: -2.6129,
+    summary: "Charming 3-bedroom terraced house",
+    features: "Period Features, Close to Station",
+    condition: 7,
+    similarity: 88,
+    image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&h=300&fit=crop&crop=center&auto=format&q=80",
+    agent: {
+      name: "Jerome Bell",
+      company: "harperjamesproperty36"
+    }
+  },
+  {
+    id: 4,
+    address: "42 Clifton Hill, Clifton, Bristol",
+    postcode: "BS8 4JX",
+    property_type: "Semi-Detached",
+    bedrooms: 2,
+    bathrooms: 1,
+    price: 320000,
+    square_feet: 850,
+    days_on_market: 34,
+    latitude: 51.4685,
+    longitude: -2.6149,
+    summary: "Modern 2-bedroom semi-detached house",
+    features: "Off-street Parking, Garden, Modern Bathroom",
+    condition: 8,
+    similarity: 90,
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=300&fit=crop",
+    agent: {
+      name: "Jerome Bell",
+      company: "harperjamesproperty36"
+    }
+  },
+  {
+    id: 16,
+    address: "12 Whiteladies Road, Clifton, Bristol",
+    postcode: "BS8 2BS",
+    property_type: "Apartment",
+    bedrooms: 2,
+    bathrooms: 2,
+    price: 350000,
+    square_feet: 800,
+    days_on_market: 23,
+    latitude: 51.4660,
+    longitude: -2.6120,
+    summary: "Modern 2-bedroom apartment with balcony",
+    features: "Balcony, Parking, Modern Kitchen, En-suite",
+    condition: 9,
+    similarity: 88,
+    image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=400&h=300&fit=crop&crop=center&auto=format&q=80",
+    agent: {
+      name: "Jerome Bell",
+      company: "harperjamesproperty36"
+    }
+  },
+  {
+    id: 18,
+    address: "25 Clifton Hill, Clifton, Bristol",
+    postcode: "BS8 1JX",
+    property_type: "Semi-Detached",
+    bedrooms: 2,
+    bathrooms: 1,
+    price: 380000,
+    square_feet: 900,
+    days_on_market: 45,
+    latitude: 51.4660,
+    longitude: -2.6110,
+    summary: "Charming 2-bedroom semi-detached house",
+    features: "Garden, Parking, Period Features",
+    condition: 7,
+    similarity: 85,
+    image: "https://images.unsplash.com/photo-1600566753190-17f63ba4f6fd?w=400&h=300&fit=crop&crop=center&auto=format&q=80",
+    agent: {
+      name: "Jerome Bell",
+      company: "harperjamesproperty36"
+    }
+  },
+  {
+    id: 22,
+    address: "42 Clifton Street, Clifton, Bristol",
+    postcode: "BS8 4EF",
+    property_type: "Terraced",
+    bedrooms: 2,
+    bathrooms: 1,
+    price: 320000,
+    square_feet: 750,
+    days_on_market: 67,
+    latitude: 51.4630,
+    longitude: -2.6100,
+    summary: "Cozy 2-bedroom terraced house",
+    features: "Period Features, Garden",
+    condition: 6,
+    similarity: 82,
+    image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=400&h=300&fit=crop&crop=center&auto=format&q=80",
+    agent: {
+      name: "Jerome Bell",
+      company: "harperjamesproperty36"
+    }
+  },
+  {
+    id: 27,
+    address: "22 Clifton Road, Clifton, Bristol",
+    postcode: "BS8 4EF",
+    property_type: "Semi-Detached",
+    bedrooms: 2,
+    bathrooms: 1,
+    price: 360000,
+    square_feet: 850,
+    days_on_market: 38,
+    latitude: 51.4625,
+    longitude: -2.6119,
+    summary: "Charming 2-bedroom semi-detached house",
+    features: "Garden, Parking, Period Features",
+    condition: 7,
+    similarity: 84,
+    image: "https://images.unsplash.com/photo-1600566753190-17f63ba4f6fd?w=400&h=300&fit=crop&crop=center&auto=format&q=80",
+    agent: {
+      name: "Jerome Bell",
+      company: "harperjamesproperty36"
+    }
+  }
+];
+import { analyzeQueryWithLLM, LLMAnalysisResult } from '../llm/llmService';
 
 // Import property images
 import property1 from "@/assets/property-1.jpg";
@@ -46,14 +229,235 @@ export default function ChatInterface({
   const [dislikedMessages, setDislikedMessages] = useState<Set<string>>(new Set());
   const [propertyQueries, setPropertyQueries] = useState<Set<string>>(new Set()); // Track which messages are property responses
   const [isInputActivated, setIsInputActivated] = useState(false);
+  const [showQuickActions, setShowQuickActions] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [showInlineMap, setShowInlineMap] = useState(false);
+  const [inlineMapMessageId, setInlineMapMessageId] = useState<string | null>(null);
+  const [searchContext, setSearchContext] = useState<{
+    location?: string;
+    bedrooms?: number;
+    bathrooms?: number;
+    priceRange?: { min?: number; max?: number };
+  }>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Function to scroll to bottom smoothly
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'end' 
+      });
+    }
+  };
+
+  // Enhanced scroll function that ensures latest response is visible
+  const scrollToShowLatestExchange = () => {
+    // Immediate scroll to ensure responsiveness
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    }, 10);
+    
+    // Multiple scroll attempts to handle dynamic content
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    }, 100);
+    
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    }, 300);
+    
+    // Final scroll to ensure everything is visible
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    }, 600);
+    
+    // Additional scroll with offset to ensure full visibility and spacing
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        const element = messagesEndRef.current;
+        const elementRect = element.getBoundingClientRect();
+        const absoluteElementTop = elementRect.top + window.pageYOffset;
+        // Position element higher to show full content with spacing
+        const offset = 400; // Extra space to ensure full card visibility
+        const targetPosition = absoluteElementTop - offset;
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 800);
+  };
+
+  // Special scroll function for property results (they take more space)
+  const scrollToShowPropertyResults = () => {
+    // Immediate scroll for property results with aggressive positioning
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        const element = messagesEndRef.current;
+        const elementRect = element.getBoundingClientRect();
+        const absoluteElementTop = elementRect.top + window.pageYOffset;
+    // Immediate positioning to ensure full card visibility
+    const offset = 500; // Extra large offset to ensure full card visibility
+    const targetPosition = absoluteElementTop - offset;
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 10);
+    
+    // Multiple scroll attempts to handle large property cards
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    }, 100);
+    
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    }, 300);
+    
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    }, 600);
+    
+    // Additional scrolls for property results
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    }, 1000);
+    
+    // Final aggressive scroll for property results
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    }, 1500);
+    
+    // Extra scroll to ensure everything is visible
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'end',
+          inline: 'nearest'
+        });
+      }
+    }, 2000);
+    
+    // Final scroll with offset to ensure full visibility of property results
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        const element = messagesEndRef.current;
+        const elementRect = element.getBoundingClientRect();
+        const absoluteElementTop = elementRect.top + window.pageYOffset;
+        // Position element higher to show full property card with spacing
+        const offset = 450; // Extra space to ensure full property card visibility
+        const targetPosition = absoluteElementTop - offset;
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 2500);
+    
+    // Additional final scroll to ensure perfect positioning
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        const element = messagesEndRef.current;
+        const elementRect = element.getBoundingClientRect();
+        const absoluteElementTop = elementRect.top + window.pageYOffset;
+        // Final positioning for property cards with proper spacing
+        const offset = 500; // Maximum space to ensure full property card visibility
+        const targetPosition = absoluteElementTop - offset;
+        window.scrollTo({
+          top: targetPosition,
+          behavior: 'smooth'
+        });
+      }
+    }, 3000);
+  };
+
+  // Function to check if a query is property-related
+  const isPropertyRelatedQuery = (query: string): boolean => {
+    const lowerQuery = query.toLowerCase();
+    const propertyKeywords = [
+      'property', 'properties', 'comp', 'comps', 'comparable', 'comparables', 
+      'house', 'houses', 'home', 'homes', 'real estate', 'listing', 'listings', 
+      'bed', 'bedroom', 'bedrooms', 'bath', 'bathroom', 'bathrooms',
+      'city centre', 'city center', 'centre', 'center', 'central', 'downtown',
+      'clifton', 'bristol', 'filton', 'redland', 'montpelier',
+      'show me', 'find me', 'get me', 'give me'
+    ];
+    
+    // Check for bedroom patterns (e.g., "2 bed", "3 bedroom")
+    const bedroomPattern = /(\d+)\s*(?:bed|bedroom|bedrooms)/;
+    if (bedroomPattern.test(lowerQuery)) return true;
+    
+    // Check for location patterns (e.g., "in clifton", "at bristol")
+    const locationPatterns = ['in ', 'at ', 'near ', 'around '];
+    if (locationPatterns.some(pattern => lowerQuery.includes(pattern))) return true;
+    
+    return propertyKeywords.some(keyword => lowerQuery.includes(keyword));
+  };
 
   // Load messages when loadedMessages prop changes
   React.useEffect(() => {
     console.log('ChatInterface - loadedMessages changed:', loadedMessages);
     if (loadedMessages && loadedMessages.length > 0) {
       console.log('Loading messages from history:', loadedMessages);
+      // Set messages immediately without any loading state
       setMessages(loadedMessages);
       setIsInitialized(true);
       
@@ -76,72 +480,181 @@ export default function ChatInterface({
     }
   }, [loadedMessages]);
 
-  // Function to check if query is property-related
-  const isPropertyRelatedQuery = (query: string): boolean => {
-    const propertyKeywords = [
-      'property', 'properties', 'comp', 'comps', 'comparable', 'comparables', 
-      'house', 'houses', 'home', 'homes', 'real estate', 'listing', 'listings',
-      'valuation', 'value', 'price', 'appraisal', 'market analysis',
-      'bedroom', 'bedrooms', 'bathroom', 'bathrooms', 'sqft', 'square feet',
-      'address', 'neighborhood', 'area', 'location', 'sold', 'for sale'
-    ];
-    
-    const lowerQuery = query.toLowerCase();
-    return propertyKeywords.some(keyword => lowerQuery.includes(keyword));
-  };
+  // LLM functions are now imported from the dedicated service
 
-  // Mock property data
-  const propertyResults = [{
-    id: 1,
-    address: "24 Rudthorpe Rd",
-    image: property1,
-    price: "$850,000",
-    beds: 3,
-    baths: 2,
-    sqft: "1,200 sqft"
-  }, {
-    id: 2,
-    address: "18 Maple Street",
-    image: property2,
-    price: "$920,000",
-    beds: 4,
-    baths: 3,
-    sqft: "1,450 sqft"
-  }, {
-    id: 3,
-    address: "42 Oak Avenue",
-    image: property3,
-    price: "$780,000",
-    beds: 3,
-    baths: 2,
-    sqft: "1,100 sqft"
-  }] as any[];
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "end"
-    });
-  };
-  
-  const scrollToShowLatestExchange = () => {
-    // Push content up more with smoother, minimal transition
-    if (messagesEndRef.current) {
-      const container = messagesEndRef.current.parentElement;
-      if (container) {
-        // Push up more by adding extra offset for spacing
-        const targetScroll = container.scrollHeight + 60; // Add extra space
-        container.scrollTo({
-          top: targetScroll,
-          behavior: "smooth"
-        });
+  // Function to extract context from previous messages
+  const extractContextFromMessages = (messages: Message[]): {
+    location?: string;
+    bedrooms?: number;
+    bathrooms?: number;
+    priceRange?: { min?: number; max?: number };
+  } => {
+    const context: any = {};
+    
+    // Look through recent messages for context clues
+    const recentMessages = messages.slice(-5); // Check last 5 messages
+    
+    for (const message of recentMessages) {
+      const content = message.content.toLowerCase();
+      
+      // Extract location context
+      if (content.includes('city centre') || content.includes('city center')) {
+        context.location = 'city centre';
+      } else if (content.includes('clifton')) {
+        context.location = 'clifton';
+      } else if (content.includes('bristol')) {
+        context.location = 'bristol';
+      } else if (content.includes('filton')) {
+        context.location = 'filton';
+      } else if (content.includes('redland')) {
+        context.location = 'redland';
+      } else if (content.includes('montpelier')) {
+        context.location = 'montpelier';
+      }
+      
+      // Extract bedroom context
+      const bedroomMatch = content.match(/(\d+)\s*(?:bed|bedroom|bedrooms)/);
+      if (bedroomMatch) {
+        context.bedrooms = parseInt(bedroomMatch[1]);
+      }
+      
+      // Extract bathroom context
+      const bathroomMatch = content.match(/(\d+)\s*(?:bath|bathroom|bathrooms)/);
+      if (bathroomMatch) {
+        context.bathrooms = parseInt(bathroomMatch[1]);
+      }
+      
+      // Extract price context
+      const priceMatch = content.match(/under\s*£?(\d+)(?:k|000)?/i);
+      if (priceMatch) {
+        context.priceRange = { max: parseInt(priceMatch[1]) * (priceMatch[1].length <= 3 ? 1000 : 1) };
       }
     }
+    
+    return context;
   };
+
+  // Enhanced search function that matches the map view logic exactly
+  const searchProperties = (query: string, context?: any) => {
+    console.log('=== SEARCH FUNCTION CALLED ===');
+    console.log('Query:', query);
+    console.log('Context:', context);
+    
+    const lowerQuery = query.toLowerCase();
+    let filteredProperties = [...mockPropertyData];
+    
+    // Extract bedroom count
+    const bedroomMatch = lowerQuery.match(/(\d+)\s*(?:bed|bedroom|bedrooms)/);
+    if (bedroomMatch) {
+      const bedroomCount = parseInt(bedroomMatch[1]);
+      console.log('Filtering by bedrooms:', bedroomCount);
+      filteredProperties = filteredProperties.filter(p => p.bedrooms === bedroomCount);
+    }
+    
+    // Enhanced location matching (same as map view)
+    const locationKeywords = {
+      'clifton': ['clifton', 'clifton village', 'clifton down', 'clifton hill', 'clifton park'],
+      'redland': ['redland', 'redland road', 'redland park'],
+      'cotham': ['cotham', 'cotham hill', 'cotham road'],
+      'bishopston': ['bishopston', 'bishopston road'],
+      'filton': ['filton', 'filton avenue', 'filton road', 'filton high street'],
+      'henleaze': ['henleaze', 'henleaze road'],
+      'stoke bishop': ['stoke bishop', 'stoke bishop road'],
+      'westbury park': ['westbury park', 'westbury hill'],
+      'horfield': ['horfield', 'horfield road'],
+      'ashley down': ['ashley down', 'ashley down road'],
+      'hotwells': ['hotwells', 'hotwells road'],
+      'easton': ['easton', 'easton road'],
+      'bedminster': ['bedminster', 'bedminster down'],
+      'montpelier': ['montpelier', 'montpelier hill'],
+      'city centre': ['city centre', 'city center', 'centre', 'center', 'broadmead', 'redcliffe', 'temple meads']
+    };
+    
+    // Check for location match
+    let queryLocation = null;
+    let locationMatch = null;
+    
+    for (const [location, keywords] of Object.entries(locationKeywords)) {
+      if (keywords.some(keyword => lowerQuery.includes(keyword))) {
+        queryLocation = location;
+        locationMatch = keywords.find(keyword => lowerQuery.includes(keyword));
+        break;
+      }
+    }
+    
+    console.log('Detected location:', queryLocation);
+    console.log('Location match:', locationMatch);
+    
+    // Filter by location
+    if (queryLocation) {
+      if (queryLocation === 'city centre') {
+        console.log('Filtering by location: City Centre (Clifton/Bristol)');
+        filteredProperties = filteredProperties.filter(p => 
+          p.address.toLowerCase().includes('clifton') || 
+          p.address.toLowerCase().includes('bristol')
+        );
+      } else {
+        console.log(`Filtering by location: ${queryLocation}`);
+        filteredProperties = filteredProperties.filter(p => 
+          p.address.toLowerCase().includes(queryLocation)
+        );
+      }
+    }
+    
+    console.log('Final filtered properties count:', filteredProperties.length);
+    console.log('Sample results:', filteredProperties.slice(0, 3).map(p => ({ 
+      id: p.id, 
+      address: p.address, 
+      bedrooms: p.bedrooms 
+    })));
+    
+    // Debug: Log all properties that match the criteria
+    console.log('=== ALL MATCHING PROPERTIES ===');
+    filteredProperties.forEach(p => {
+      console.log(`ID: ${p.id}, Address: ${p.address}, Bedrooms: ${p.bedrooms}`);
+    });
+    
+    return filteredProperties;
+  };
+
+  // State to store current property results
+  const [currentPropertyResults, setCurrentPropertyResults] = useState<any[]>([]);
+  
+  // Scroll when property results are displayed
+  useEffect(() => {
+    if (currentPropertyResults.length > 0) {
+      // Immediate aggressive scroll to ensure full visibility
+      setTimeout(() => {
+        if (messagesEndRef.current) {
+          const element = messagesEndRef.current;
+          const elementRect = element.getBoundingClientRect();
+          const absoluteElementTop = elementRect.top + window.pageYOffset;
+          // Ultra-aggressive positioning to prevent any cut-off
+          const offset = 600; // Maximum offset to ensure no cut-off
+          const targetPosition = absoluteElementTop - offset;
+          window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 10);
+      // Additional scroll attempts for property results
+      setTimeout(() => scrollToShowPropertyResults(), 50);
+      setTimeout(() => scrollToShowPropertyResults(), 200);
+      setTimeout(() => scrollToShowPropertyResults(), 800);
+      setTimeout(() => scrollToShowPropertyResults(), 1500);
+    }
+  }, [currentPropertyResults]);
   
   useEffect(() => {
     // When messages change, scroll with minimal delay
     if (messages.length > 0) {
-      setTimeout(() => scrollToShowLatestExchange(), 50);
+      // Immediate scroll for responsiveness
+      setTimeout(() => scrollToShowLatestExchange(), 10);
+      // Additional scroll after content renders
+      setTimeout(() => scrollToShowLatestExchange(), 100);
+      setTimeout(() => scrollToShowLatestExchange(), 300);
+      setTimeout(() => scrollToShowLatestExchange(), 600);
     }
   }, [messages]);
   
@@ -149,6 +662,12 @@ export default function ChatInterface({
     // Immediate scroll for typing indicator
     if (isTyping) {
       setTimeout(() => scrollToShowLatestExchange(), 20);
+    } else {
+      // Scroll when typing stops (AI response is coming) - multiple attempts
+      setTimeout(() => scrollToShowLatestExchange(), 50);
+      setTimeout(() => scrollToShowLatestExchange(), 200);
+      setTimeout(() => scrollToShowLatestExchange(), 500);
+      setTimeout(() => scrollToShowLatestExchange(), 1000);
     }
   }, [isTyping]);
   // Auto-focus behavior for chat input after activation
@@ -184,7 +703,8 @@ export default function ChatInterface({
     }
   }, [messages]);
   useEffect(() => {
-    if (initialQuery && !isInitialized && !isFromHistory) {
+    // Only handle initial query if we don't have loaded messages (i.e., it's a new chat)
+    if (initialQuery && !isInitialized && !isFromHistory && (!loadedMessages || loadedMessages.length === 0)) {
       console.log('ChatInterface: Initializing with query:', initialQuery);
       handleInitialQuery(initialQuery);
       setIsInitialized(true);
@@ -194,25 +714,125 @@ export default function ChatInterface({
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
+    } else if (loadedMessages && loadedMessages.length > 0) {
+      // If we have loaded messages, just mark as initialized without processing initialQuery
+      setIsInitialized(true);
+      setIsInputActivated(true);
     }
-  }, [initialQuery, isInitialized, isFromHistory]);
+  }, [initialQuery, isInitialized, isFromHistory, loadedMessages]);
   const handleInitialQuery = async (query: string) => {
-    const isPropertyRelated = isPropertyRelatedQuery(query);
+    try {
+      const userMessage: Message = {
+        id: `user-${Date.now()}`,
+        content: query,
+        role: 'user',
+        timestamp: new Date()
+      };
+      const newMessages = [userMessage];
+      setMessages(newMessages);
+      onMessagesUpdate?.(newMessages);
+      setIsTyping(true);
     
-    const userMessage: Message = {
-      id: `user-${Date.now()}`,
-      content: query,
-      role: 'user',
-      timestamp: new Date()
-    };
-    const newMessages = [userMessage];
-    setMessages(newMessages);
-    onMessagesUpdate?.(newMessages);
-    setIsTyping(true);
-    setTimeout(() => {
+    // Scroll to bottom after user message
+    setTimeout(scrollToShowLatestExchange, 100);
+    
+    setTimeout(async () => {
+      let responseContent = '';
+      let shouldShowProperties = false;
+      
+      try {
+        // Use LLM to analyze the query
+        const analysis = await analyzeQueryWithLLM(query, newMessages);
+        console.log('LLM Analysis (initial query):', analysis);
+        
+        // Handle different response types
+        console.log('LLM Analysis result:', analysis);
+        console.log('Query:', query);
+        console.log('Is property related (LLM):', analysis.isPropertyRelated);
+        console.log('Is property related (fallback):', isPropertyRelatedQuery(query));
+        
+        // Always try property search for any query that might be property-related
+        const shouldSearchProperties = analysis.isPropertyRelated || isPropertyRelatedQuery(query);
+        
+        if (shouldSearchProperties) {
+          if (analysis.needsClarification) {
+            responseContent = analysis.suggestedResponse || "I can help you find property comparables. Please specify: bedrooms, location, and price range.";
+          } else {
+            // Extract context from previous messages
+            const context = extractContextFromMessages(newMessages);
+            console.log('Extracted context:', context);
+            
+            // Merge LLM extracted criteria with context, but prioritize current query
+            const searchCriteria = {
+              bedrooms: analysis.extractedCriteria.bedrooms || context.bedrooms,
+              bathrooms: analysis.extractedCriteria.bathrooms || context.bathrooms,
+              location: analysis.extractedCriteria.location || context.location,
+              priceRange: analysis.extractedCriteria.priceRange || context.priceRange
+            };
+            
+            console.log('Search criteria before search:', searchCriteria);
+            
+            // Search for properties based on the query with context
+            const searchResults = searchProperties(query, searchCriteria);
+            
+            if (searchResults.length > 0) {
+              responseContent = analysis.suggestedResponse || `Found properties matching your criteria.`;
+              shouldShowProperties = true;
+              console.log('Setting property results:', searchResults);
+              console.log('Property results length:', searchResults.length);
+              console.log('First result bedrooms:', searchResults[0]?.bedrooms);
+              setCurrentPropertyResults(searchResults);
+              // Use ultra-aggressive scroll for property results to prevent cut-off
+              setTimeout(() => {
+                if (messagesEndRef.current) {
+                  const element = messagesEndRef.current;
+                  const elementRect = element.getBoundingClientRect();
+                  const absoluteElementTop = elementRect.top + window.pageYOffset;
+                  // Ultra-aggressive positioning to prevent any cut-off
+                  const offset = 600; // Maximum offset to ensure no cut-off
+                  const targetPosition = absoluteElementTop - offset;
+                  window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                  });
+                }
+              }, 10);
+              setTimeout(() => scrollToShowPropertyResults(), 50);
+              setTimeout(() => scrollToShowPropertyResults(), 200);
+              setTimeout(() => scrollToShowPropertyResults(), 800);
+            } else {
+              // Generate a more helpful "no results" message
+              const totalProperties = mockPropertyData.length;
+              const availableBedrooms = [...new Set(mockPropertyData.map(p => p.bedrooms))].sort();
+              const availableBathrooms = [...new Set(mockPropertyData.map(p => p.bathrooms))].sort();
+              const availableLocations = [...new Set(mockPropertyData.map(p => {
+                const addr = p.address.toLowerCase();
+                if (addr.includes('clifton')) return 'Clifton';
+                if (addr.includes('bristol')) return 'Bristol';
+                if (addr.includes('filton')) return 'Filton';
+                if (addr.includes('redland')) return 'Redland';
+                if (addr.includes('montpelier')) return 'Montpelier';
+                return 'Other areas';
+              }))].filter(Boolean);
+              
+              const sampleProperties = mockPropertyData.slice(0, 3).map(p => 
+                `• ${p.bedrooms} bed ${p.bathrooms} bath in ${p.address.split(',')[1]?.trim() || p.address.split(',')[0]} (£${p.price.toLocaleString()})`
+              ).join('\n');
+              
+              responseContent = `No properties found matching your criteria. Available: ${availableBedrooms.join(', ')} bedrooms, areas: ${availableLocations.join(', ')}. Try "3 bed in Clifton" or "show all properties".`;
+            }
+          }
+        } else {
+          responseContent = analysis.suggestedResponse || `Hello. How can I help you today?`;
+        }
+      } catch (error) {
+        console.error('Error in initial query processing:', error);
+        responseContent = `I'd be happy to help you with "${query}". How can I assist you today?`;
+      }
+      
       const aiResponse: Message = {
         id: `ai-${Date.now()}`,
-        content: isPropertyRelated ? `Here are the most suitable comps I found for "${query}":` : `I'll help you with "${query}". Let me provide you with some information on this topic.`,
+        content: responseContent,
         role: 'assistant',
         timestamp: new Date()
       };
@@ -220,23 +840,37 @@ export default function ChatInterface({
       setMessages(updatedMessages);
       onMessagesUpdate?.(updatedMessages);
       
-      // Track property-related responses
-      if (isPropertyRelated) {
+      // Scroll to bottom after AI response
+      setTimeout(scrollToShowLatestExchange, 200);
+      
+      // Track property-related responses that should show properties
+      if (shouldShowProperties) {
         setPropertyQueries(prev => new Set([...prev, aiResponse.id]));
       }
       
       setIsTyping(false);
     }, 800);
+    } catch (error) {
+      console.error('Error in handleInitialQuery:', error);
+      setIsTyping(false);
+    }
   };
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || isTyping) return;
     
-    const isPropertyRelated = isPropertyRelatedQuery(inputValue.trim());
+    try {
+    
+    // Hide quick actions when user sends a message
+    setShowQuickActions(false);
+    
+    // Capture the submitted text immediately to avoid race conditions with state updates
+    const submittedText = inputValue.trim();
+    const isPropertyRelated = isPropertyRelatedQuery(submittedText);
     
     const userMessage: Message = {
       id: `user-${Date.now()}`,
-      content: inputValue.trim(),
+      content: submittedText,
       role: 'user',
       timestamp: new Date()
     };
@@ -245,12 +879,100 @@ export default function ChatInterface({
     onMessagesUpdate?.(newMessages);
     setInputValue("");
     setIsTyping(true);
-    setTimeout(() => {
+    
+    // Scroll to bottom after user message
+    setTimeout(scrollToShowLatestExchange, 100);
+    setTimeout(async () => {
+      let responseContent = '';
+      let shouldShowProperties = false;
+      
+      try {
+        // Use LLM to analyze the query
+        const analysis = await analyzeQueryWithLLM(submittedText, newMessages);
+        console.log('LLM Analysis (send message):', analysis);
+        
+        // Handle different response types
+        if (analysis.responseType === 'content_creation') {
+          responseContent = analysis.suggestedResponse || "I can help you write property descriptions. What property details do you have?";
+        } else if (analysis.responseType === 'data_analysis') {
+          responseContent = analysis.suggestedResponse || "I can help analyze property data. What insights do you need?";
+        } else if (analysis.isPropertyRelated || isPropertyRelatedQuery(submittedText)) {
+          if (analysis.needsClarification) {
+            responseContent = analysis.suggestedResponse || "I can help you find property comparables. Please specify: bedrooms, location, and price range.";
+          } else {
+            // Extract context from previous messages
+            const context = extractContextFromMessages(newMessages);
+            console.log('Extracted context (send message):', context);
+            
+            // Merge LLM extracted criteria with context, but prioritize current query
+            const searchCriteria = {
+              bedrooms: analysis.extractedCriteria.bedrooms || context.bedrooms,
+              bathrooms: analysis.extractedCriteria.bathrooms || context.bathrooms,
+              location: analysis.extractedCriteria.location || context.location,
+              priceRange: analysis.extractedCriteria.priceRange || context.priceRange
+            };
+            
+            console.log('Search criteria before search (send message):', searchCriteria);
+            
+            // Search for properties based on the query with context
+            const searchResults = searchProperties(submittedText, searchCriteria);
+            
+            if (searchResults.length > 0) {
+              responseContent = analysis.suggestedResponse || `Found properties matching your criteria.`;
+              shouldShowProperties = true;
+              console.log('Setting property results (send message):', searchResults);
+              setCurrentPropertyResults(searchResults);
+              // Use ultra-aggressive scroll for property results to prevent cut-off
+              setTimeout(() => {
+                if (messagesEndRef.current) {
+                  const element = messagesEndRef.current;
+                  const elementRect = element.getBoundingClientRect();
+                  const absoluteElementTop = elementRect.top + window.pageYOffset;
+                  // Ultra-aggressive positioning to prevent any cut-off
+                  const offset = 600; // Maximum offset to ensure no cut-off
+                  const targetPosition = absoluteElementTop - offset;
+                  window.scrollTo({
+                    top: targetPosition,
+                    behavior: 'smooth'
+                  });
+                }
+              }, 10);
+              setTimeout(() => scrollToShowPropertyResults(), 50);
+              setTimeout(() => scrollToShowPropertyResults(), 200);
+              setTimeout(() => scrollToShowPropertyResults(), 800);
+            } else {
+              // Generate a more helpful "no results" message
+              const totalProperties = mockPropertyData.length;
+              const availableBedrooms = [...new Set(mockPropertyData.map(p => p.bedrooms))].sort();
+              const availableBathrooms = [...new Set(mockPropertyData.map(p => p.bathrooms))].sort();
+              const availableLocations = [...new Set(mockPropertyData.map(p => {
+                const addr = p.address.toLowerCase();
+                if (addr.includes('clifton')) return 'Clifton';
+                if (addr.includes('bristol')) return 'Bristol';
+                if (addr.includes('filton')) return 'Filton';
+                if (addr.includes('redland')) return 'Redland';
+                if (addr.includes('montpelier')) return 'Montpelier';
+                return 'Other areas';
+              }))].filter(Boolean);
+              
+              const sampleProperties = mockPropertyData.slice(0, 3).map(p => 
+                `• ${p.bedrooms} bed ${p.bathrooms} bath in ${p.address.split(',')[1]?.trim() || p.address.split(',')[0]} (£${p.price.toLocaleString()})`
+              ).join('\n');
+              
+              responseContent = `No properties found matching your criteria. Available: ${availableBedrooms.join(', ')} bedrooms, areas: ${availableLocations.join(', ')}. Try "3 bed in Clifton" or "show all properties".`;
+            }
+          }
+        } else {
+          responseContent = analysis.suggestedResponse || `Hello. How can I help you today?`;
+        }
+      } catch (error) {
+        console.error('Error in send message processing:', error);
+        responseContent = `I'd be happy to help you with "${submittedText}". How can I assist you today?`;
+      }
+      
       const aiResponse: Message = {
         id: `ai-${Date.now()}`,
-        content: isPropertyRelated 
-          ? `Here are the most suitable comps I found for "${inputValue.trim()}":` 
-          : "Excellent question! Let me provide you with a comprehensive breakdown:\n\n• **Key Considerations** - Important factors to keep in mind\n• **Implementation Strategy** - Step-by-step approach for success\n• **Common Pitfalls** - What to avoid and how to prevent issues\n• **Best Practices** - Industry-standard recommendations\n\nWould you like me to elaborate on any of these areas?",
+        content: responseContent,
         role: 'assistant',
         timestamp: new Date()
       };
@@ -258,13 +980,20 @@ export default function ChatInterface({
       setMessages(updatedMessages);
       onMessagesUpdate?.(updatedMessages);
       
-      // Track property-related responses
-      if (isPropertyRelated) {
+      // Scroll to bottom after AI response
+      setTimeout(scrollToShowLatestExchange, 200);
+      
+      // Track property-related responses that should show properties
+      if (shouldShowProperties) {
         setPropertyQueries(prev => new Set([...prev, aiResponse.id]));
       }
       
       setIsTyping(false);
     }, 600);
+    } catch (error) {
+      console.error('Error in handleSendMessage:', error);
+      setIsTyping(false);
+    }
   };
   const handleCopyMessage = async (content: string, messageId: string) => {
     try {
@@ -309,7 +1038,27 @@ export default function ChatInterface({
       return newSet;
     });
   };
-  return <motion.div initial={{
+
+  const handleQuickAction = (query: string) => {
+    setInputValue(query);
+    setShowQuickActions(false);
+    // Trigger the search
+    setTimeout(() => {
+      handleSendMessage({ preventDefault: () => {} } as React.FormEvent);
+    }, 100);
+  };
+
+  const handleMapButtonClick = (messageId: string) => {
+    setInlineMapMessageId(messageId);
+    setShowInlineMap(true);
+  };
+
+  const handleCloseInlineMap = () => {
+    setShowInlineMap(false);
+    setInlineMapMessageId(null);
+  };
+
+  return (<motion.div initial={{
     opacity: 0,
     y: 4
   }} animate={{
@@ -318,46 +1067,27 @@ export default function ChatInterface({
   }} transition={{
     duration: 0.2,
     ease: smoothEasing
-  }} className={`flex flex-col h-full w-full relative ${className || ''}`}>
-      {/* Fullscreen Chat Container - Animated Background */}
-      <div className="w-full h-full relative overflow-hidden rounded-lg">
+  }} className={`fixed inset-0 flex flex-col h-screen w-screen relative ${className || ''}`}>
+      {/* Fullscreen Chat Container - Plain White Background */}
+      <div className="w-screen h-screen relative overflow-hidden">
         {/* White Background */}
-        <div className="absolute inset-0 bg-white rounded-lg">
+        <div className="absolute inset-0 bg-white">
         </div>
         
         {/* Content Layer */}
-        <div className="relative z-10 flex flex-col h-full">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-3 mx-4 mt-4 mr-8 border-b border-slate-100/20">
-          <div className="flex items-center space-x-2">
-            <motion.button whileHover={{
-            scale: 1.02
-          }} whileTap={{
-            scale: 0.98
-          }} transition={{
-            duration: 0.1,
-            ease: snapEasing
-          }} onClick={onBack} className="w-6 h-6 rounded-lg bg-slate-50 hover:bg-slate-100 flex items-center justify-center transition-colors duration-150">
-              <ArrowLeft className="w-3 h-3 text-slate-600" />
-            </motion.button>
-            <div>
-              <h2 className="text-xs font-medium text-slate-700">
-                <span>Back</span>
-              </h2>
-            </div>
-          </div>
-          <div className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-        </div>
+        <div className="relative z-10 flex flex-col h-screen w-screen">
 
-        {/* Messages Area */}
+        {/* Messages Area - Centered like ChatGPT */}
         <div 
-          className="flex-1 overflow-y-auto px-8 pt-6 pb-32 space-y-6 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-300/70"
+          className="flex-1 overflow-y-auto pt-16 pb-32 space-y-6 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-300/70"
           onMouseEnter={() => {
             if (inputRef.current) {
               inputRef.current.focus();
             }
           }}
         >
+          {/* Centered Content Container */}
+          <div className="max-w-3xl mx-auto px-4 space-y-6">
           <AnimatePresence initial={false}>
             {messages.map((message, index) => {
               // Check if this is a property-related assistant message
@@ -472,8 +1202,11 @@ export default function ChatInterface({
                     delay: 0.15,
                     ease: smoothEasing
                   }} className="flex justify-start pl-4">
-                    <div className="w-full max-w-md">
-                      <PropertyResultsDisplay properties={propertyResults} />
+                    <div className="w-full max-w-2xl">
+                      <PropertyResultsDisplay 
+                        properties={currentPropertyResults} 
+                        onMapButtonClick={() => handleMapButtonClick(message.id)}
+                      />
                     </div>
                   </motion.div>
                 )}
@@ -518,17 +1251,121 @@ export default function ChatInterface({
 
           <div ref={messagesEndRef} />
         </div>
+        </div>
 
-        {/* Chat Input at Bottom of White Container */}
-        <div className="absolute bottom-6 left-6 right-6 z-50">
+        {/* Inline Map */}
+        <AnimatePresence>
+          {showInlineMap && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="mx-4 mb-4 bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden"
+            >
+              {/* Map Header */}
+              <div className="flex items-center justify-between p-4 border-b border-slate-200">
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900">Property Comparables Map</h3>
+                  <p className="text-sm text-slate-600">Showing {currentPropertyResults.length} comparable properties</p>
+                </div>
+                <button
+                  onClick={handleCloseInlineMap}
+                  className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+                >
+                  <X className="w-4 h-4 text-slate-600" />
+                </button>
+        </div>
+
+              {/* Map Container */}
+              <div className="h-96">
+                <SquareMap
+                  isVisible={true}
+                  searchQuery=""
+                  onLocationUpdate={() => {}}
+                  onSearch={() => {}}
+                  hasPerformedSearch={true}
+                />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Quick Action Buttons */}
+        <AnimatePresence>
+          {showQuickActions && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="absolute bottom-24 left-0 right-0 z-40 px-4"
+            >
+              <div className="max-w-3xl mx-auto">
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {[
+                    "Show me property comparables",
+                    "Find houses in the area", 
+                    "Get market analysis",
+                    "Search for properties"
+                  ].map((action, index) => (
+                    <motion.button
+                      key={action}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: index * 0.1, duration: 0.2 }}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleQuickAction(action)}
+                      className="px-4 py-2 bg-white/80 backdrop-blur-sm border border-white/40 rounded-full text-sm font-medium text-slate-700 hover:bg-white/90 hover:border-white/60 transition-all duration-200 shadow-sm hover:shadow-md"
+                    >
+                      {action}
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+        </div>
+        </div>
+        {/* Chat Input at Bottom - Centered */}
+        <div className="absolute bottom-6 left-0 right-0 z-50 px-4">
+          <div className="max-w-3xl mx-auto">
           <form onSubmit={handleSendMessage} className="relative">
-            <div className="relative flex items-center bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200/50 rounded-full px-5 py-1.5 shadow-lg hover:shadow-xl focus-within:shadow-xl focus-within:border-blue-300/70 transition-all duration-300 max-w-2xl mx-auto">
-              <input 
+              <motion.div 
+                className="relative flex items-center rounded-full px-6 py-2 transition-all duration-300 ease-out border border-slate-300"
+                style={{
+                  background: 'rgba(255, 255, 255, 0.15)',
+                  backdropFilter: 'blur(20px)',
+                  borderRadius: '9999px',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                }}
+                animate={{
+                  scale: 1
+                }}
+                transition={{
+                  duration: 0.2,
+                  ease: "easeOut"
+                }}
+                whileHover={{
+                  scale: 1.003
+                }}
+                whileTap={{
+                  scale: 0.995
+                }}
+              >
+              <motion.input 
                 ref={inputRef} 
                 type="text" 
                 value={inputValue} 
                 onChange={e => setInputValue(e.target.value)} 
-                onFocus={() => setIsInputActivated(true)}
+                onFocus={() => {
+                  setIsInputActivated(true);
+                  setIsFocused(true);
+                }}
+                onBlur={() => setIsFocused(false)}
                 onKeyDown={e => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
@@ -538,21 +1375,53 @@ export default function ChatInterface({
                   }
                 }} 
                 placeholder="Ask anything..." 
-                className="flex-1 bg-transparent text-slate-700 placeholder:text-slate-400 focus:outline-none text-sm font-normal" 
+                className="flex-1 bg-transparent focus:outline-none text-lg font-normal text-slate-700 placeholder:text-slate-500 placeholder:font-light placeholder:tracking-wide" 
                 disabled={isTyping} 
+                animate={{
+                  scale: 1
+                }}
+                whileFocus={{
+                  scale: 1.002
+                }}
+                transition={{
+                  duration: 0.15,
+                  ease: "easeOut"
+                }}
               />
               
-              <button type="submit" disabled={!inputValue.trim() || isTyping} className={`ml-3 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 ${
+              <ImageUploadButton
+                onImageUpload={(query) => {
+                  setInputValue(query);
+                  handleSendMessage({ preventDefault: () => {} } as any);
+                }}
+                size="md"
+              />
+              
+              <motion.button 
+                type="submit" 
+                disabled={!inputValue.trim() || isTyping} 
+                className={`ml-3 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-200 ${
                 inputValue.trim() && !isTyping 
-                  ? 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm hover:scale-105' 
-                  : 'bg-slate-300/70 text-slate-400 cursor-not-allowed'
-              }`}>
-                <ArrowUp className="w-4 h-4" strokeWidth={2.5} />
-              </button>
-            </div>
+                    ? 'bg-slate-600 text-white hover:bg-green-500' 
+                    : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                }`}
+                whileHover={inputValue.trim() && !isTyping ? { 
+                  scale: 1.05
+                } : {}}
+                whileTap={inputValue.trim() && !isTyping ? { 
+                  scale: 0.95
+                } : {}}
+                transition={{
+                  duration: 0.15,
+                  ease: "easeOut"
+                }}
+              >
+                <ArrowUp className="w-4 h-4" strokeWidth={2} />
+              </motion.button>
+            </motion.div>
           </form>
+          </div>
         </div>
-        </div>
-      </div>
-    </motion.div>;
+    </motion.div>
+  );
 }

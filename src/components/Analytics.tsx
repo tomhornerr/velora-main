@@ -84,13 +84,30 @@ export default function Analytics({ className }: AnalyticsProps) {
         </div>
       </div>
 
-      {/* Main Map Container */}
-      <div className="absolute inset-0 pt-16">
-        <DocumentMapping
-          documents={documents}
-          onDocumentSelect={setSelectedDocument}
-          onDocumentDelete={handleDeleteDocument}
-        />
+      {/* Main Content (map removed) */}
+      <div className="absolute inset-0 pt-16 overflow-auto">
+        <div className="mx-auto max-w-6xl p-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-xl border border-slate-200/60 p-6 shadow-sm">
+              <div className="text-3xl font-bold text-slate-900">{documents.length}</div>
+              <div className="text-sm text-slate-500 mt-1">Total Documents</div>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200/60 p-6 shadow-sm">
+              <div className="text-3xl font-bold text-blue-600">{getProcessingCount()}</div>
+              <div className="text-sm text-slate-500 mt-1">Processing</div>
+            </div>
+            <div className="bg-white rounded-xl border border-slate-200/60 p-6 shadow-sm">
+              <div className="text-lg font-semibold text-slate-700">{getTotalStorage()}</div>
+              <div className="text-sm text-slate-500 mt-1">Total Storage</div>
+            </div>
+          </div>
+
+          {/* Recent activity list */}
+          <div className="mt-6 bg-white rounded-xl border border-slate-200/60 p-6 shadow-sm">
+            <h2 className="text-sm font-semibold text-slate-900 mb-3">Recent Activity</h2>
+            <ActivityFeed activities={activities} />
+          </div>
+        </div>
       </div>
 
       {/* Floating Stats Panel */}
