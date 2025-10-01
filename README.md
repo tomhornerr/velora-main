@@ -1,22 +1,20 @@
-# Welcome to your Lovable project
+# Velora - Property Intelligence Platform
 
-## Project info
+## Project Overview
 
-**URL**: https://lovable.dev/projects/0e925b80-87f9-4e53-b77f-5750c01c56a6
+**Velora** is a comprehensive property intelligence platform that combines AI-powered search, analytics, and property valuation tools to help users make informed real estate decisions.
 
-## How can I edit this code?
+## Repository Information
 
-There are several ways of editing your application.
+**GitHub Repository**: https://github.com/tomhornerr/velora-main
 
-**Use Lovable**
+## How to work with this codebase?
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0e925b80-87f9-4e53-b77f-5750c01c56a6) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
+There are several ways to contribute to and develop this application.
 
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Clone this repository and work locally using your preferred development environment. All changes can be committed and pushed directly to the repository.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -24,10 +22,10 @@ Follow these steps:
 
 ```sh
 # Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+git clone https://github.com/tomhornerr/velora-main.git
 
 # Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+cd velora-main
 
 # Step 3: Install the necessary dependencies.
 npm i
@@ -60,14 +58,34 @@ This project is built with:
 - shadcn-ui
 - Tailwind CSS
 
-## How can I deploy this project?
+## Key Features
 
-Simply open [Lovable](https://lovable.dev/projects/0e925b80-87f9-4e53-b77f-5750c01c56a6) and click on Share -> Publish.
+- **AI-Powered Property Search**: Intelligent search with natural language processing
+- **Image Upload & OCR**: Upload property images for analysis and data extraction
+- **Analytics Dashboard**: Comprehensive property analytics and insights
+- **Interactive Maps**: Property location visualization and mapping
+- **Property Valuation**: AI-driven property valuation tools
+- **Real-time Chat Interface**: Interactive property consultation
 
-## Can I connect a custom domain to my Lovable project?
+## How to deploy this project?
 
-Yes, you can!
+### Development Deployment
+```sh
+npm run dev
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Production Build
+```sh
+npm run build
+npm run preview
+```
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+### Deployment Options
+- **Vercel**: Connect your GitHub repository for automatic deployments
+- **Netlify**: Deploy directly from GitHub with continuous integration
+- **AWS/GCP/Azure**: Use containerized deployment with Docker
+- **GitHub Pages**: Static hosting for the built application
+
+## Development Team
+
+This is a Velora company project. For collaboration and access, contact the repository administrators.
