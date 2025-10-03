@@ -2,23 +2,49 @@
 
 import * as React from "react";
 import { motion } from "framer-motion";
-import { Camera, User, Mail, Phone, MapPin, Calendar, Edit3, Save, X, Upload, Star, TrendingUp, TrendingDown, BarChart3, Home, Search, Map, FileText, Bell, Settings } from "lucide-react";
+import { Camera, User, Mail, Phone, MapPin, Calendar, Edit3, Save, X, Bell, Settings, Shield, Eye, EyeOff, Globe, Moon, Sun, Volume2, VolumeX, Smartphone, Monitor, Laptop } from "lucide-react";
 
 interface ProfileData {
+  // Basic Information
   name: string;
   email: string;
   phone: string;
   location: string;
   joinDate: string;
   profileImage: string;
-  totalSearches: number;
-  propertiesViewed: number;
-  mapSearches: number;
-  favoriteAreas: string[];
-  searchHistory: string[];
-  preferences: {
-    propertyType: string;
-    budgetRange: string;
+  
+  // Account Settings
+  notifications: {
+    email: boolean;
+    push: boolean;
+    sms: boolean;
+    propertyAlerts: boolean;
+    priceChanges: boolean;
+    newListings: boolean;
+  };
+  
+  // Privacy Settings
+  privacy: {
+    profileVisibility: 'public' | 'private' | 'contacts';
+    showActivity: boolean;
+    allowDataCollection: boolean;
+    shareSearchHistory: boolean;
+  };
+  
+  // Display Preferences
+  display: {
+    theme: 'light' | 'dark' | 'auto';
+    currency: 'GBP' | 'USD' | 'EUR';
+    distanceUnit: 'miles' | 'km';
+    language: 'en' | 'es' | 'fr' | 'de';
+  };
+  
+  // Search Preferences
+  searchPreferences: {
+    defaultSearchRadius: number; // in miles/km
+    maxPrice: number;
+    minPrice: number;
+    propertyTypes: string[];
     bedrooms: number;
     bathrooms: number;
   };
@@ -40,31 +66,56 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
       }
     }
     return {
+      // Basic Information
       name: "Alex Thompson",
       email: "alex.thompson@email.com",
       phone: "+44 7700 900123",
       location: "Bristol, UK",
       joinDate: "March 2024",
       profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
-      totalSearches: 47,
-      propertiesViewed: 23,
-      mapSearches: 15,
-      favoriteAreas: ["Clifton", "Redland", "Cotham"],
-      searchHistory: ["3 bed houses in Clifton", "2 bed flats near university", "Family homes in Redland"],
-      preferences: {
-        propertyType: "Semi-Detached",
-        budgetRange: "£300k - £500k",
+      
+      // Account Settings
+      notifications: {
+        email: true,
+        push: true,
+        sms: false,
+        propertyAlerts: true,
+        priceChanges: true,
+        newListings: true,
+      },
+      
+      // Privacy Settings
+      privacy: {
+        profileVisibility: 'private',
+        showActivity: false,
+        allowDataCollection: true,
+        shareSearchHistory: false,
+      },
+      
+      // Display Preferences
+      display: {
+        theme: 'dark',
+        currency: 'GBP',
+        distanceUnit: 'miles',
+        language: 'en',
+      },
+      
+      // Search Preferences
+      searchPreferences: {
+        defaultSearchRadius: 10,
+        maxPrice: 500000,
+        minPrice: 200000,
+        propertyTypes: ['house', 'flat', 'apartment'],
         bedrooms: 3,
-        bathrooms: 2
+        bathrooms: 2,
       }
     };
   };
 
   const [profileData, setProfileData] = React.useState<ProfileData>(getInitialProfileData);
-
+  const [activeTab, setActiveTab] = React.useState<'profile' | 'notifications' | 'privacy' | 'display' | 'search'>('profile');
   const [isEditing, setIsEditing] = React.useState(false);
   const [editData, setEditData] = React.useState<Partial<ProfileData>>({});
-  const [imageUpload, setImageUpload] = React.useState<File | null>(null);
 
   // Load profile data from localStorage on component mount
   React.useEffect(() => {
@@ -87,7 +138,6 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
   const handleSave = () => {
     const updatedProfileData = { ...profileData, ...editData };
     setProfileData(updatedProfileData);
-    // Save to localStorage
     localStorage.setItem('velora-profile-data', JSON.stringify(updatedProfileData));
     setIsEditing(false);
     setEditData({});
@@ -98,19 +148,40 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
     setIsEditing(false);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSave();
+  const handleSettingChange = (section: keyof ProfileData, key: string, value: any) => {
+    if (isEditing) {
+      setEditData({
+        ...editData,
+        [section]: {
+          ...editData[section as keyof ProfileData],
+          [key]: value
+        }
+      });
+    } else {
+      const updatedData = {
+        ...profileData,
+        [section]: {
+          ...profileData[section as keyof ProfileData],
+          [key]: value
+        }
+      };
+      setProfileData(updatedData);
+      localStorage.setItem('velora-profile-data', JSON.stringify(updatedData));
     }
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      setImageUpload(file);
       const reader = new FileReader();
       reader.onload = (e) => {
-        setEditData({ ...editData, profileImage: e.target?.result as string });
+        if (isEditing) {
+          setEditData({ ...editData, profileImage: e.target?.result as string });
+        } else {
+          const updatedData = { ...profileData, profileImage: e.target?.result as string };
+          setProfileData(updatedData);
+          localStorage.setItem('velora-profile-data', JSON.stringify(updatedData));
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -118,7 +189,7 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
 
   const Card = ({ children, className = "", ...props }: any) => (
     <div
-      className={`bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl p-8 ${className}`}
+      className={`bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl p-6 ${className}`}
       style={{
         background: 'rgba(255, 255, 255, 0.1)',
         backdropFilter: 'blur(20px)',
@@ -131,65 +202,104 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
     </div>
   );
 
-  const StatCard = ({ title, value, change, trend, icon: Icon, color }: any) => (
-    <div className="text-center p-3 bg-white/10 rounded-lg">
-      <div className="flex items-center justify-center mb-2">
-        <div className={`p-1.5 rounded-full ${color.replace('text-', 'bg-').replace('-400', '-100')} mr-2`}>
-          <Icon className={`w-4 h-4 ${color}`} />
-        </div>
-        <span className="text-xs text-gray-300">{title}</span>
-      </div>
-      <div className="text-2xl font-bold text-white mb-1">{value}</div>
-      <div className="flex items-center justify-center">
-        <span className="text-xs text-green-400">{change}</span>
-        <TrendingUp className="w-3 h-3 text-green-400 ml-1" />
-      </div>
-    </div>
+  const ToggleSwitch = ({ checked, onChange, disabled = false }: { checked: boolean; onChange: (checked: boolean) => void; disabled?: boolean }) => (
+    <button
+      onClick={() => onChange(!checked)}
+      disabled={disabled}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 ${
+        checked ? 'bg-blue-600' : 'bg-gray-600'
+      } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+    >
+      <span
+        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+          checked ? 'translate-x-6' : 'translate-x-1'
+        }`}
+      />
+    </button>
+  );
+
+  const Select = ({ value, onChange, options, disabled = false }: { value: string; onChange: (value: string) => void; options: { value: string; label: string }[]; disabled?: boolean }) => (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {options.map((option) => (
+        <option key={option.value} value={option.value} className="bg-gray-800 text-white">
+          {option.label}
+        </option>
+      ))}
+    </select>
   );
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-800 via-green-900 to-emerald-900 overflow-y-auto">
-      <div className="w-full min-h-screen py-12 pl-6 pr-8 ml-14 lg:ml-16 flex items-center justify-center">
-        <div className="w-full max-w-5xl">
+      <div className="w-full min-h-screen py-8 pl-6 pr-8 ml-14 lg:ml-16">
+        <div className="w-full max-w-6xl mx-auto">
+          
+          {/* Header */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-white mb-2">Account Settings</h1>
+            <p className="text-gray-300">Manage your account preferences and settings</p>
+          </div>
 
-          {/* Main Profile Card */}
-          <Card className="relative">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Left Column - Profile Info */}
+          {/* Tab Navigation */}
+          <div className="mb-8">
+            <div className="flex space-x-1 bg-white/10 backdrop-blur-sm rounded-lg p-1">
+              {[
+                { id: 'profile', label: 'Profile', icon: User },
+                { id: 'notifications', label: 'Notifications', icon: Bell },
+                { id: 'privacy', label: 'Privacy', icon: Shield },
+                { id: 'display', label: 'Display', icon: Monitor },
+                { id: 'search', label: 'Search', icon: Settings }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as any)}
+                  className={`flex items-center px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeTab === tab.id
+                      ? 'bg-white/20 text-white'
+                      : 'text-gray-300 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <tab.icon className="w-4 h-4 mr-2" />
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Tab Content */}
+          <Card>
+            {activeTab === 'profile' && (
               <div className="space-y-6">
-                {/* Profile Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-2xl font-bold text-white">Profile Information</h2>
-                  <div className="flex items-center space-x-2">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-xl font-bold text-white">Profile Information</h2>
+                  <div className="flex space-x-2">
                     {!isEditing ? (
                       <button
                         onClick={handleEdit}
-                        className="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm border border-white/20 rounded-md px-3 py-1.5 text-white font-medium transition-colors duration-200 hover:from-blue-500/30 hover:to-purple-500/30 hover:border-white/30"
+                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                       >
-                        <div className="flex items-center">
-                          <Edit3 className="w-3.5 h-3.5 mr-1.5" />
-                          <span className="text-xs">Edit</span>
-                        </div>
+                        <Edit3 className="w-4 h-4 mr-2 inline" />
+                        Edit
                       </button>
                     ) : (
                       <>
                         <button
                           onClick={handleSave}
-                          className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-sm border border-white/20 rounded-md px-3 py-1.5 text-white font-medium transition-colors duration-200 hover:from-green-500/30 hover:to-emerald-500/30 hover:border-white/30"
+                          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                         >
-                          <div className="flex items-center">
-                            <Save className="w-3.5 h-3.5 mr-1.5" />
-                            <span className="text-xs">Save</span>
-                          </div>
+                          <Save className="w-4 h-4 mr-2 inline" />
+                          Save
                         </button>
                         <button
                           onClick={handleCancel}
-                          className="bg-gradient-to-r from-gray-500/20 to-slate-500/20 backdrop-blur-sm border border-white/20 rounded-md px-3 py-1.5 text-white font-medium transition-colors duration-200 hover:from-gray-500/30 hover:to-slate-500/30 hover:border-white/30"
+                          className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
                         >
-                          <div className="flex items-center">
-                            <X className="w-3.5 h-3.5 mr-1.5" />
-                            <span className="text-xs">Cancel</span>
-                          </div>
+                          <X className="w-4 h-4 mr-2 inline" />
+                          Cancel
                         </button>
                       </>
                     )}
@@ -197,7 +307,6 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                 </div>
 
                 <div className="flex items-start space-x-6">
-                  {/* Profile Image */}
                   <div className="relative">
                     <div className="w-20 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-blue-400 to-purple-500 shadow-lg">
                       <img
@@ -219,192 +328,280 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                     )}
                   </div>
 
-                  {/* Profile Details */}
-                  <div className="flex-1 space-y-3">
-                    <div className="grid grid-cols-1 gap-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
-                        {isEditing ? (
-                          <input
-                            key="name-input"
-                            type="text"
-                            value={editData.name || profileData.name}
-                            onChange={(e) => setEditData({ ...editData, name: e.target.value })}
-                            onKeyPress={handleKeyPress}
-                            className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                            autoFocus
-                          />
-                        ) : (
-                          <p className="text-white font-semibold">{profileData.name}</p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
-                        {isEditing ? (
-                          <input
-                            key="email-input"
-                            type="email"
-                            value={editData.email || profileData.email}
-                            onChange={(e) => setEditData({ ...editData, email: e.target.value })}
-                            onKeyPress={handleKeyPress}
-                            className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                          />
-                        ) : (
-                          <p className="text-white font-semibold">{profileData.email}</p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Phone</label>
-                        {isEditing ? (
-                          <input
-                            key="phone-input"
-                            type="tel"
-                            value={editData.phone || profileData.phone}
-                            onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
-                            onKeyPress={handleKeyPress}
-                            className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                          />
-                        ) : (
-                          <p className="text-white font-semibold">{profileData.phone}</p>
-                        )}
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-1">Location</label>
-                        {isEditing ? (
-                          <input
-                            key="location-input"
-                            type="text"
-                            value={editData.location || profileData.location}
-                            onChange={(e) => setEditData({ ...editData, location: e.target.value })}
-                            onKeyPress={handleKeyPress}
-                            className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                          />
-                        ) : (
-                          <p className="text-white font-semibold">{profileData.location}</p>
-                        )}
-                      </div>
+                  <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={editData.name || profileData.name}
+                          onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                          className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
+                        />
+                      ) : (
+                        <p className="text-white font-medium">{profileData.name}</p>
+                      )}
                     </div>
-                    <div className="flex items-center text-gray-300">
-                      <Calendar className="w-4 h-4 mr-2" />
-                      <span className="text-sm">Member since {profileData.joinDate}</span>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                      {isEditing ? (
+                        <input
+                          type="email"
+                          value={editData.email || profileData.email}
+                          onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                          className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
+                        />
+                      ) : (
+                        <p className="text-white font-medium">{profileData.email}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Phone</label>
+                      {isEditing ? (
+                        <input
+                          type="tel"
+                          value={editData.phone || profileData.phone}
+                          onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
+                          className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
+                        />
+                      ) : (
+                        <p className="text-white font-medium">{profileData.phone}</p>
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Location</label>
+                      {isEditing ? (
+                        <input
+                          type="text"
+                          value={editData.location || profileData.location}
+                          onChange={(e) => setEditData({ ...editData, location: e.target.value })}
+                          className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
+                        />
+                      ) : (
+                        <p className="text-white font-medium">{profileData.location}</p>
+                      )}
                     </div>
                   </div>
                 </div>
 
-                {/* Activity Stats */}
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-4">Activity Overview</h3>
-                  <div className="grid grid-cols-3 gap-4">
-                    <div className="text-center p-3 bg-white/10 rounded-lg">
-                      <div className="flex items-center justify-center mb-2">
-                        <Search className="w-4 h-4 text-blue-400 mr-2" />
-                        <span className="text-xs text-gray-300">Searches</span>
-                      </div>
-                      <div className="text-xl font-bold text-white">{profileData.totalSearches}</div>
-                      <div className="text-xs text-green-400">+12%</div>
-                    </div>
-                    <div className="text-center p-3 bg-white/10 rounded-lg">
-                      <div className="flex items-center justify-center mb-2">
-                        <Home className="w-4 h-4 text-green-400 mr-2" />
-                        <span className="text-xs text-gray-300">Viewed</span>
-                      </div>
-                      <div className="text-xl font-bold text-white">{profileData.propertiesViewed}</div>
-                      <div className="text-xs text-green-400">+8%</div>
-                    </div>
-                    <div className="text-center p-3 bg-white/10 rounded-lg">
-                      <div className="flex items-center justify-center mb-2">
-                        <Map className="w-4 h-4 text-purple-400 mr-2" />
-                        <span className="text-xs text-gray-300">Map</span>
-                      </div>
-                      <div className="text-xl font-bold text-white">{profileData.mapSearches}</div>
-                      <div className="text-xs text-green-400">+18%</div>
-                    </div>
-                  </div>
+                <div className="flex items-center text-gray-300 pt-4 border-t border-white/20">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  <span className="text-sm">Member since {profileData.joinDate}</span>
                 </div>
               </div>
+            )}
 
-              {/* Right Column - Preferences & Actions */}
+            {activeTab === 'notifications' && (
               <div className="space-y-6">
-                {/* Property Preferences */}
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-4">Property Preferences</h3>
-                  <div className="space-y-3">
-                    <div className="flex justify-between items-center p-3 bg-white/10 rounded-lg">
-                      <span className="text-gray-300">Type</span>
-                      <span className="text-white font-medium">{profileData.preferences.propertyType}</span>
+                <h2 className="text-xl font-bold text-white">Notification Preferences</h2>
+                <div className="space-y-4">
+                  {Object.entries(profileData.notifications).map(([key, value]) => (
+                    <div key={key} className="flex items-center justify-between p-4 bg-white/10 rounded-lg">
+                      <div>
+                        <h3 className="text-white font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</h3>
+                        <p className="text-gray-300 text-sm">
+                          {key === 'email' && 'Receive notifications via email'}
+                          {key === 'push' && 'Receive push notifications in browser'}
+                          {key === 'sms' && 'Receive SMS notifications'}
+                          {key === 'propertyAlerts' && 'Get alerts for new properties matching your criteria'}
+                          {key === 'priceChanges' && 'Get notified when property prices change'}
+                          {key === 'newListings' && 'Get notified about new listings in your areas'}
+                        </p>
+                      </div>
+                      <ToggleSwitch
+                        checked={value}
+                        onChange={(checked) => handleSettingChange('notifications', key, checked)}
+                      />
                     </div>
-                    <div className="flex justify-between items-center p-3 bg-white/10 rounded-lg">
-                      <span className="text-gray-300">Budget</span>
-                      <span className="text-white font-medium">{profileData.preferences.budgetRange}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'privacy' && (
+              <div className="space-y-6">
+                <h2 className="text-xl font-bold text-white">Privacy Settings</h2>
+                <div className="space-y-4">
+                  <div className="p-4 bg-white/10 rounded-lg">
+                    <h3 className="text-white font-medium mb-2">Profile Visibility</h3>
+                    <p className="text-gray-300 text-sm mb-3">Control who can see your profile information</p>
+                    <Select
+                      value={profileData.privacy.profileVisibility}
+                      onChange={(value) => handleSettingChange('privacy', 'profileVisibility', value)}
+                      options={[
+                        { value: 'public', label: 'Public - Everyone can see your profile' },
+                        { value: 'contacts', label: 'Contacts - Only people you connect with' },
+                        { value: 'private', label: 'Private - Only you can see your profile' }
+                      ]}
+                    />
+                  </div>
+
+                  {Object.entries(profileData.privacy).filter(([key]) => key !== 'profileVisibility').map(([key, value]) => (
+                    <div key={key} className="flex items-center justify-between p-4 bg-white/10 rounded-lg">
+                      <div>
+                        <h3 className="text-white font-medium capitalize">{key.replace(/([A-Z])/g, ' $1').trim()}</h3>
+                        <p className="text-gray-300 text-sm">
+                          {key === 'showActivity' && 'Allow others to see your search activity'}
+                          {key === 'allowDataCollection' && 'Help improve our service by sharing anonymous usage data'}
+                          {key === 'shareSearchHistory' && 'Share your search history for better recommendations'}
+                        </p>
+                      </div>
+                      <ToggleSwitch
+                        checked={value as boolean}
+                        onChange={(checked) => handleSettingChange('privacy', key, checked)}
+                      />
                     </div>
-                    <div className="flex justify-between items-center p-3 bg-white/10 rounded-lg">
-                      <span className="text-gray-300">Bedrooms</span>
-                      <span className="text-white font-medium">{profileData.preferences.bedrooms}</span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'display' && (
+              <div className="space-y-6">
+                <h2 className="text-xl font-bold text-white">Display Preferences</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Theme</label>
+                      <Select
+                        value={profileData.display.theme}
+                        onChange={(value) => handleSettingChange('display', 'theme', value)}
+                        options={[
+                          { value: 'light', label: 'Light' },
+                          { value: 'dark', label: 'Dark' },
+                          { value: 'auto', label: 'Auto (System)' }
+                        ]}
+                      />
                     </div>
-                    <div className="flex justify-between items-center p-3 bg-white/10 rounded-lg">
-                      <span className="text-gray-300">Bathrooms</span>
-                      <span className="text-white font-medium">{profileData.preferences.bathrooms}</span>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Currency</label>
+                      <Select
+                        value={profileData.display.currency}
+                        onChange={(value) => handleSettingChange('display', 'currency', value)}
+                        options={[
+                          { value: 'GBP', label: 'British Pound (£)' },
+                          { value: 'USD', label: 'US Dollar ($)' },
+                          { value: 'EUR', label: 'Euro (€)' }
+                        ]}
+                      />
                     </div>
                   </div>
-                </div>
-
-                {/* Favorite Areas */}
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-4">Favorite Areas</h3>
-                  <div className="space-y-2">
-                    {profileData.favoriteAreas.map((area, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-white/10 rounded-lg">
-                        <div className="flex items-center">
-                          <MapPin className="w-4 h-4 text-blue-400 mr-2" />
-                          <span className="text-white text-sm">{area}</span>
-                        </div>
-                        <Star className="w-4 h-4 text-yellow-400" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Quick Actions */}
-                <div>
-                  <h3 className="text-lg font-bold text-white mb-4">Quick Actions</h3>
-                  <div className="space-y-2">
-                    <button 
-                      onClick={() => {
-                        onNavigate?.('search');
-                      }}
-                      className="w-full bg-gradient-to-r from-blue-500/20 to-cyan-500/20 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-3 text-white font-medium transition-colors duration-200 hover:from-blue-500/30 hover:to-cyan-500/30 hover:border-white/30"
-                    >
-                      <div className="flex items-center">
-                        <Search className="w-4 h-4 mr-3" />
-                        <span className="text-sm">New Property Search</span>
-                      </div>
-                    </button>
-                    <button 
-                      onClick={() => {
-                        onNavigate?.('search', { showMap: true });
-                      }}
-                      className="w-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-3 text-white font-medium transition-colors duration-200 hover:from-green-500/30 hover:to-emerald-500/30 hover:border-white/30"
-                    >
-                      <div className="flex items-center">
-                        <Map className="w-4 h-4 mr-3" />
-                        <span className="text-sm">View Map</span>
-                      </div>
-                    </button>
-                    <button 
-                      onClick={() => {
-                        onNavigate?.('upload');
-                      }}
-                      className="w-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 backdrop-blur-sm border border-white/20 rounded-lg px-4 py-3 text-white font-medium transition-colors duration-200 hover:from-purple-500/30 hover:to-pink-500/30 hover:border-white/30"
-                    >
-                      <div className="flex items-center">
-                        <Upload className="w-4 h-4 mr-3" />
-                        <span className="text-sm">Upload Property</span>
-                      </div>
-                    </button>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Distance Unit</label>
+                      <Select
+                        value={profileData.display.distanceUnit}
+                        onChange={(value) => handleSettingChange('display', 'distanceUnit', value)}
+                        options={[
+                          { value: 'miles', label: 'Miles' },
+                          { value: 'km', label: 'Kilometers' }
+                        ]}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Language</label>
+                      <Select
+                        value={profileData.display.language}
+                        onChange={(value) => handleSettingChange('display', 'language', value)}
+                        options={[
+                          { value: 'en', label: 'English' },
+                          { value: 'es', label: 'Spanish' },
+                          { value: 'fr', label: 'French' },
+                          { value: 'de', label: 'German' }
+                        ]}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
+
+            {activeTab === 'search' && (
+              <div className="space-y-6">
+                <h2 className="text-xl font-bold text-white">Search Preferences</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Default Search Radius</label>
+                      <input
+                        type="number"
+                        value={profileData.searchPreferences.defaultSearchRadius}
+                        onChange={(e) => handleSettingChange('searchPreferences', 'defaultSearchRadius', parseInt(e.target.value))}
+                        className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
+                        min="1"
+                        max="50"
+                      />
+                      <p className="text-gray-400 text-xs mt-1">Miles from search location</p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Minimum Price</label>
+                      <input
+                        type="number"
+                        value={profileData.searchPreferences.minPrice}
+                        onChange={(e) => handleSettingChange('searchPreferences', 'minPrice', parseInt(e.target.value))}
+                        className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
+                        min="0"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Maximum Price</label>
+                      <input
+                        type="number"
+                        value={profileData.searchPreferences.maxPrice}
+                        onChange={(e) => handleSettingChange('searchPreferences', 'maxPrice', parseInt(e.target.value))}
+                        className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
+                        min="0"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Bedrooms</label>
+                      <input
+                        type="number"
+                        value={profileData.searchPreferences.bedrooms}
+                        onChange={(e) => handleSettingChange('searchPreferences', 'bedrooms', parseInt(e.target.value))}
+                        className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
+                        min="1"
+                        max="10"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Bathrooms</label>
+                      <input
+                        type="number"
+                        value={profileData.searchPreferences.bathrooms}
+                        onChange={(e) => handleSettingChange('searchPreferences', 'bathrooms', parseInt(e.target.value))}
+                        className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
+                        min="1"
+                        max="10"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-300 mb-2">Property Types</label>
+                      <div className="space-y-2">
+                        {['house', 'flat', 'apartment', 'bungalow', 'cottage'].map((type) => (
+                          <label key={type} className="flex items-center">
+                            <input
+                              type="checkbox"
+                              checked={profileData.searchPreferences.propertyTypes.includes(type)}
+                              onChange={(e) => {
+                                const newTypes = e.target.checked
+                                  ? [...profileData.searchPreferences.propertyTypes, type]
+                                  : profileData.searchPreferences.propertyTypes.filter(t => t !== type);
+                                handleSettingChange('searchPreferences', 'propertyTypes', newTypes);
+                              }}
+                              className="mr-2 rounded border-white/30 bg-white/20 text-blue-600 focus:ring-blue-500"
+                            />
+                            <span className="text-white capitalize">{type}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </Card>
         </div>
       </div>
