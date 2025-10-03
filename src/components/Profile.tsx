@@ -265,7 +265,7 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
     </div>
   );
 
-  const handleEmailChange = React.useCallback((value: string) => {
+  const handleEmailChange = (value: string) => {
     if (!emailChangeAttempted) {
       setShowEmailNotification(true);
       setEmailChangeAttempted(true);
@@ -273,9 +273,9 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
       setTimeout(() => setShowEmailNotification(false), 5000);
     }
     setEditData(prev => ({ ...prev, email: value }));
-  }, [emailChangeAttempted]);
+  };
 
-  const handlePhoneChange = React.useCallback((value: string) => {
+  const handlePhoneChange = (value: string) => {
     if (!phoneChangeAttempted) {
       setShowPhoneNotification(true);
       setPhoneChangeAttempted(true);
@@ -283,15 +283,15 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
       setTimeout(() => setShowPhoneNotification(false), 5000);
     }
     setEditData(prev => ({ ...prev, phone: value }));
-  }, [phoneChangeAttempted]);
+  };
 
-  const handleNameChange = React.useCallback((value: string) => {
+  const handleNameChange = (value: string) => {
     setEditData(prev => ({ ...prev, name: value }));
-  }, []);
+  };
 
-  const handleLocationChange = React.useCallback((value: string) => {
+  const handleLocationChange = (value: string) => {
     setEditData(prev => ({ ...prev, location: value }));
-  }, []);
+  };
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-800 via-green-900 to-emerald-900 overflow-y-auto">
@@ -407,59 +407,59 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                   <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
-                      {isEditing ? (
-                        <input
-                          key="name-input"
-                          type="text"
-                          value={editData.name || profileData.name}
-                          onChange={(e) => handleNameChange(e.target.value)}
-                          className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                        />
-                      ) : (
-                        <p className="text-white font-medium">{profileData.name}</p>
-                      )}
+                      <input
+                        type="text"
+                        value={isEditing ? (editData.name || profileData.name) : profileData.name}
+                        onChange={(e) => isEditing ? handleNameChange(e.target.value) : undefined}
+                        readOnly={!isEditing}
+                        className={`w-full px-3 py-2 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm ${
+                          isEditing 
+                            ? 'bg-white/20 border-white/30' 
+                            : 'bg-transparent border-transparent cursor-default'
+                        }`}
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                      {isEditing ? (
-                        <input
-                          key="email-input"
-                          type="email"
-                          value={editData.email || profileData.email}
-                          onChange={(e) => handleEmailChange(e.target.value)}
-                          className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                        />
-                      ) : (
-                        <p className="text-white font-medium">{profileData.email}</p>
-                      )}
+                      <input
+                        type="email"
+                        value={isEditing ? (editData.email || profileData.email) : profileData.email}
+                        onChange={(e) => isEditing ? handleEmailChange(e.target.value) : undefined}
+                        readOnly={!isEditing}
+                        className={`w-full px-3 py-2 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm ${
+                          isEditing 
+                            ? 'bg-white/20 border-white/30' 
+                            : 'bg-transparent border-transparent cursor-default'
+                        }`}
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">Phone</label>
-                      {isEditing ? (
-                        <input
-                          key="phone-input"
-                          type="tel"
-                          value={editData.phone || profileData.phone}
-                          onChange={(e) => handlePhoneChange(e.target.value)}
-                          className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                        />
-                      ) : (
-                        <p className="text-white font-medium">{profileData.phone}</p>
-                      )}
+                      <input
+                        type="tel"
+                        value={isEditing ? (editData.phone || profileData.phone) : profileData.phone}
+                        onChange={(e) => isEditing ? handlePhoneChange(e.target.value) : undefined}
+                        readOnly={!isEditing}
+                        className={`w-full px-3 py-2 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm ${
+                          isEditing 
+                            ? 'bg-white/20 border-white/30' 
+                            : 'bg-transparent border-transparent cursor-default'
+                        }`}
+                      />
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-300 mb-2">Location</label>
-                      {isEditing ? (
-                        <input
-                          key="location-input"
-                          type="text"
-                          value={editData.location || profileData.location}
-                          onChange={(e) => handleLocationChange(e.target.value)}
-                          className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
-                        />
-                      ) : (
-                        <p className="text-white font-medium">{profileData.location}</p>
-                      )}
+                      <input
+                        type="text"
+                        value={isEditing ? (editData.location || profileData.location) : profileData.location}
+                        onChange={(e) => isEditing ? handleLocationChange(e.target.value) : undefined}
+                        readOnly={!isEditing}
+                        className={`w-full px-3 py-2 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm ${
+                          isEditing 
+                            ? 'bg-white/20 border-white/30' 
+                            : 'bg-transparent border-transparent cursor-default'
+                        }`}
+                      />
                     </div>
                   </div>
                 </div>
