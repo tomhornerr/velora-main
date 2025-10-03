@@ -265,25 +265,33 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
     </div>
   );
 
-  const handleEmailChange = (value: string) => {
+  const handleEmailChange = React.useCallback((value: string) => {
     if (!emailChangeAttempted) {
       setShowEmailNotification(true);
       setEmailChangeAttempted(true);
       // Auto-hide notification after 5 seconds
       setTimeout(() => setShowEmailNotification(false), 5000);
     }
-    setEditData({ ...editData, email: value });
-  };
+    setEditData(prev => ({ ...prev, email: value }));
+  }, [emailChangeAttempted]);
 
-  const handlePhoneChange = (value: string) => {
+  const handlePhoneChange = React.useCallback((value: string) => {
     if (!phoneChangeAttempted) {
       setShowPhoneNotification(true);
       setPhoneChangeAttempted(true);
       // Auto-hide notification after 5 seconds
       setTimeout(() => setShowPhoneNotification(false), 5000);
     }
-    setEditData({ ...editData, phone: value });
-  };
+    setEditData(prev => ({ ...prev, phone: value }));
+  }, [phoneChangeAttempted]);
+
+  const handleNameChange = React.useCallback((value: string) => {
+    setEditData(prev => ({ ...prev, name: value }));
+  }, []);
+
+  const handleLocationChange = React.useCallback((value: string) => {
+    setEditData(prev => ({ ...prev, location: value }));
+  }, []);
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-800 via-green-900 to-emerald-900 overflow-y-auto">
@@ -401,9 +409,10 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                       <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
                       {isEditing ? (
                         <input
+                          key="name-input"
                           type="text"
                           value={editData.name || profileData.name}
-                          onChange={(e) => setEditData({ ...editData, name: e.target.value })}
+                          onChange={(e) => handleNameChange(e.target.value)}
                           className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
                         />
                       ) : (
@@ -414,6 +423,7 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                       <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
                       {isEditing ? (
                         <input
+                          key="email-input"
                           type="email"
                           value={editData.email || profileData.email}
                           onChange={(e) => handleEmailChange(e.target.value)}
@@ -427,6 +437,7 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                       <label className="block text-sm font-medium text-gray-300 mb-2">Phone</label>
                       {isEditing ? (
                         <input
+                          key="phone-input"
                           type="tel"
                           value={editData.phone || profileData.phone}
                           onChange={(e) => handlePhoneChange(e.target.value)}
@@ -440,9 +451,10 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                       <label className="block text-sm font-medium text-gray-300 mb-2">Location</label>
                       {isEditing ? (
                         <input
+                          key="location-input"
                           type="text"
                           value={editData.location || profileData.location}
-                          onChange={(e) => setEditData({ ...editData, location: e.target.value })}
+                          onChange={(e) => handleLocationChange(e.target.value)}
                           className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
                         />
                       ) : (
