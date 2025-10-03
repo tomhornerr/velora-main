@@ -116,6 +116,10 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
   const [activeTab, setActiveTab] = React.useState<'profile' | 'notifications' | 'privacy' | 'display' | 'search'>('profile');
   const [isEditing, setIsEditing] = React.useState(false);
   const [editData, setEditData] = React.useState<Partial<ProfileData>>({});
+  const [showEmailNotification, setShowEmailNotification] = React.useState(false);
+  const [showPhoneNotification, setShowPhoneNotification] = React.useState(false);
+  const [emailChangeAttempted, setEmailChangeAttempted] = React.useState(false);
+  const [phoneChangeAttempted, setPhoneChangeAttempted] = React.useState(false);
 
   // Load profile data from localStorage on component mount
   React.useEffect(() => {
@@ -133,6 +137,9 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
   const handleEdit = () => {
     setEditData(profileData);
     setIsEditing(true);
+    // Reset change attempts when starting to edit
+    setEmailChangeAttempted(false);
+    setPhoneChangeAttempted(false);
   };
 
   const handleSave = () => {
@@ -233,8 +240,69 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
     </select>
   );
 
+  const NotificationBanner = ({ message, onClose, type = 'warning' }: { message: string; onClose: () => void; type?: 'warning' | 'info' }) => (
+    <div className={`fixed top-4 right-4 z-50 max-w-sm bg-white/10 backdrop-blur-xl border border-white/20 rounded-lg shadow-2xl p-4 transition-all duration-300 ${
+      type === 'warning' ? 'border-yellow-400/50' : 'border-blue-400/50'
+    }`}>
+      <div className="flex items-start space-x-3">
+        <div className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center ${
+          type === 'warning' ? 'bg-yellow-500/20' : 'bg-blue-500/20'
+        }`}>
+          <div className={`w-2 h-2 rounded-full ${
+            type === 'warning' ? 'bg-yellow-400' : 'bg-blue-400'
+          }`} />
+        </div>
+        <div className="flex-1">
+          <p className="text-white text-sm font-medium">{message}</p>
+        </div>
+        <button
+          onClick={onClose}
+          className="flex-shrink-0 text-gray-400 hover:text-white transition-colors"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+
+  const handleEmailChange = (value: string) => {
+    if (!emailChangeAttempted) {
+      setShowEmailNotification(true);
+      setEmailChangeAttempted(true);
+      // Auto-hide notification after 5 seconds
+      setTimeout(() => setShowEmailNotification(false), 5000);
+    }
+    setEditData({ ...editData, email: value });
+  };
+
+  const handlePhoneChange = (value: string) => {
+    if (!phoneChangeAttempted) {
+      setShowPhoneNotification(true);
+      setPhoneChangeAttempted(true);
+      // Auto-hide notification after 5 seconds
+      setTimeout(() => setShowPhoneNotification(false), 5000);
+    }
+    setEditData({ ...editData, phone: value });
+  };
+
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-slate-800 via-green-900 to-emerald-900 overflow-y-auto">
+      {/* Notification Banners */}
+      {showEmailNotification && (
+        <NotificationBanner
+          message="Email changes require approval. Your account cannot be changed again for another 3 days until it has been approved."
+          onClose={() => setShowEmailNotification(false)}
+          type="warning"
+        />
+      )}
+      {showPhoneNotification && (
+        <NotificationBanner
+          message="Phone number changes require approval. Your account cannot be changed again for another 3 days until it has been approved."
+          onClose={() => setShowPhoneNotification(false)}
+          type="warning"
+        />
+      )}
+      
       <div className="w-full min-h-screen py-8 pl-6 pr-8 ml-14 lg:ml-16">
         <div className="w-full max-w-6xl mx-auto">
           
@@ -348,7 +416,7 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                         <input
                           type="email"
                           value={editData.email || profileData.email}
-                          onChange={(e) => setEditData({ ...editData, email: e.target.value })}
+                          onChange={(e) => handleEmailChange(e.target.value)}
                           className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
                         />
                       ) : (
@@ -361,7 +429,7 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                         <input
                           type="tel"
                           value={editData.phone || profileData.phone}
-                          onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
+                          onChange={(e) => handlePhoneChange(e.target.value)}
                           className="w-full px-3 py-2 bg-white/20 border border-white/30 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm"
                         />
                       ) : (
