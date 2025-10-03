@@ -115,7 +115,7 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
   const [profileData, setProfileData] = React.useState<ProfileData>(getInitialProfileData);
   const [activeTab, setActiveTab] = React.useState<'profile' | 'notifications' | 'privacy' | 'display' | 'search'>('profile');
   const [isEditing, setIsEditing] = React.useState(false);
-  const [editData, setEditData] = React.useState<Partial<ProfileData>>({});
+  const [editData, setEditData] = React.useState<ProfileData>(getInitialProfileData);
   const [showEmailNotification, setShowEmailNotification] = React.useState(false);
   const [showPhoneNotification, setShowPhoneNotification] = React.useState(false);
   const [emailChangeAttempted, setEmailChangeAttempted] = React.useState(false);
@@ -128,6 +128,7 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
       try {
         const parsedData = JSON.parse(saved);
         setProfileData(parsedData);
+        setEditData(parsedData);
       } catch (error) {
         console.error('Error loading saved profile data:', error);
       }
@@ -143,16 +144,16 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
   };
 
   const handleSave = () => {
-    const updatedProfileData = { ...profileData, ...editData };
-    setProfileData(updatedProfileData);
-    localStorage.setItem('velora-profile-data', JSON.stringify(updatedProfileData));
+    setProfileData(editData);
+    localStorage.setItem('velora-profile-data', JSON.stringify(editData));
     setIsEditing(false);
-    setEditData({});
   };
 
   const handleCancel = () => {
-    setEditData({});
+    setEditData(profileData);
     setIsEditing(false);
+    setEmailChangeAttempted(false);
+    setPhoneChangeAttempted(false);
   };
 
   const handleSettingChange = (section: keyof ProfileData, key: string, value: any) => {
@@ -177,22 +178,6 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
     }
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        if (isEditing) {
-          setEditData({ ...editData, profileImage: e.target?.result as string });
-        } else {
-          const updatedData = { ...profileData, profileImage: e.target?.result as string };
-          setProfileData(updatedData);
-          localStorage.setItem('velora-profile-data', JSON.stringify(updatedData));
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   const Card = ({ children, className = "", ...props }: any) => (
     <div
@@ -265,32 +250,41 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
     </div>
   );
 
-  const handleEmailChange = (value: string) => {
-    if (!emailChangeAttempted) {
+  const handleFieldChange = (field: keyof ProfileData, value: string) => {
+    if (!isEditing) return;
+    
+    // Show notifications for sensitive fields
+    if (field === 'email' && !emailChangeAttempted) {
       setShowEmailNotification(true);
       setEmailChangeAttempted(true);
-      // Auto-hide notification after 5 seconds
       setTimeout(() => setShowEmailNotification(false), 5000);
     }
-    setEditData(prev => ({ ...prev, email: value }));
-  };
-
-  const handlePhoneChange = (value: string) => {
-    if (!phoneChangeAttempted) {
+    
+    if (field === 'phone' && !phoneChangeAttempted) {
       setShowPhoneNotification(true);
       setPhoneChangeAttempted(true);
-      // Auto-hide notification after 5 seconds
       setTimeout(() => setShowPhoneNotification(false), 5000);
     }
-    setEditData(prev => ({ ...prev, phone: value }));
+    
+    setEditData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleNameChange = (value: string) => {
-    setEditData(prev => ({ ...prev, name: value }));
-  };
-
-  const handleLocationChange = (value: string) => {
-    setEditData(prev => ({ ...prev, location: value }));
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (isEditing) {
+          setEditData(prev => ({ ...prev, profileImage: e.target?.result as string }));
+        } else {
+          const updatedData = { ...profileData, profileImage: e.target?.result as string };
+          setProfileData(updatedData);
+          setEditData(updatedData);
+          localStorage.setItem('velora-profile-data', JSON.stringify(updatedData));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   return (
@@ -386,7 +380,7 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                   <div className="relative">
                     <div className="w-20 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-blue-400 to-purple-500 shadow-lg">
                       <img
-                        src={isEditing && editData.profileImage ? editData.profileImage : profileData.profileImage}
+                        src={editData.profileImage}
                         alt="Profile"
                         className="w-full h-full object-cover"
                       />
@@ -409,8 +403,8 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                       <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
                       <input
                         type="text"
-                        value={isEditing ? (editData.name || profileData.name) : profileData.name}
-                        onChange={(e) => isEditing ? handleNameChange(e.target.value) : undefined}
+                        value={editData.name}
+                        onChange={(e) => handleFieldChange('name', e.target.value)}
                         readOnly={!isEditing}
                         className={`w-full px-3 py-2 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm ${
                           isEditing 
@@ -423,8 +417,8 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                       <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
                       <input
                         type="email"
-                        value={isEditing ? (editData.email || profileData.email) : profileData.email}
-                        onChange={(e) => isEditing ? handleEmailChange(e.target.value) : undefined}
+                        value={editData.email}
+                        onChange={(e) => handleFieldChange('email', e.target.value)}
                         readOnly={!isEditing}
                         className={`w-full px-3 py-2 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm ${
                           isEditing 
@@ -437,8 +431,8 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                       <label className="block text-sm font-medium text-gray-300 mb-2">Phone</label>
                       <input
                         type="tel"
-                        value={isEditing ? (editData.phone || profileData.phone) : profileData.phone}
-                        onChange={(e) => isEditing ? handlePhoneChange(e.target.value) : undefined}
+                        value={editData.phone}
+                        onChange={(e) => handleFieldChange('phone', e.target.value)}
                         readOnly={!isEditing}
                         className={`w-full px-3 py-2 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm ${
                           isEditing 
@@ -451,8 +445,8 @@ const Profile: React.FC<ProfileProps> = ({ onNavigate }) => {
                       <label className="block text-sm font-medium text-gray-300 mb-2">Location</label>
                       <input
                         type="text"
-                        value={isEditing ? (editData.location || profileData.location) : profileData.location}
-                        onChange={(e) => isEditing ? handleLocationChange(e.target.value) : undefined}
+                        value={editData.location}
+                        onChange={(e) => handleFieldChange('location', e.target.value)}
                         readOnly={!isEditing}
                         className={`w-full px-3 py-2 border rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent backdrop-blur-sm ${
                           isEditing 
