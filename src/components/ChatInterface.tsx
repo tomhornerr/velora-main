@@ -242,192 +242,32 @@ export default function ChatInterface({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Function to scroll to bottom smoothly
-  const scrollToBottom = () => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'end' 
+  // Simple, reliable scroll function that shows the full response
+  const scrollToShowResponse = (isPropertyResponse = false) => {
+    if (!messagesEndRef.current) return;
+    
+    // Wait for content to render, then scroll
+    setTimeout(() => {
+      if (!messagesEndRef.current) return;
+      
+      const element = messagesEndRef.current;
+      const elementRect = element.getBoundingClientRect();
+      
+      // Calculate the position to show the full response
+      const elementTop = elementRect.top + window.pageYOffset;
+      
+      // For property responses, we need more space to show the full card
+      // For regular responses, less space is needed
+      const offset = isPropertyResponse ? 150 : 100;
+      const targetPosition = Math.max(0, elementTop - offset);
+      
+      window.scrollTo({
+        top: targetPosition,
+        behavior: 'smooth'
       });
-    }
+    }, 100);
   };
 
-  // Enhanced scroll function that ensures latest response is visible
-  const scrollToShowLatestExchange = () => {
-    // Immediate scroll to ensure responsiveness
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end',
-          inline: 'nearest'
-        });
-      }
-    }, 10);
-    
-    // Multiple scroll attempts to handle dynamic content
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end',
-          inline: 'nearest'
-        });
-      }
-    }, 100);
-    
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end',
-          inline: 'nearest'
-        });
-      }
-    }, 300);
-    
-    // Final scroll to ensure everything is visible
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end',
-          inline: 'nearest'
-        });
-      }
-    }, 600);
-    
-    // Additional scroll with offset to ensure full visibility and spacing
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        const element = messagesEndRef.current;
-        const elementRect = element.getBoundingClientRect();
-        const absoluteElementTop = elementRect.top + window.pageYOffset;
-        // Position element higher to show full content with spacing
-        const offset = 400; // Extra space to ensure full card visibility
-        const targetPosition = absoluteElementTop - offset;
-        window.scrollTo({
-          top: targetPosition,
-          behavior: 'smooth'
-        });
-      }
-    }, 800);
-  };
-
-  // Special scroll function for property results (they take more space)
-  const scrollToShowPropertyResults = () => {
-    // Immediate scroll for property results with aggressive positioning
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        const element = messagesEndRef.current;
-        const elementRect = element.getBoundingClientRect();
-        const absoluteElementTop = elementRect.top + window.pageYOffset;
-    // Immediate positioning to ensure full card visibility
-    const offset = 500; // Extra large offset to ensure full card visibility
-    const targetPosition = absoluteElementTop - offset;
-        window.scrollTo({
-          top: targetPosition,
-          behavior: 'smooth'
-        });
-      }
-    }, 10);
-    
-    // Multiple scroll attempts to handle large property cards
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end',
-          inline: 'nearest'
-        });
-      }
-    }, 100);
-    
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end',
-          inline: 'nearest'
-        });
-      }
-    }, 300);
-    
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end',
-          inline: 'nearest'
-        });
-      }
-    }, 600);
-    
-    // Additional scrolls for property results
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end',
-          inline: 'nearest'
-        });
-      }
-    }, 1000);
-    
-    // Final aggressive scroll for property results
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end',
-          inline: 'nearest'
-        });
-      }
-    }, 1500);
-    
-    // Extra scroll to ensure everything is visible
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'end',
-          inline: 'nearest'
-        });
-      }
-    }, 2000);
-    
-    // Final scroll with offset to ensure full visibility of property results
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        const element = messagesEndRef.current;
-        const elementRect = element.getBoundingClientRect();
-        const absoluteElementTop = elementRect.top + window.pageYOffset;
-        // Position element higher to show full property card with spacing
-        const offset = 450; // Extra space to ensure full property card visibility
-        const targetPosition = absoluteElementTop - offset;
-        window.scrollTo({
-          top: targetPosition,
-          behavior: 'smooth'
-        });
-      }
-    }, 2500);
-    
-    // Additional final scroll to ensure perfect positioning
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        const element = messagesEndRef.current;
-        const elementRect = element.getBoundingClientRect();
-        const absoluteElementTop = elementRect.top + window.pageYOffset;
-        // Final positioning for property cards with proper spacing
-        const offset = 500; // Maximum space to ensure full property card visibility
-        const targetPosition = absoluteElementTop - offset;
-        window.scrollTo({
-          top: targetPosition,
-          behavior: 'smooth'
-        });
-      }
-    }, 3000);
-  };
 
   // Function to check if a query is property-related
   const isPropertyRelatedQuery = (query: string): boolean => {
@@ -623,51 +463,23 @@ export default function ChatInterface({
   // Scroll when property results are displayed
   useEffect(() => {
     if (currentPropertyResults.length > 0) {
-      // Immediate aggressive scroll to ensure full visibility
-      setTimeout(() => {
-        if (messagesEndRef.current) {
-          const element = messagesEndRef.current;
-          const elementRect = element.getBoundingClientRect();
-          const absoluteElementTop = elementRect.top + window.pageYOffset;
-          // Ultra-aggressive positioning to prevent any cut-off
-          const offset = 600; // Maximum offset to ensure no cut-off
-          const targetPosition = absoluteElementTop - offset;
-          window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
-          });
-        }
-      }, 10);
-      // Additional scroll attempts for property results
-      setTimeout(() => scrollToShowPropertyResults(), 50);
-      setTimeout(() => scrollToShowPropertyResults(), 200);
-      setTimeout(() => scrollToShowPropertyResults(), 800);
-      setTimeout(() => scrollToShowPropertyResults(), 1500);
+      scrollToShowResponse(true);
     }
   }, [currentPropertyResults]);
   
   useEffect(() => {
-    // When messages change, scroll with minimal delay
+    // When messages change, scroll to show the response
     if (messages.length > 0) {
-      // Immediate scroll for responsiveness
-      setTimeout(() => scrollToShowLatestExchange(), 10);
-      // Additional scroll after content renders
-      setTimeout(() => scrollToShowLatestExchange(), 100);
-      setTimeout(() => scrollToShowLatestExchange(), 300);
-      setTimeout(() => scrollToShowLatestExchange(), 600);
+      const lastMessage = messages[messages.length - 1];
+      const isPropertyResponse = lastMessage && lastMessage.content.includes('Property Results');
+      scrollToShowResponse(isPropertyResponse);
     }
   }, [messages]);
   
   useEffect(() => {
-    // Immediate scroll for typing indicator
+    // Scroll for typing indicator
     if (isTyping) {
-      setTimeout(() => scrollToShowLatestExchange(), 20);
-    } else {
-      // Scroll when typing stops (AI response is coming) - multiple attempts
-      setTimeout(() => scrollToShowLatestExchange(), 50);
-      setTimeout(() => scrollToShowLatestExchange(), 200);
-      setTimeout(() => scrollToShowLatestExchange(), 500);
-      setTimeout(() => scrollToShowLatestExchange(), 1000);
+      scrollToShowResponse(false);
     }
   }, [isTyping]);
   // Auto-focus behavior for chat input after activation
@@ -734,7 +546,7 @@ export default function ChatInterface({
       setIsTyping(true);
     
     // Scroll to bottom after user message
-    setTimeout(scrollToShowLatestExchange, 100);
+    scrollToShowResponse(false);
     
     setTimeout(async () => {
       let responseContent = '';
@@ -797,9 +609,7 @@ export default function ChatInterface({
                   });
                 }
               }, 10);
-              setTimeout(() => scrollToShowPropertyResults(), 50);
-              setTimeout(() => scrollToShowPropertyResults(), 200);
-              setTimeout(() => scrollToShowPropertyResults(), 800);
+              scrollToShowResponse(true);
             } else {
               // Generate a more helpful "no results" message
               const totalProperties = mockPropertyData.length;
@@ -841,7 +651,7 @@ export default function ChatInterface({
       onMessagesUpdate?.(updatedMessages);
       
       // Scroll to bottom after AI response
-      setTimeout(scrollToShowLatestExchange, 200);
+      scrollToShowResponse(false);
       
       // Track property-related responses that should show properties
       if (shouldShowProperties) {
@@ -881,7 +691,7 @@ export default function ChatInterface({
     setIsTyping(true);
     
     // Scroll to bottom after user message
-    setTimeout(scrollToShowLatestExchange, 100);
+    scrollToShowResponse(false);
     setTimeout(async () => {
       let responseContent = '';
       let shouldShowProperties = false;
@@ -937,9 +747,7 @@ export default function ChatInterface({
                   });
                 }
               }, 10);
-              setTimeout(() => scrollToShowPropertyResults(), 50);
-              setTimeout(() => scrollToShowPropertyResults(), 200);
-              setTimeout(() => scrollToShowPropertyResults(), 800);
+              scrollToShowResponse(true);
             } else {
               // Generate a more helpful "no results" message
               const totalProperties = mockPropertyData.length;
@@ -981,7 +789,7 @@ export default function ChatInterface({
       onMessagesUpdate?.(updatedMessages);
       
       // Scroll to bottom after AI response
-      setTimeout(scrollToShowLatestExchange, 200);
+      scrollToShowResponse(false);
       
       // Track property-related responses that should show properties
       if (shouldShowProperties) {
