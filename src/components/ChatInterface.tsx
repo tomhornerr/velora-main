@@ -260,17 +260,24 @@ export default function ChatInterface({
       
       // Calculate how much more we can scroll
       const maxScrollTop = containerScrollHeight - containerHeight;
-      const chatBarHeight = 100; // Space for chat input bar
-      const padding = isPropertyResponse ? 150 : 80; // Refined padding
+      const chatBarHeight = 150; // Increased space for chat input bar
+      const padding = isPropertyResponse ? 300 : 200; // Much larger padding to show full card
       const totalOffset = chatBarHeight + padding;
       
-      // Calculate target position
-      const targetScrollTop = Math.min(maxScrollTop, currentScrollTop + totalOffset);
+      // Calculate target position - be more aggressive for property responses
+      let targetScrollTop;
+      if (isPropertyResponse) {
+        // For property responses, scroll to near the bottom to show full card
+        targetScrollTop = Math.min(maxScrollTop, maxScrollTop - 50);
+      } else {
+        // For regular responses, use the calculated offset
+        targetScrollTop = Math.min(maxScrollTop, currentScrollTop + totalOffset);
+      }
       
       // Use requestAnimationFrame for ultra-smooth scrolling
       const startScrollTop = currentScrollTop;
       const distance = targetScrollTop - startScrollTop;
-      const duration = 400; // 400ms for immediate, responsive scroll
+      const duration = 200; // 200ms for very fast, immediate scroll
       let startTime: number | null = null;
       
       const easeInOutCubic = (t: number): number => {
@@ -299,6 +306,16 @@ export default function ChatInterface({
         block: 'end',
         inline: 'nearest'
       });
+      
+      // For property responses, also try scrolling to the very bottom
+      if (isPropertyResponse) {
+        setTimeout(() => {
+          scrollContainer.scrollTo({
+            top: scrollContainer.scrollHeight,
+            behavior: 'smooth'
+          });
+        }, 50);
+      }
     };
     
     // Immediate ultra-smooth scroll
