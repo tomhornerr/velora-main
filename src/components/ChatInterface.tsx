@@ -242,30 +242,44 @@ export default function ChatInterface({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Simple, reliable scroll function that shows the full response
+  // Aggressive scroll function that ensures the full response is visible
   const scrollToShowResponse = (isPropertyResponse = false) => {
     if (!messagesEndRef.current) return;
     
-    // Wait for content to render, then scroll
-    setTimeout(() => {
+    // Multiple scroll attempts to handle dynamic content rendering
+    const performScroll = () => {
       if (!messagesEndRef.current) return;
       
       const element = messagesEndRef.current;
       const elementRect = element.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
       
       // Calculate the position to show the full response
       const elementTop = elementRect.top + window.pageYOffset;
+      const elementHeight = elementRect.height;
       
-      // For property responses, we need more space to show the full card
-      // For regular responses, less space is needed
-      const offset = isPropertyResponse ? 150 : 100;
+      // For property responses, we need much more space to show the full card
+      // For regular responses, we still need enough space to avoid cut-off
+      const offset = isPropertyResponse ? 300 : 200;
       const targetPosition = Math.max(0, elementTop - offset);
       
+      // Ensure we scroll enough to show the entire response
+      const finalPosition = Math.max(0, targetPosition);
+      
       window.scrollTo({
-        top: targetPosition,
+        top: finalPosition,
         behavior: 'smooth'
       });
-    }, 100);
+    };
+    
+    // Immediate scroll
+    performScroll();
+    
+    // Additional scrolls to handle content that renders progressively
+    setTimeout(performScroll, 50);
+    setTimeout(performScroll, 150);
+    setTimeout(performScroll, 300);
+    setTimeout(performScroll, 500);
   };
 
 
