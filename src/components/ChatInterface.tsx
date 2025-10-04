@@ -241,33 +241,41 @@ export default function ChatInterface({
   }>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   // Ultra-aggressive scroll function that ensures the full response is visible
   const scrollToShowResponse = (isPropertyResponse = false) => {
-    if (!messagesEndRef.current) return;
+    if (!messagesEndRef.current || !messagesContainerRef.current) return;
+    
+    const scrollContainer = messagesContainerRef.current;
     
     // Multiple scroll attempts to handle dynamic content rendering
     const performScroll = () => {
-      if (!messagesEndRef.current) return;
+      if (!messagesEndRef.current || !scrollContainer) return;
       
-      const element = messagesEndRef.current;
-      const elementRect = element.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
+      // Method 1: Use scrollIntoView on the messages end element
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'end',
+        inline: 'nearest'
+      });
       
-      // Calculate the position to show the full response
-      const elementTop = elementRect.top + window.pageYOffset;
-      const elementHeight = elementRect.height;
+      // Method 2: Direct container scrolling for more control
+      const containerHeight = scrollContainer.clientHeight;
+      const containerScrollHeight = scrollContainer.scrollHeight;
+      const currentScrollTop = scrollContainer.scrollTop;
       
-      // Much more aggressive offsets to ensure full visibility
-      // Account for chat bar height (approximately 80px) plus extra padding
-      const chatBarHeight = 100; // Extra space for chat input bar
-      const padding = isPropertyResponse ? 400 : 300; // Large padding for property cards
+      // Calculate how much more we can scroll
+      const maxScrollTop = containerScrollHeight - containerHeight;
+      const chatBarHeight = 120; // Space for chat input bar
+      const padding = isPropertyResponse ? 200 : 100; // Extra padding
       const totalOffset = chatBarHeight + padding;
       
-      const targetPosition = Math.max(0, elementTop - totalOffset);
+      // Scroll to show more content
+      const targetScrollTop = Math.min(maxScrollTop, currentScrollTop + totalOffset);
       
-      window.scrollTo({
-        top: targetPosition,
+      scrollContainer.scrollTo({
+        top: targetScrollTop,
         behavior: 'smooth'
       });
     };
@@ -918,6 +926,7 @@ export default function ChatInterface({
 
         {/* Messages Area - Centered like ChatGPT */}
         <div 
+          ref={messagesContainerRef}
           className="flex-1 overflow-y-auto pt-16 pb-32 space-y-6 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-300/70"
           onMouseEnter={() => {
             if (inputRef.current) {
