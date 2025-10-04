@@ -243,53 +243,69 @@ export default function ChatInterface({
   const inputRef = useRef<HTMLInputElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
-  // Ultra-aggressive scroll function that ensures the full response is visible
+  // Sleek and smooth scroll function that ensures the full response is visible
   const scrollToShowResponse = (isPropertyResponse = false) => {
     if (!messagesEndRef.current || !messagesContainerRef.current) return;
     
     const scrollContainer = messagesContainerRef.current;
     
-    // Multiple scroll attempts to handle dynamic content rendering
-    const performScroll = () => {
+    // Ultra-smooth scroll with requestAnimationFrame for buttery smoothness
+    const performUltraSmoothScroll = () => {
       if (!messagesEndRef.current || !scrollContainer) return;
       
-      // Method 1: Use scrollIntoView on the messages end element
-      messagesEndRef.current.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'end',
-        inline: 'nearest'
-      });
-      
-      // Method 2: Direct container scrolling for more control
+      // Calculate the optimal scroll position
       const containerHeight = scrollContainer.clientHeight;
       const containerScrollHeight = scrollContainer.scrollHeight;
       const currentScrollTop = scrollContainer.scrollTop;
       
       // Calculate how much more we can scroll
       const maxScrollTop = containerScrollHeight - containerHeight;
-      const chatBarHeight = 120; // Space for chat input bar
-      const padding = isPropertyResponse ? 200 : 100; // Extra padding
+      const chatBarHeight = 100; // Space for chat input bar
+      const padding = isPropertyResponse ? 150 : 80; // Refined padding
       const totalOffset = chatBarHeight + padding;
       
-      // Scroll to show more content
+      // Calculate target position
       const targetScrollTop = Math.min(maxScrollTop, currentScrollTop + totalOffset);
       
-      scrollContainer.scrollTo({
-        top: targetScrollTop,
-        behavior: 'smooth'
+      // Use requestAnimationFrame for ultra-smooth scrolling
+      const startScrollTop = currentScrollTop;
+      const distance = targetScrollTop - startScrollTop;
+      const duration = 800; // 800ms for smooth, elegant scroll
+      let startTime: number | null = null;
+      
+      const easeInOutCubic = (t: number): number => {
+        return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+      };
+      
+      const animateScroll = (currentTime: number) => {
+        if (startTime === null) startTime = currentTime;
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const easedProgress = easeInOutCubic(progress);
+        
+        const currentPosition = startScrollTop + (distance * easedProgress);
+        scrollContainer.scrollTop = currentPosition;
+        
+        if (progress < 1) {
+          requestAnimationFrame(animateScroll);
+        }
+      };
+      
+      requestAnimationFrame(animateScroll);
+      
+      // Also ensure the messages end is visible with smooth behavior
+      messagesEndRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'end',
+        inline: 'nearest'
       });
     };
     
-    // Immediate scroll
-    performScroll();
+    // Immediate ultra-smooth scroll
+    performUltraSmoothScroll();
     
-    // Multiple aggressive scrolls to handle content that renders progressively
-    setTimeout(performScroll, 50);
-    setTimeout(performScroll, 100);
-    setTimeout(performScroll, 200);
-    setTimeout(performScroll, 400);
-    setTimeout(performScroll, 600);
-    setTimeout(performScroll, 800);
+    // Single elegant follow-up for progressive content rendering
+    setTimeout(performUltraSmoothScroll, 400);
   };
 
 
@@ -487,13 +503,11 @@ export default function ChatInterface({
   // Scroll when property results are displayed
   useEffect(() => {
     if (currentPropertyResults.length > 0) {
-      // Ultra-aggressive scroll for property results
+      // Smooth scroll for property results
       scrollToShowResponse(true);
       
-      // Additional scrolls to ensure full visibility
-      setTimeout(() => scrollToShowResponse(true), 100);
-      setTimeout(() => scrollToShowResponse(true), 300);
-      setTimeout(() => scrollToShowResponse(true), 600);
+      // Single elegant follow-up scroll for progressive rendering
+      setTimeout(() => scrollToShowResponse(true), 400);
     }
   }, [currentPropertyResults]);
   
@@ -503,14 +517,12 @@ export default function ChatInterface({
       const lastMessage = messages[messages.length - 1];
       const isPropertyResponse = lastMessage && lastMessage.content.includes('Property Results');
       
-      // Immediate scroll
+      // Smooth immediate scroll
       scrollToShowResponse(isPropertyResponse);
       
-      // Additional aggressive scrolls for property responses
+      // Single elegant follow-up for property responses
       if (isPropertyResponse) {
-        setTimeout(() => scrollToShowResponse(true), 100);
-        setTimeout(() => scrollToShowResponse(true), 300);
-        setTimeout(() => scrollToShowResponse(true), 600);
+        setTimeout(() => scrollToShowResponse(true), 500);
       }
     }
   }, [messages]);
@@ -928,6 +940,11 @@ export default function ChatInterface({
         <div 
           ref={messagesContainerRef}
           className="flex-1 overflow-y-auto pt-16 pb-32 space-y-6 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-slate-200/50 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-slate-300/70"
+          style={{
+            scrollBehavior: 'smooth',
+            scrollPaddingTop: '2rem',
+            scrollPaddingBottom: '2rem'
+          }}
           onMouseEnter={() => {
             if (inputRef.current) {
               inputRef.current.focus();
