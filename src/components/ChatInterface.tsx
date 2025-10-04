@@ -270,7 +270,7 @@ export default function ChatInterface({
       // Use requestAnimationFrame for ultra-smooth scrolling
       const startScrollTop = currentScrollTop;
       const distance = targetScrollTop - startScrollTop;
-      const duration = 800; // 800ms for smooth, elegant scroll
+      const duration = 400; // 400ms for immediate, responsive scroll
       let startTime: number | null = null;
       
       const easeInOutCubic = (t: number): number => {
@@ -303,9 +303,6 @@ export default function ChatInterface({
     
     // Immediate ultra-smooth scroll
     performUltraSmoothScroll();
-    
-    // Single elegant follow-up for progressive content rendering
-    setTimeout(performUltraSmoothScroll, 400);
   };
 
 
@@ -503,27 +500,24 @@ export default function ChatInterface({
   // Scroll when property results are displayed
   useEffect(() => {
     if (currentPropertyResults.length > 0) {
-      // Smooth scroll for property results
+      // Immediate scroll as soon as property results appear
       scrollToShowResponse(true);
       
-      // Single elegant follow-up scroll for progressive rendering
-      setTimeout(() => scrollToShowResponse(true), 400);
+      // Additional immediate scroll after component renders
+      requestAnimationFrame(() => {
+        scrollToShowResponse(true);
+      });
     }
   }, [currentPropertyResults]);
   
   useEffect(() => {
-    // When messages change, scroll to show the response
+    // When messages change, scroll to show the response immediately
     if (messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
       const isPropertyResponse = lastMessage && lastMessage.content.includes('Property Results');
       
-      // Smooth immediate scroll
+      // Immediate scroll as soon as message appears
       scrollToShowResponse(isPropertyResponse);
-      
-      // Single elegant follow-up for property responses
-      if (isPropertyResponse) {
-        setTimeout(() => scrollToShowResponse(true), 500);
-      }
     }
   }, [messages]);
   
