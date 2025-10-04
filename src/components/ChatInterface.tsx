@@ -242,7 +242,7 @@ export default function ChatInterface({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Aggressive scroll function that ensures the full response is visible
+  // Ultra-aggressive scroll function that ensures the full response is visible
   const scrollToShowResponse = (isPropertyResponse = false) => {
     if (!messagesEndRef.current) return;
     
@@ -258,16 +258,16 @@ export default function ChatInterface({
       const elementTop = elementRect.top + window.pageYOffset;
       const elementHeight = elementRect.height;
       
-      // For property responses, we need much more space to show the full card
-      // For regular responses, we still need enough space to avoid cut-off
-      const offset = isPropertyResponse ? 300 : 200;
-      const targetPosition = Math.max(0, elementTop - offset);
+      // Much more aggressive offsets to ensure full visibility
+      // Account for chat bar height (approximately 80px) plus extra padding
+      const chatBarHeight = 100; // Extra space for chat input bar
+      const padding = isPropertyResponse ? 400 : 300; // Large padding for property cards
+      const totalOffset = chatBarHeight + padding;
       
-      // Ensure we scroll enough to show the entire response
-      const finalPosition = Math.max(0, targetPosition);
+      const targetPosition = Math.max(0, elementTop - totalOffset);
       
       window.scrollTo({
-        top: finalPosition,
+        top: targetPosition,
         behavior: 'smooth'
       });
     };
@@ -275,11 +275,13 @@ export default function ChatInterface({
     // Immediate scroll
     performScroll();
     
-    // Additional scrolls to handle content that renders progressively
+    // Multiple aggressive scrolls to handle content that renders progressively
     setTimeout(performScroll, 50);
-    setTimeout(performScroll, 150);
-    setTimeout(performScroll, 300);
-    setTimeout(performScroll, 500);
+    setTimeout(performScroll, 100);
+    setTimeout(performScroll, 200);
+    setTimeout(performScroll, 400);
+    setTimeout(performScroll, 600);
+    setTimeout(performScroll, 800);
   };
 
 
@@ -477,7 +479,13 @@ export default function ChatInterface({
   // Scroll when property results are displayed
   useEffect(() => {
     if (currentPropertyResults.length > 0) {
+      // Ultra-aggressive scroll for property results
       scrollToShowResponse(true);
+      
+      // Additional scrolls to ensure full visibility
+      setTimeout(() => scrollToShowResponse(true), 100);
+      setTimeout(() => scrollToShowResponse(true), 300);
+      setTimeout(() => scrollToShowResponse(true), 600);
     }
   }, [currentPropertyResults]);
   
@@ -486,7 +494,16 @@ export default function ChatInterface({
     if (messages.length > 0) {
       const lastMessage = messages[messages.length - 1];
       const isPropertyResponse = lastMessage && lastMessage.content.includes('Property Results');
+      
+      // Immediate scroll
       scrollToShowResponse(isPropertyResponse);
+      
+      // Additional aggressive scrolls for property responses
+      if (isPropertyResponse) {
+        setTimeout(() => scrollToShowResponse(true), 100);
+        setTimeout(() => scrollToShowResponse(true), 300);
+        setTimeout(() => scrollToShowResponse(true), 600);
+      }
     }
   }, [messages]);
   
