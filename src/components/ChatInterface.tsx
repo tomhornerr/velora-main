@@ -277,18 +277,19 @@ export default function ChatInterface({
       // Use requestAnimationFrame for ultra-smooth scrolling
       const startScrollTop = currentScrollTop;
       const distance = targetScrollTop - startScrollTop;
-      const duration = 200; // 200ms for very fast, immediate scroll
+      const duration = 150; // 150ms for ultra-fast, immediate scroll
       let startTime: number | null = null;
       
-      const easeInOutCubic = (t: number): number => {
-        return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+      // Ultra-smooth easing function for buttery smooth scrolling
+      const easeOutQuart = (t: number): number => {
+        return 1 - Math.pow(1 - t, 4);
       };
       
       const animateScroll = (currentTime: number) => {
         if (startTime === null) startTime = currentTime;
         const elapsed = currentTime - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        const easedProgress = easeInOutCubic(progress);
+        const easedProgress = easeOutQuart(progress);
         
         const currentPosition = startScrollTop + (distance * easedProgress);
         scrollContainer.scrollTop = currentPosition;
@@ -314,7 +315,7 @@ export default function ChatInterface({
             top: scrollContainer.scrollHeight,
             behavior: 'smooth'
           });
-        }, 50);
+        }, 25); // Reduced from 50ms to 25ms for faster response
       }
     };
     
@@ -524,6 +525,9 @@ export default function ChatInterface({
       requestAnimationFrame(() => {
         scrollToShowResponse(true);
       });
+      
+      // Extra immediate scroll for ultra-responsiveness
+      setTimeout(() => scrollToShowResponse(true), 10);
     }
   }, [currentPropertyResults]);
   
@@ -535,6 +539,9 @@ export default function ChatInterface({
       
       // Immediate scroll as soon as message appears
       scrollToShowResponse(isPropertyResponse);
+      
+      // Additional immediate scroll for ultra-responsiveness
+      setTimeout(() => scrollToShowResponse(isPropertyResponse), 5);
     }
   }, [messages]);
   
@@ -954,7 +961,9 @@ export default function ChatInterface({
           style={{
             scrollBehavior: 'smooth',
             scrollPaddingTop: '2rem',
-            scrollPaddingBottom: '2rem'
+            scrollPaddingBottom: '2rem',
+            scrollSnapType: 'y proximity',
+            scrollSnapAlign: 'start'
           }}
           onMouseEnter={() => {
             if (inputRef.current) {
